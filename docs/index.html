@@ -2,13 +2,52 @@
 <html>
 <head>
   <title>Kid Learn Quest</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #4a4aef;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: white;
+      width: 200px;
+      padding: 30px;
+      border-radius: 15px;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-  <h1>Kid Learn Quest</h1>
-  <p>If you see this, GitHub Pages is working.</p>
 
-  <div onclick="location.href='activities/math/'">Math</div>
-  <div onclick="location.href='activities/reading/'">Reading</div>
-  <div onclick="location.href='activities/science/'">Science</div>
+  <h1>🌟 Kid Learn Quest 🌟</h1>
+  <p>Choose a learning adventure!</p>
+
+  <div class="container">
+    <div class="card" onclick="location.href='activities/math/'">➕ Math</div>
+    <div class="card" onclick="location.href='activities/reading/'">📖 Reading</div>
+    <div class="card" onclick="location.href='activities/science/'">🔬 Science</div>
+  </div>
+
 </body>
 </html>
