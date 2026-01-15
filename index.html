@@ -3,11 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Kid Learn Quest</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; background:#f0f8ff; margin:0; }
+    header { background:#ffb347; color:white; text-align:center; padding:20px; }
+    .container { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; padding:20px; }
+    .card {
+      background:white; width:220px; padding:20px;
+      border-radius:12px; text-align:center;
+      box-shadow:0 4px 8px rgba(0,0,0,.1);
+      cursor:pointer;
+    }
+    .card:hover { transform:scale(1.05); }
+    footer { background:#ffb347; color:white; text-align:center; padding:10px; }
+  </style>
 </head>
-<body style="font-family: Arial, sans-serif; text-align:center; padding:40px;">
-  <h1>🎓 Kid Learn Quest</h1>
-  <p>Fun, interactive learning adventures for kids.</p>
-  <p>🚧 Web version coming soon.</p>
+<body>
+
+<header>
+  <h1>Kid Learn Quest</h1>
+  <p>Fun learning adventures for kids</p>
+</header>
+
+<div class="container">
+  <div class="card" onclick="location.href='activities/math.html'">
+    <h2>Math</h2>
+    <p>Play math games</p>
+  </div>
+
+  <div class="card" onclick="location.href='activities/reading.html'">
+    <h2>Reading</h2>
+    <p>Spelling & words</p>
+  </div>
+
+  <div class="card" onclick="location.href='activities/science.html'">
+    <h2>Science</h2>
+    <p>Explore nature</p>
+  </div>
+</div>
+
+<footer>
+  © 2026 Kid Learn Quest
+</footer>
+
 </body>
 </html>
