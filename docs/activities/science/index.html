@@ -15,7 +15,7 @@ body {
   background: white;
   border-radius: 15px;
   padding: 30px;
-  max-width: 400px;
+  max-width: 420px;
   margin: auto;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
@@ -32,28 +32,69 @@ button {
 button:hover {
   background: #1e88e5;
 }
+.score {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
 </style>
 </head>
 <body>
 
 <div class="card">
   <h1>🔬 Science Quest</h1>
-  <p>Which one is a living thing?</p>
-
-  <button onclick="wrong()">Rock</button>
-  <button onclick="correct()">Tree</button>
-  <button onclick="wrong()">Car</button>
-
+  <div class="score">⭐ Score: <span id="score">0</span></div>
+  <p id="question"></p>
+  <div id="answers"></div>
   <p id="result"></p>
 </div>
 
 <script>
-function correct() {
-  document.getElementById("result").innerHTML = "🌱 Yes! Trees are living!";
+const questions = [
+  { q: "Which one is a living thing?", a: "Tree", options: ["Rock", "Tree", "Car"] },
+  { q: "Which one needs water?", a: "Plant", options: ["Plant", "Chair", "Toy"] },
+  { q: "Which one can grow?", a: "Flower", options: ["Flower", "Shoe", "Book"] },
+  { q: "Which one is an animal?", a: "Dog", options: ["Dog", "Table", "Ball"] }
+];
+
+let index = 0;
+let score = 0;
+
+function loadQuestion() {
+  const q = questions[index];
+  document.getElementById("question").innerHTML = q.q;
+  document.getElementById("answers").innerHTML = "";
+  document.getElementById("result").innerHTML = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => check(opt);
+    document.getElementById("answers").appendChild(btn);
+  });
 }
-function wrong() {
-  document.getElementById("result").innerHTML = "❌ Nope, try again!";
+
+function check(answer) {
+  const q = questions[index];
+  if (answer === q.a) {
+    score++;
+    document.getElementById("score").textContent = score;
+    document.getElementById("result").innerHTML = "🌱 Correct!";
+  } else {
+    document.getElementById("result").innerHTML = "❌ Try again!";
+    return;
+  }
+
+  index++;
+  if (index < questions.length) {
+    setTimeout(loadQuestion, 800);
+  } else {
+    document.getElementById("question").innerHTML =
+      "🏆 Science star!";
+    document.getElementById("answers").innerHTML = "";
+  }
 }
+
+loadQuestion();
 </script>
 
 </body>
