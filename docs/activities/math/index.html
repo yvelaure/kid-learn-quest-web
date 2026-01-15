@@ -9,20 +9,20 @@ body {
   font-family: Arial, sans-serif;
   background: #e3f2fd;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
 }
 .card {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 25px;
   max-width: 420px;
   margin: auto;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 button {
-  margin: 10px;
-  padding: 15px 25px;
-  font-size: 18px;
+  margin: 8px;
+  padding: 14px 22px;
+  font-size: 17px;
   border: none;
   border-radius: 10px;
   background: #4caf50;
@@ -32,13 +32,16 @@ button {
 button:hover {
   background: #43a047;
 }
-#result {
-  margin-top: 15px;
-  font-size: 20px;
+.back {
+  background: #ff9800;
 }
 .score {
-  font-size: 18px;
-  margin-bottom: 15px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.level {
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -46,14 +49,25 @@ button:hover {
 
 <div class="card">
   <h1>🧮 Math Quest</h1>
-  <div class="score">⭐ Score: <span id="score">0</span></div>
+  <div class="level">⭐ Level: <span id="level">1</span></div>
+  <div class="score">Score: <span id="score">0</span></div>
+
   <p id="question"></p>
   <div id="answers"></div>
-  <div id="result"></div>
+  <p id="result"></p>
+
+  <button class="back" onclick="goHome()">⬅ Back to Hub</button>
 </div>
 
+<audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+<audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
 <script>
-const questions = [
+let level = 1;
+let score = 0;
+let current = 0;
+
+let questions = [
   { q: "4 + 3", a: 7, options: [6,7,8] },
   { q: "6 + 2", a: 8, options: [7,8,9] },
   { q: "5 + 5", a: 10, options: [9,10,11] },
@@ -61,11 +75,11 @@ const questions = [
   { q: "2 + 7", a: 9, options: [8,9,10] }
 ];
 
-let index = 0;
-let score = 0;
+// shuffle questions
+questions.sort(() => Math.random() - 0.5);
 
 function loadQuestion() {
-  const q = questions[index];
+  const q = questions[current];
   document.getElementById("question").innerHTML =
     `What is <strong>${q.q}</strong>?`;
   document.getElementById("answers").innerHTML = "";
@@ -80,26 +94,32 @@ function loadQuestion() {
 }
 
 function check(answer) {
-  const q = questions[index];
+  const q = questions[current];
   if (answer === q.a) {
     score++;
     document.getElementById("score").textContent = score;
+    document.getElementById("correctSound").play();
     document.getElementById("result").innerHTML = "🎉 Correct!";
-    document.getElementById("result").style.color = "green";
   } else {
+    document.getElementById("wrongSound").play();
     document.getElementById("result").innerHTML = "❌ Try again!";
-    document.getElementById("result").style.color = "red";
     return;
   }
 
-  index++;
-  if (index < questions.length) {
-    setTimeout(loadQuestion, 800);
+  current++;
+  if (current < questions.length) {
+    setTimeout(loadQuestion, 700);
   } else {
+    level++;
+    document.getElementById("level").textContent = level;
     document.getElementById("question").innerHTML =
-      "🏆 Great job! You finished Math Quest!";
+      "🏆 Level complete! Great job!";
     document.getElementById("answers").innerHTML = "";
   }
+}
+
+function goHome() {
+  window.location.href = "../index.html";
 }
 
 loadQuestion();
