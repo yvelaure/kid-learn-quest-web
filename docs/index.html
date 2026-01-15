@@ -1,3 +1,83 @@
-<div class="card" onclick="location.href='activities/math/'">Math</div>
-<div class="card" onclick="location.href='activities/reading/'">Reading</div>
-<div class="card" onclick="location.href='activities/science/'">Science</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kid Learn Quest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      margin: 0;
+    }
+
+    header {
+      background: #ffb347;
+      color: white;
+      text-align: center;
+      padding: 25px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      width: 220px;
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      background: #ffb347;
+      color: white;
+      text-align: center;
+      padding: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Kid Learn Quest</h1>
+  <p>Choose a learning adventure</p>
+</header>
+
+<div class="container">
+  <div class="card" onclick="location.href='activities/math/'">
+    <h2>Math</h2>
+    <p>Addition & numbers</p>
+  </div>
+
+  <div class="card" onclick="location.href='activities/reading/'">
+    <h2>Reading</h2>
+    <p>Spelling & words</p>
+  </div>
+
+  <div class="card" onclick="location.href='activities/science/'">
+    <h2>Science</h2>
+    <p>Nature & experiments</p>
+  </div>
+</div>
+
+<footer>
+  © 2026 Kid Learn Quest
+</footer>
+
+</body>
+</html>
