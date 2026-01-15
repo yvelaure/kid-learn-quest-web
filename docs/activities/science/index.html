@@ -9,32 +9,27 @@ body {
   font-family: Arial, sans-serif;
   background: #e8f5e9;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
 }
 .card {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 25px;
   max-width: 420px;
   margin: auto;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 button {
-  margin: 10px;
-  padding: 15px 25px;
-  font-size: 18px;
-  border: none;
+  margin: 8px;
+  padding: 14px 22px;
+  font-size: 17px;
   border-radius: 10px;
-  background: #2196f3;
+  border: none;
+  background: #4caf50;
   color: white;
-  cursor: pointer;
 }
-button:hover {
-  background: #1e88e5;
-}
-.score {
-  font-size: 18px;
-  margin-bottom: 15px;
+.back {
+  background: #ff9800;
 }
 </style>
 </head>
@@ -42,59 +37,72 @@ button:hover {
 
 <div class="card">
   <h1>🔬 Science Quest</h1>
-  <div class="score">⭐ Score: <span id="score">0</span></div>
+  <div>⭐ Level: <span id="level">1</span></div>
+  <div>Score: <span id="score">0</span></div>
+
   <p id="question"></p>
   <div id="answers"></div>
   <p id="result"></p>
+
+  <button class="back" onclick="goHome()">⬅ Back to Hub</button>
 </div>
 
+<audio id="correct" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+<audio id="wrong" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
 <script>
-const questions = [
-  { q: "Which one is a living thing?", a: "Tree", options: ["Rock", "Tree", "Car"] },
-  { q: "Which one needs water?", a: "Plant", options: ["Plant", "Chair", "Toy"] },
-  { q: "Which one can grow?", a: "Flower", options: ["Flower", "Shoe", "Book"] },
-  { q: "Which one is an animal?", a: "Dog", options: ["Dog", "Table", "Ball"] }
+let level=1, score=0, i=0;
+
+let qs = [
+  {q:"What planet do we live on?", a:"Earth", o:["Mars","Earth","Moon"]},
+  {q:"What do plants need to grow?", a:"Water", o:["Candy","Water","Rocks"]},
+  {q:"What gives us light in the day?", a:"Sun", o:["Moon","Stars","Sun"]},
+  {q:"What do we breathe?", a:"Air", o:["Juice","Air","Sand"]}
 ];
 
-let index = 0;
-let score = 0;
+qs.sort(()=>Math.random()-0.5);
 
-function loadQuestion() {
-  const q = questions[index];
-  document.getElementById("question").innerHTML = q.q;
-  document.getElementById("answers").innerHTML = "";
-  document.getElementById("result").innerHTML = "";
-
-  q.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = () => check(opt);
-    document.getElementById("answers").appendChild(btn);
+function load() {
+  question.textContent = qs[i].q;
+  answers.innerHTML="";
+  result.textContent="";
+  qs[i].o.forEach(x=>{
+    let b=document.createElement("button");
+    b.textContent=x;
+    b.onclick=()=>check(x);
+    answers.appendChild(b);
   });
 }
 
-function check(answer) {
-  const q = questions[index];
-  if (answer === q.a) {
-    score++;
-    document.getElementById("score").textContent = score;
-    document.getElementById("result").innerHTML = "🌱 Correct!";
+function check(x){
+  if(x===qs[i].a){
+    score++; correct.play();
+    scoreEl.textContent=score;
+    result.textContent="🎉 Correct!";
   } else {
-    document.getElementById("result").innerHTML = "❌ Try again!";
+    wrong.play();
+    result.textContent="❌ Try again";
     return;
   }
-
-  index++;
-  if (index < questions.length) {
-    setTimeout(loadQuestion, 800);
-  } else {
-    document.getElementById("question").innerHTML =
-      "🏆 Science star!";
-    document.getElementById("answers").innerHTML = "";
+  i++;
+  if(i<qs.length) setTimeout(load,700);
+  else {
+    level++;
+    levelEl.textContent=level;
+    question.textContent="🏆 Science Level Complete!";
+    answers.innerHTML="";
   }
 }
 
-loadQuestion();
+function goHome(){ window.location.href="../index.html"; }
+
+const question=document.getElementById("question");
+const answers=document.getElementById("answers");
+const result=document.getElementById("result");
+const scoreEl=document.getElementById("score");
+const levelEl=document.getElementById("level");
+
+load();
 </script>
 
 </body>
