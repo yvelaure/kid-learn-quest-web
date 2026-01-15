@@ -15,7 +15,7 @@ body {
   background: white;
   border-radius: 15px;
   padding: 30px;
-  max-width: 400px;
+  max-width: 420px;
   margin: auto;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
@@ -34,28 +34,69 @@ button {
 button:hover {
   background: #fb8c00;
 }
+.score {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
 </style>
 </head>
 <body>
 
 <div class="card">
   <h1>📖 Reading Quest</h1>
-  <p>Which word says <strong>CAT</strong>?</p>
-
-  <button onclick="wrong()">DOG</button>
-  <button onclick="correct()">CAT</button>
-  <button onclick="wrong()">HAT</button>
-
+  <div class="score">⭐ Score: <span id="score">0</span></div>
+  <p id="question"></p>
+  <div id="answers"></div>
   <p id="result"></p>
 </div>
 
 <script>
-function correct() {
-  document.getElementById("result").innerHTML = "🎉 Correct! You can read!";
+const questions = [
+  { q: "Which word says CAT?", a: "CAT", options: ["DOG", "CAT", "HAT"] },
+  { q: "Which word says SUN?", a: "SUN", options: ["RUN", "SUN", "FUN"] },
+  { q: "Which word says BALL?", a: "BALL", options: ["BELL", "BALL", "DOLL"] },
+  { q: "Which word says TREE?", a: "TREE", options: ["FREE", "TREE", "THREE"] }
+];
+
+let index = 0;
+let score = 0;
+
+function loadQuestion() {
+  const q = questions[index];
+  document.getElementById("question").innerHTML = q.q;
+  document.getElementById("answers").innerHTML = "";
+  document.getElementById("result").innerHTML = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => check(opt);
+    document.getElementById("answers").appendChild(btn);
+  });
 }
-function wrong() {
-  document.getElementById("result").innerHTML = "❌ Try again!";
+
+function check(answer) {
+  const q = questions[index];
+  if (answer === q.a) {
+    score++;
+    document.getElementById("score").textContent = score;
+    document.getElementById("result").innerHTML = "🎉 Correct!";
+  } else {
+    document.getElementById("result").innerHTML = "❌ Try again!";
+    return;
+  }
+
+  index++;
+  if (index < questions.length) {
+    setTimeout(loadQuestion, 800);
+  } else {
+    document.getElementById("question").innerHTML =
+      "🏆 Amazing reading!";
+    document.getElementById("answers").innerHTML = "";
+  }
 }
+
+loadQuestion();
 </script>
 
 </body>
