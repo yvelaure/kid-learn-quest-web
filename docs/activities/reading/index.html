@@ -7,36 +7,29 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #fff3e0;
+  background: #fce4ec;
   text-align: center;
-  padding: 30px;
+  padding: 20px;
 }
 .card {
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 25px;
   max-width: 420px;
   margin: auto;
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 15px;
-  font-size: 18px;
+  margin: 8px;
+  padding: 14px 22px;
+  font-size: 17px;
   border: none;
   border-radius: 10px;
-  background: #ff9800;
+  background: #ec407a;
   color: white;
-  cursor: pointer;
 }
-button:hover {
-  background: #fb8c00;
-}
-.score {
-  font-size: 18px;
-  margin-bottom: 15px;
+.back {
+  background: #ff9800;
 }
 </style>
 </head>
@@ -44,59 +37,77 @@ button:hover {
 
 <div class="card">
   <h1>📖 Reading Quest</h1>
-  <div class="score">⭐ Score: <span id="score">0</span></div>
+  <div>⭐ Level: <span id="level">1</span></div>
+  <div>Score: <span id="score">0</span></div>
+
   <p id="question"></p>
   <div id="answers"></div>
   <p id="result"></p>
+
+  <button class="back" onclick="goHome()">⬅ Back to Hub</button>
 </div>
 
+<audio id="correct" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+<audio id="wrong" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
 <script>
-const questions = [
-  { q: "Which word says CAT?", a: "CAT", options: ["DOG", "CAT", "HAT"] },
-  { q: "Which word says SUN?", a: "SUN", options: ["RUN", "SUN", "FUN"] },
-  { q: "Which word says BALL?", a: "BALL", options: ["BELL", "BALL", "DOLL"] },
-  { q: "Which word says TREE?", a: "TREE", options: ["FREE", "TREE", "THREE"] }
+let level = 1, score = 0, current = 0;
+
+let questions = [
+  { q: "Which word is an animal?", a: "Dog", options: ["Dog","Chair","Blue"] },
+  { q: "Which word is a color?", a: "Red", options: ["Run","Red","Cat"] },
+  { q: "Which word is food?", a: "Apple", options: ["Apple","Jump","Car"] },
+  { q: "Which word is a place?", a: "School", options: ["Happy","School","Eat"] }
 ];
 
-let index = 0;
-let score = 0;
+questions.sort(() => Math.random() - 0.5);
 
-function loadQuestion() {
-  const q = questions[index];
-  document.getElementById("question").innerHTML = q.q;
-  document.getElementById("answers").innerHTML = "";
-  document.getElementById("result").innerHTML = "";
-
-  q.options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.onclick = () => check(opt);
-    document.getElementById("answers").appendChild(btn);
+function loadQ() {
+  let q = questions[current];
+  question.textContent = q.q;
+  answers.innerHTML = "";
+  result.textContent = "";
+  q.options.forEach(o => {
+    let b = document.createElement("button");
+    b.textContent = o;
+    b.onclick = () => check(o);
+    answers.appendChild(b);
   });
 }
 
-function check(answer) {
-  const q = questions[index];
-  if (answer === q.a) {
+function check(ans) {
+  if (ans === questions[current].a) {
     score++;
-    document.getElementById("score").textContent = score;
-    document.getElementById("result").innerHTML = "🎉 Correct!";
+    correct.play();
+    result.textContent = "🎉 Correct!";
+    scoreEl.textContent = score;
   } else {
-    document.getElementById("result").innerHTML = "❌ Try again!";
+    wrong.play();
+    result.textContent = "❌ Try again";
     return;
   }
-
-  index++;
-  if (index < questions.length) {
-    setTimeout(loadQuestion, 800);
+  current++;
+  if (current < questions.length) {
+    setTimeout(loadQ, 700);
   } else {
-    document.getElementById("question").innerHTML =
-      "🏆 Amazing reading!";
-    document.getElementById("answers").innerHTML = "";
+    level++;
+    question.textContent = "🏆 Reading Level Complete!";
+    answers.innerHTML = "";
+    levelEl.textContent = level;
   }
 }
 
-loadQuestion();
+function goHome() {
+  window.location.href = "../index.html";
+}
+
+const question = document.getElementById("question");
+const answers = document.getElementById("answers");
+const result = document.getElementById("result");
+const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+
+loadQ();
 </script>
 
 </body>
