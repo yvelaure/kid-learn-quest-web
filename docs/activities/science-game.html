@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Science Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #e8f5e9;
+  text-align: center;
+  padding: 30px;
+}
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+button {
+  margin: 10px;
+  padding: 15px 25px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  background: #2196f3;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #1e88e5;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🔬 Science Quest</h1>
+  <p>Which one is a living thing?</p>
+
+  <button onclick="wrong()">Rock</button>
+  <button onclick="correct()">Tree</button>
+  <button onclick="wrong()">Car</button>
+
+  <p id="result"></p>
+</div>
+
+<script>
+function correct() {
+  document.getElementById("result").innerHTML = "🌱 Yes! Trees are living!";
+}
+function wrong() {
+  document.getElementById("result").innerHTML = "❌ Nope, try again!";
+}
+</script>
+
+</body>
+</html>
