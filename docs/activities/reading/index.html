@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <title>Reading Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #fce4ec;
+  background: #f3e5f5;
   text-align: center;
   padding: 20px;
 }
@@ -25,96 +26,98 @@ button {
   font-size: 17px;
   border: none;
   border-radius: 10px;
-  background: #ec407a;
+  background: #7e57c2;
   color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #673ab7;
 }
 .back {
   background: #ff9800;
 }
 </style>
 </head>
+
 <body>
 
 <div class="card">
   <h1>📖 Reading Quest</h1>
+
   <div>⭐ Level: <span id="level">1</span></div>
   <div>Score: <span id="score">0</span></div>
 
   <p id="question"></p>
-<div id="answers"></div>
-<p id="result"></p>
+  <div id="answers"></div>
+  <p id="result"></p>
 
+  <button class="back" onclick="location.href='../index.html'">⬅ Back to Hub</button>
+</div>
 
-  <button onclick="location.href='../index.html'">⬅ Back to Hub</button>
-
-<audio id="correct" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
-<audio id="wrong" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+<audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+<audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
 
 <script>
 let level = 1;
 let score = 0;
+let current = 0;
 
 const questions = [
   {
     q: "Which word is a color?",
-    options: ["Dog", "Blue", "Run"],
-    a: "Blue"
+    options: ["Run", "Blue", "Fast"],
+    answer: "Blue"
   },
   {
     q: "Which word is an animal?",
-    options: ["Apple", "Cat", "Jump"],
-    a: "Cat"
+    options: ["Apple", "Dog", "Chair"],
+    answer: "Dog"
   },
   {
-    q: "Which word means happy?",
-    options: ["Sad", "Angry", "Joyful"],
-    a: "Joyful"
+    q: "Which word is a fruit?",
+    options: ["Car", "Banana", "Jump"],
+    answer: "Banana"
   }
 ];
-</script>
 
 function loadQ() {
-  let q = questions[current];
-  question.textContent = q.q;
-  answers.innerHTML = "";
-  result.textContent = "";
-  q.options.forEach(o => {
-    let b = document.createElement("button");
-    b.textContent = o;
-    b.onclick = () => check(o);
-    answers.appendChild(b);
+  const q = questions[current];
+  document.getElementById("question").textContent = q.q;
+  document.getElementById("answers").innerHTML = "";
+  document.getElementById("result").textContent = "";
+
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => check(opt);
+    document.getElementById("answers").appendChild(btn);
   });
 }
 
-function check(ans) {
-  if (ans === questions[current].a) {
+function check(choice) {
+  if (choice === questions[current].answer) {
     score++;
-    correct.play();
-    result.textContent = "🎉 Correct!";
-    scoreEl.textContent = score;
+    document.getElementById("score").textContent = score;
+    document.getElementById("correctSound").play();
+    document.getElementById("result").textContent = "🎉 Correct!";
   } else {
-    wrong.play();
-    result.textContent = "❌ Try again";
+    document.getElementById("wrongSound").play();
+    document.getElementById("result").textContent = "❌ Try again!";
     return;
   }
+
   current++;
   if (current < questions.length) {
     setTimeout(loadQ, 700);
   } else {
     level++;
-    question.textContent = "🏆 Reading Level Complete!";
-    answers.innerHTML = "";
-    levelEl.textContent = level;
+    document.getElementById("level").textContent = level;
+    document.getElementById("question").textContent =
+      "🏆 Reading Level Complete!";
+    document.getElementById("answers").innerHTML = "";
   }
 }
 
-<button onclick="location.href='../index.html'">⬅ Back to Hub</button>
-
-const question = document.getElementById("question");
-const answers = document.getElementById("answers");
-const result = document.getElementById("result");
-const scoreEl = document.getElementById("score");
-const levelEl = document.getElementById("level");
 loadQ();
 </script>
 
