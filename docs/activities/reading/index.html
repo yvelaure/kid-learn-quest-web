@@ -53,11 +53,10 @@ button {
 <script>
 let level = 1, score = 0, current = 0;
 
-let questions = [
-  { q: "Which word is an animal?", a: "Dog", options: ["Dog","Chair","Blue"] },
-  { q: "Which word is a color?", a: "Red", options: ["Run","Red","Cat"] },
-  { q: "Which word is food?", a: "Apple", options: ["Apple","Jump","Car"] },
-  { q: "Which word is a place?", a: "School", options: ["Happy","School","Eat"] }
+const questions = [
+  { q: "Which word is a color?", a: ["Dog", "Blue", "Run"], correct: 1 },
+  { q: "Which word is an animal?", a: ["Apple", "Cat", "Jump"], correct: 1 },
+  { q: "Which word means happy?", a: ["Sad", "Angry", "Joyful"], correct: 2 }
 ];
 
 questions.sort(() => Math.random() - 0.5);
@@ -104,7 +103,7 @@ const answers = document.getElementById("answers");
 const result = document.getElementById("result");
 const scoreEl = document.getElementById("score");
 const levelEl = document.getElementById("level");
-
+<h1>📖 Reading Quest</h1>
 loadQ();
 </script>
 
