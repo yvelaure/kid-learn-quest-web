@@ -56,8 +56,7 @@ button:hover {
   <div id="answers"></div>
   <p id="result"></p>
 
-  <button class="back" onclick="goHome()">⬅ Back to Hub</button>
-</div>
+  <button onclick="location.href='../index.html'">⬅ Back to Hub</button>
 
 <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
 <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
@@ -65,23 +64,39 @@ button:hover {
 <script>
 let level = 1;
 let score = 0;
+let current = 0;
 
-let questions = const questions = [
-  { q: "2 + 3 = ?", a: ["4", "5", "6"], correct: 1 },
-  { q: "5 − 2 = ?", a: ["2", "3", "4"], correct: 1 },
-  { q: "3 × 2 = ?", a: ["5", "6", "7"], correct: 1 }
-{ q: "10 ÷ 2 = ?", a: ["4", "5", "6"], correct: 1 }
-  ];
+const questions = [
+  {
+    q: "2 + 3 = ?",
+    options: ["4", "5", "6"],
+    answer: "5"
+  },
+  {
+    q: "5 − 2 = ?",
+    options: ["2", "3", "4"],
+    answer: "3"
+  },
+  {
+    q: "3 × 2 = ?",
+    options: ["5", "6", "7"],
+    answer: "6"
+  },
+  {
+    q: "10 ÷ 2 = ?",
+    options: ["4", "5", "6"],
+    answer: "5"
+  }
+];
 
-// shuffle questions
+// shuffle
 questions.sort(() => Math.random() - 0.5);
 
 function loadQuestion() {
   const q = questions[current];
-  document.getElementById("question").innerHTML =
-    `What is <strong>${q.q}</strong>?`;
+  document.getElementById("question").textContent = q.q;
   document.getElementById("answers").innerHTML = "";
-  document.getElementById("result").innerHTML = "";
+  document.getElementById("result").textContent = "";
 
   q.options.forEach(opt => {
     const btn = document.createElement("button");
@@ -91,16 +106,16 @@ function loadQuestion() {
   });
 }
 
-function check(answer) {
+function check(choice) {
   const q = questions[current];
-  if (answer === q.a) {
+  if (choice === q.answer) {
     score++;
     document.getElementById("score").textContent = score;
     document.getElementById("correctSound").play();
-    document.getElementById("result").innerHTML = "🎉 Correct!";
+    document.getElementById("result").textContent = "🎉 Correct!";
   } else {
     document.getElementById("wrongSound").play();
-    document.getElementById("result").innerHTML = "❌ Try again!";
+    document.getElementById("result").textContent = "❌ Try again!";
     return;
   }
 
@@ -110,15 +125,12 @@ function check(answer) {
   } else {
     level++;
     document.getElementById("level").textContent = level;
-    document.getElementById("question").innerHTML =
+    document.getElementById("question").textContent =
       "🏆 Level complete! Great job!";
     document.getElementById("answers").innerHTML = "";
   }
 }
-<button onclick="history.back()">⬅ Back to Hub</button>
 
+// START GAME
 loadQuestion();
 </script>
-
-</body>
-</html>
