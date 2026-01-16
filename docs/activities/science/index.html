@@ -107,3 +107,41 @@ load();
 
 </body>
 </html>
+<script>
+const questions = [
+  {
+    q: "What planet is known as the Red Planet?",
+    a: ["Earth", "Mars", "Jupiter"],
+    correct: 1
+  },
+  {
+    q: "What do plants need to grow?",
+    a: ["Candy", "Sunlight", "Toys"],
+    correct: 1
+  }
+];
+
+let index = 0;
+let score = 0;
+
+function loadQuestion() {
+  const q = questions[index];
+  document.getElementById("question").textContent = q.q;
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  q.a.forEach((text, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = text;
+    btn.onclick = () => {
+      if (i === q.correct) score++;
+      index++;
+      if (index < questions.length) loadQuestion();
+      else document.getElementById("question").textContent = "🎉 Great job!";
+    };
+    answersDiv.appendChild(btn);
+  });
+}
+
+loadQuestion();
+</script>
