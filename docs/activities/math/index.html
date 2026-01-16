@@ -65,13 +65,13 @@ button:hover {
 <script>
 let level = 1;
 let score = 0;
-let current = 0;
 
 let questions = const questions = [
   { q: "2 + 3 = ?", a: ["4", "5", "6"], correct: 1 },
   { q: "5 − 2 = ?", a: ["2", "3", "4"], correct: 1 },
   { q: "3 × 2 = ?", a: ["5", "6", "7"], correct: 1 }
-];
+{ q: "10 ÷ 2 = ?", a: ["4", "5", "6"], correct: 1 }
+  ];
 
 // shuffle questions
 questions.sort(() => Math.random() - 0.5);
