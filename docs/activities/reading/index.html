@@ -51,13 +51,17 @@ button {
 <audio id="wrong" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
 
 <script>
-let level = 1, score = 0, current = 0;
+let level = 1;
+let score = 0;
 
 const questions = [
   { q: "Which word is a color?", a: ["Dog", "Blue", "Run"], correct: 1 },
   { q: "Which word is an animal?", a: ["Apple", "Cat", "Jump"], correct: 1 },
-  { q: "Which word means happy?", a: ["Sad", "Angry", "Joyful"], correct: 2 }
+  { q: "Which word means happy?", a: ["Sad", "Angry", "Joyful"], correct: 2 },
+  { q: "Which word is a fruit?", a: ["Car", "Banana", "Chair"], correct: 1 }
 ];
+</script>
+
 
 questions.sort(() => Math.random() - 0.5);
 
