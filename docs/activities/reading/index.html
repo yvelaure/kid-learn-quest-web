@@ -41,8 +41,10 @@ button {
   <div>Score: <span id="score">0</span></div>
 
   <p id="question"></p>
-  <div id="answers"></div>
-  <p id="result"></p>
+<div id="answers"></div>
+<p id="result"></p>
+<span id="score"></span>
+<span id="level"></span>
 
   <button class="back" onclick="goHome()">⬅ Back to Hub</button>
 </div>
@@ -55,15 +57,23 @@ let level = 1;
 let score = 0;
 
 const questions = [
-  { q: "Which word is a color?", a: ["Dog", "Blue", "Run"], correct: 1 },
-  { q: "Which word is an animal?", a: ["Apple", "Cat", "Jump"], correct: 1 },
-  { q: "Which word means happy?", a: ["Sad", "Angry", "Joyful"], correct: 2 },
-  { q: "Which word is a fruit?", a: ["Car", "Banana", "Chair"], correct: 1 }
+  {
+    q: "Which word is a color?",
+    options: ["Dog", "Blue", "Run"],
+    a: "Blue"
+  },
+  {
+    q: "Which word is an animal?",
+    options: ["Apple", "Cat", "Jump"],
+    a: "Cat"
+  },
+  {
+    q: "Which word means happy?",
+    options: ["Sad", "Angry", "Joyful"],
+    a: "Joyful"
+  }
 ];
 </script>
-
-
-questions.sort(() => Math.random() - 0.5);
 
 function loadQ() {
   let q = questions[current];
@@ -100,7 +110,7 @@ function check(ans) {
   }
 }
 
-<button onclick="history.back()">⬅ Back to Hub</button>
+<button onclick="location.href='../index.html'">⬅ Back to Hub</button>
 
 const question = document.getElementById("question");
 const answers = document.getElementById("answers");
