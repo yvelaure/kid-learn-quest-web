@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Quest - Kid Learn Quest</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <a href="../index.html" class="back-btn">← Back to Hub</a>
+            <div class="game-stats">
+                <div class="game-stat">⭐ <span id="score">0</span></div>
+                <div class="game-stat">🎯 Level <span id="level">1</span></div>
+            </div>
+        </div>
+
+        <h1 class="game-title">🔢 Math Quest</h1>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="level-badge" id="levelBadge">Level 1 - Easy</div>
+
+        <div class="question-card">
+            <div class="question-text" id="questionText">Loading...</div>
+            <div class="answers-grid" id="answersGrid"></div>
+        </div>
+
+        <div class="ad-placeholder">
+            <p>Advertisement Space</p>
+        </div>
+    </div>
+
+    <div class="feedback-overlay" id="feedbackOverlay">
+        <div class="feedback-content" id="feedbackContent">
+            <div class="feedback-icon" id="feedbackIcon">✅</div>
+            <div class="feedback-text" id="feedbackText">Correct!</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="levelModal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <div class="modal-title" id="modalTitle">Level Complete!</div>
+            <div class="modal-message" id="modalMessage">Great job!</div>
+            <div class="modal-stars" id="modalStars">⭐⭐⭐</div>
+            <button class="modal-btn" id="nextLevelBtn">Next Level</button>
+            <a href="../index.html" class="modal-btn secondary">Back to Hub</a>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script>
+        const QUESTIONS_PER_LEVEL = 5;
+        let currentLevel = 1;
+        let currentScore = 0;
+        let questionsAnswered = 0;
+        let correctThisLevel = 0;
+        let currentQuestion = null;
+
+        function generateQuestion(level) {
+            const operations = level <= 2 ? ['+'] : level <= 4 ? ['+', '-'] : ['+', '-', '*'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            
+            let num1, num2, answer;
+            const maxNum = Math.min(10 + level * 5, 50);
+            
+            switch(operation) {
+                case '+':
+                    num1 = getRandomInt(1, maxNum);
+                    num2 = getRandomInt(1, maxNum);
+                    answer = num1 + num2;
+                    break;
+                case '-':
+                    num1 = getRandomInt(10, maxNum);
+                    num2 = getRandomInt(1, num1);
+                    answer = num1 - num2;
+                    break;
+                case '*':
+                    num1 = getRandomInt(1, 12);
+                    num2 = getRandomInt(1, 10);
+                    answer = num1 * num2;
+                    break;
+            }
+
+            const wrongAnswers = new Set();
+            while(wrongAnswers.size < 3) {
+                let wrong = answer + getRandomInt(-10, 10);
+                if (wrong !== answer && wrong > 0) {
+                    wrongAnswers.add(wrong);
+                }
+            }
+
+            const options = shuffleArray([answer, ...Array.from(wrongAnswers)]);
+
+            return {
+                text: `${num1} ${operation} ${num2} = ?`,
+                answer: answer,
+                options: options
+            };
+        }
+
+        function displayQuestion(question) {
+            currentQuestion = question;
+            document.getElementById('questionText').textContent = question.text;
+            
+            const grid = document.getElementById('answersGrid');
+            grid.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btn) {
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const isCorrect = selected === currentQuestion.answer;
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                playCorrectSound();
+                showFeedback(true);
+                currentScore += 10 * currentLevel;
+                correctThisLevel++;
+            } else {
+                btn.classList.add('wrong');
+                playWrongSound();
+                showFeedback(false);
+                buttons.forEach(b => {
+                    if (parseInt(b.textContent) === currentQuestion.answer) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+
+            questionsAnswered++;
+            updateUI();
+
+            setTimeout(() => {
+                if (questionsAnswered >= QUESTIONS_PER_LEVEL) {
+                    completedLevel();
+                } else {
+                    nextQuestion();
+                }
+            }, 1200);
+        }
+
+        function showFeedback(isCorrect) {
+            const overlay = document.getElementById('feedbackOverlay');
+            const content = document.getElementById('feedbackContent');
+            const icon = document.getElementById('feedbackIcon');
+            const text = document.getElementById('feedbackText');
+
+            content.className = 'feedback-content ' + (isCorrect ? 'correct' : 'wrong');
+            icon.textContent = isCorrect ? '✅' : '❌';
+            text.textContent = isCorrect ? 'Correct!' : 'Try Again!';
+            
+            overlay.classList.add('show');
+            setTimeout(() => overlay.classList.remove('show'), 800);
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = currentScore;
+            document.getElementById('level').textContent = currentLevel;
+            document.getElementById('progressFill').style.width = `${(questionsAnswered / QUESTIONS_PER_LEVEL) * 100}%`;
+            
+            const levelNames = ['Easy', 'Easy+', 'Medium', 'Medium+', 'Hard', 'Expert'];
+            document.getElementById('levelBadge').textContent = `Level ${currentLevel} - ${levelNames[Math.min(currentLevel - 1, 5)]}`;
+        }
+
+        function completedLevel() {
+            playLevelUpSound();
+            
+            const stars = correctThisLevel >= 5 ? 3 : correctThisLevel >= 3 ? 2 : 1;
+            const starsText = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+            
+            document.getElementById('modalTitle').textContent = `Level ${currentLevel} Complete!`;
+            document.getElementById('modalMessage').textContent = `You got ${correctThisLevel}/${QUESTIONS_PER_LEVEL} correct!`;
+            document.getElementById('modalStars').textContent = starsText;
+            
+            document.getElementById('levelModal').classList.add('show');
+
+            // Save progress
+            const progress = loadGameProgress('math');
+            progress.level = currentLevel;
+            progress.score = currentScore;
+            progress.stars = (progress.stars || 0) + stars;
+            saveGameProgress('math', progress);
+        }
+
+        function nextQuestion() {
+            const question = generateQuestion(currentLevel);
+            displayQuestion(question);
+        }
+
+        function startLevel() {
+            questionsAnswered = 0;
+            correctThisLevel = 0;
+            document.getElementById('levelModal').classList.remove('show');
+            updateUI();
+            nextQuestion();
+        }
+
+        document.getElementById('nextLevelBtn').onclick = () => {
+            currentLevel++;
+            startLevel();
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const progress = loadGameProgress('math');
+            currentLevel = progress.level || 1;
+            currentScore = progress.score || 0;
+            startLevel();
+        });
+    </script>
+</body>
+</html>
