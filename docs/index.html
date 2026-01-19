@@ -111,6 +111,14 @@
   <h2 class="quest-name">Unlock Full Game</h2>
   <p class="quest-desc">All levels • All games • No ads</p>
 
+<h2>Free Levels</h2>
+
+<button class="level1-btn" data-subject="Math">Math Quest Level 1</button>
+<button class="level1-btn" data-subject="Reading">Reading Quest Level 1</button>
+<button class="level1-btn" data-subject="Science">Science Quest Level 1</button>
+
+<div id="star-count">Stars: 0</div>
+            
   <!-- PAYPAL -->
   <a href="https://www.paypal.com/ncp/payment/ELCA44CL2QTX4"
    target="_blank"
@@ -631,6 +639,72 @@ function updatePremiumBadges() {
 updateHubStats();
   | <a href="payment-info.html">Payment Info</a>      
     </script>
+<script>
+let stars = 0;
+
+// Update the star counter on screen
+function addStar() {
+    stars += 1;
+    document.getElementById("star-count").innerText = `Stars: ${stars}`;
+}
+
+// Unified Level 1 Mini-Game
+function startLevel1MiniGame(subject) {
+    let correctCount = 0;
+    const questionsCount = 3; // Number of questions per session
+
+    for (let i = 0; i < questionsCount; i++) {
+        let question, correctAnswer, playerAnswer;
+
+        if (subject === "Math") {
+            const a = Math.floor(Math.random() * 10);
+            const b = Math.floor(Math.random() * 10);
+            correctAnswer = a + b;
+            question = `Math Quest Level 1:\nWhat is ${a} + ${b}?`;
+
+        } else if (subject === "Reading") {
+            const words = ["cat", "dog", "sun", "hat"];
+            const word = words[Math.floor(Math.random() * words.length)];
+            correctAnswer = word;
+            question = `Reading Quest Level 1:\nUnscramble this word: ${word.split('').sort(() => 0.5 - Math.random()).join('')}`;
+
+        } else if (subject === "Science") {
+            const q = [
+                { question: "What planet do we live on?", answer: "Earth" },
+                { question: "What is H2O commonly called?", answer: "Water" }
+            ];
+            const chosen = q[Math.floor(Math.random() * q.length)];
+            question = `Science Quest Level 1:\n${chosen.question}`;
+            correctAnswer = chosen.answer;
+
+        } else {
+            alert("Unknown subject!");
+            return;
+        }
+
+        playerAnswer = prompt(question);
+
+        if (playerAnswer && playerAnswer.toLowerCase() === correctAnswer.toString().toLowerCase()) {
+            alert("🎉 Correct!");
+            addStar();
+            correctCount++;
+        } else {
+            alert(`❌ Oops! The correct answer was ${correctAnswer}.`);
+        }
+    }
+
+    alert(`🎉 Session complete!\nYou answered ${correctCount} out of ${questionsCount} correctly and earned ${correctCount} star(s)!`);
+}
+
+// Connect buttons to the mini-game
+const level1Buttons = document.querySelectorAll(".level1-btn");
+level1Buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        const subject = button.getAttribute("data-subject");
+        startLevel1MiniGame(subject);
+    });
+});
+</script>
 </body>
 </html>
 
