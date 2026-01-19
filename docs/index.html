@@ -100,7 +100,28 @@
             <h1 class="title">Kid Learn Quest</h1>
             <p class="subtitle">Choose Your Adventure!</p>
         </div>
-        
+        <div class="quest-card" style="border: 3px dashed gold;">
+  <div class="quest-icon">🔓</div>
+  <h2 class="quest-name">Unlock Full Game</h2>
+  <p class="quest-desc">All levels • All games • No ads</p>
+
+  <!-- PAYPAL -->
+  <a href="https://www.paypal.me/YOURPAYPAL/2.99" target="_blank"
+     style="display:block;margin:10px;padding:12px;background:#ffc439;color:#111;
+     font-weight:bold;border-radius:12px;text-decoration:none;">
+     Pay with PayPal
+  </a>
+
+  <!-- STRIPE -->
+  <a href="https://buy.stripe.com/YOURSTRIPELINK" target="_blank"
+     style="display:block;margin:10px;padding:12px;background:#635bff;color:#fff;
+     font-weight:bold;border-radius:12px;text-decoration:none;">
+     Pay with Card
+  </a>
+
+  <small>After payment, click “Unlock” below</small>
+  <button onclick="unlockPremium()" class="quest-badge">I Paid – Unlock</button>
+</div>
         <div class="quest-grid">
             <button class="quest-card math-card" onclick="startGame('math')">
                 <div class="quest-icon">🔢</div>
@@ -380,6 +401,10 @@
         }
         
         function startGame(type) {
+            if (!isPremium() && level > 2) {
+  alert("🔒 Premium required to unlock higher levels.");
+  level = 2;
+}
             gameType = type;
             const p = loadProgress(type);
             level = p.level || 1;
@@ -535,6 +560,14 @@
         // Init
         updateHubStats();
     </script>
+    function unlockPremium() {
+  localStorage.setItem("klq_premium", "true");
+  alert("🎉 Premium unlocked! Enjoy all levels.");
+}
+
+function isPremium() {
+  return localStorage.getItem("klq_premium") === "true";
+}
 </body>
 </html>
 
