@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alphabet Classroom – Kid Learn Quest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f2f8ff;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #ff9800;
+    }
+
+    .letters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .letter {
+      font-size: 32px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .locked {
+      background: #ddd;
+      cursor: not-allowed;
+      position: relative;
+    }
+
+    .locked::after {
+      content: "🔒 Premium";
+      font-size: 12px;
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      right: 0;
+    }
+
+    .back {
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+      color: #2196f3;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🅰️ Alphabet Classroom</h1>
+<p>Tap the letter you hear!</p>
+
+<div class="letters" id="letters"></div>
+
+<a href="index.html" class="back">⬅ Back to Home</a>
+
+<script>
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const freeLetters = ["A","B","C","D","E","F"];
+
+  const container = document.getElementById("letters");
+
+  letters.forEach(letter => {
+    const div = document.createElement("div");
+    div.textContent = letter;
+
+    if (!freeLetters.includes(letter)) {
+      div.className = "letter locked";
+      div.onclick = () => {
+        alert("🔒 This letter is Premium. Ask a parent to unlock!");
+      };
+    } else {
+      div.className = "letter";
+      div.onclick = () => {
+        speak(letter);
+      };
+    }
+
+    container.appendChild(div);
+  });
+
+  function speak(letter) {
+    const msg = new SpeechSynthesisUtterance(letter);
+    msg.lang = "en-US";
+    speechSynthesis.speak(msg);
+  }
+</script>
+
+</body>
+</html>
