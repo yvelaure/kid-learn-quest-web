@@ -122,7 +122,6 @@
    ">
    🔓 Unlock Full Games – Pay with Card
 </a>
-🎮 Want more games? Unlock full access below!
   <!-- STRIPE -->
   <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00"
    target="_blank"
@@ -570,17 +569,19 @@ score = p.score || 0;
         }
         
         document.getElementById('nextLevelBtn').onclick = () => {
-            level++;
-            questionNum = 0;
-            correct = 0;
-            document.getElementById('levelModal').classList.remove('show');
-            updateGameUI();
-            nextQuestion();
-        };
-        if (isPremium()) {
-  const box = document.getElementById("premiumBox");
-  if (box) box.style.display = "none";
-}
+  if (!isPremium() && level >= 2) {
+    alert("🔒 Premium required to unlock the next level.");
+    goHome();
+    return;
+  }
+
+  level++;
+  questionNum = 0;
+  correct = 0;
+  document.getElementById('levelModal').classList.remove('show');
+  updateGameUI();
+  nextQuestion();
+};
         function unlockPremium() {
   localStorage.setItem("klq_premium", "true");
   alert("🎉 Premium unlocked! Enjoy all levels.");
