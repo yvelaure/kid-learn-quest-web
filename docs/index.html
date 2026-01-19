@@ -631,86 +631,165 @@ function updatePremiumBadges() {
 updateHubStats();
   | <a href="payment-info.html">Payment Info</a>      
    
-   <body>
-    <h1>Kid Learn Quest</h1>
-    <h2>Free Levels</h2>
+   <body style="font-family: 'Comic Sans MS', sans-serif; background: #f0f8ff; text-align:center;">
+
+    <h1 style="color:#FF5733;">Kid Learn Quest</h1>
+    <h2 style="color:#33A1FF;">Free Levels</h2>
 
     <!-- Free Level 1 Buttons -->
-    <button class="level1-btn" data-subject="Math">Math Quest Level 1</button>
-    <button class="level1-btn" data-subject="Reading">Reading Quest Level 1</button>
-    <button class="level1-btn" data-subject="Science">Science Quest Level 1</button>
+    <button class="level1-btn" data-subject="Math" style="padding:10px 20px; margin:10px; font-size:16px; border-radius:12px; background:#FF8C00; color:white;">Math Quest Level 1</button>
+    <button class="level1-btn" data-subject="Reading" style="padding:10px 20px; margin:10px; font-size:16px; border-radius:12px; background:#32CD32; color:white;">Reading Quest Level 1</button>
+    <button class="level1-btn" data-subject="Science" style="padding:10px 20px; margin:10px; font-size:16px; border-radius:12px; background:#1E90FF; color:white;">Science Quest Level 1</button>
 
     <!-- Star Counter -->
-    <div id="star-count" style="margin-top: 20px; font-size: 20px;">Stars: 0</div>
+    <div id="star-count" style="margin-top:20px; font-size:20px; color:#FF69B4;">Stars: 0</div>
 
-    <!-- Mini-Game Script -->
+    <!-- Mini-Game Pop-up Container -->
+    <div id="mini-game-popup" style="
+        display:none; 
+        position:fixed; 
+        top:50%; 
+        left:50%; 
+        transform:translate(-50%, -50%); 
+        background:#fff; 
+        padding:30px; 
+        border-radius:20px; 
+        box-shadow:0 5px 25px rgba(0,0,0,0.5);
+        text-align:center;
+        z-index:1000;
+        width:300px;
+    ">
+        <h3 id="mini-game-question" style="color:#FF4500;"></h3>
+        <div id="mini-game-answers" style="margin-top:15px;"></div>
+        <button id="mini-game-close" style="margin-top:15px; display:none; padding:8px 15px; font-size:16px; border-radius:10px; background:#FF69B4; color:white;">Close</button>
+    </div>
+
+    <!-- Stars Animation Container -->
+    <div id="stars-animation" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:2000;"></div>
+
     <script>
     window.onload = function() {
         let stars = 0;
+        let currentQuestionIndex = 0;
+        let questions = [];
+        let correctCount = 0;
 
         function addStar() {
             stars += 1;
             document.getElementById("star-count").innerText = `Stars: ${stars}`;
+            // Animate stars
+            for(let i=0;i<5;i++){
+                const star = document.createElement("div");
+                star.innerText = "⭐";
+                star.style.position = "absolute";
+                star.style.fontSize = (20 + Math.random()*20)+"px";
+                star.style.left = (window.innerWidth/2 + Math.random()*100 - 50)+"px";
+                star.style.top = (window.innerHeight/2 + Math.random()*100 - 50)+"px";
+                star.style.opacity = 1;
+                star.style.transition = "all 1s ease-out";
+                document.getElementById("stars-animation").appendChild(star);
+                setTimeout(()=>{
+                    star.style.top = (parseInt(star.style.top)-100)+"px";
+                    star.style.opacity = 0;
+                    setTimeout(()=>{star.remove();},1000);
+                },50*i);
+            }
         }
+
+        const popup = document.getElementById("mini-game-popup");
+        const questionElem = document.getElementById("mini-game-question");
+        const answersElem = document.getElementById("mini-game-answers");
+        const closeBtn = document.getElementById("mini-game-close");
 
         function startLevel1MiniGame(subject) {
-            let correctCount = 0;
-            const questionsCount = 3; // Number of questions per session
+            correctCount = 0;
+            currentQuestionIndex = 0;
+            questions = [];
 
-            for (let i = 0; i < questionsCount; i++) {
-                let question, correctAnswer, playerAnswer;
-
-                if (subject === "Math") {
-                    const a = Math.floor(Math.random() * 10);
-                    const b = Math.floor(Math.random() * 10);
-                    correctAnswer = a + b;
-                    question = `Math Quest Level 1:\nWhat is ${a} + ${b}?`;
-
-                } else if (subject === "Reading") {
-                    const words = ["cat", "dog", "sun", "hat"];
-                    const word = words[Math.floor(Math.random() * words.length)];
-                    correctAnswer = word;
-                    question = `Reading Quest Level 1:\nUnscramble this word: ${word.split('').sort(() => 0.5 - Math.random()).join('')}`;
-
-                } else if (subject === "Science") {
-                    const q = [
-                        { question: "What planet do we live on?", answer: "Earth" },
-                        { question: "What is H2O commonly called?", answer: "Water" }
+            for(let i=0;i<3;i++){
+                let q = {};
+                if(subject==="Math"){
+                    const a = Math.floor(Math.random()*10);
+                    const b = Math.floor(Math.random()*10);
+                    q.question = `What is ${a} + ${b}?`;
+                    q.answers = [a+b, a+b+1, a+b-1];
+                    q.correct = a+b;
+                } else if(subject==="Reading"){
+                    const words = ["cat","dog","sun","hat"];
+                    const word = words[Math.floor(Math.random()*words.length)];
+                    q.question = `Unscramble this word: ${word.split('').sort(()=>0.5-Math.random()).join('')}`;
+                    q.answers = [word,"abc","xyz"];
+                    q.correct = word;
+                } else if(subject==="Science"){
+                    const qList=[
+                        {question:"What planet do we live on?", answer:"Earth"},
+                        {question:"What is H2O commonly called?", answer:"Water"}
                     ];
-                    const chosen = q[Math.floor(Math.random() * q.length)];
-                    question = `Science Quest Level 1:\n${chosen.question}`;
-                    correctAnswer = chosen.answer;
-
-                } else {
-                    alert("Unknown subject!");
-                    return;
+                    const chosen = qList[Math.floor(Math.random()*qList.length)];
+                    q.question = chosen.question;
+                    q.answers = [chosen.answer,"Sun","Mars"];
+                    q.correct = chosen.answer;
                 }
-
-                playerAnswer = prompt(question);
-
-                if (playerAnswer && playerAnswer.toLowerCase() === correctAnswer.toString().toLowerCase()) {
-                    alert("🎉 Correct!");
-                    addStar();
-                    correctCount++;
-                } else {
-                    alert(`❌ Oops! The correct answer was ${correctAnswer}.`);
-                }
+                q.answers.sort(()=>0.5-Math.random());
+                questions.push(q);
             }
 
-            alert(`🎉 Session complete!\nYou answered ${correctCount} out of ${questionsCount} correctly and earned ${correctCount} star(s)!`);
+            popup.style.display="block";
+            closeBtn.style.display="none";
+            showQuestion();
         }
 
-        // Connect buttons to mini-game
+        function showQuestion(){
+            const q = questions[currentQuestionIndex];
+            questionElem.innerText = q.question;
+            answersElem.innerHTML="";
+
+            q.answers.forEach(ans=>{
+                const btn = document.createElement("button");
+                btn.innerText=ans;
+                btn.style.margin="5px";
+                btn.style.padding="10px 15px";
+                btn.style.borderRadius="12px";
+                btn.style.background="#FFA500";
+                btn.style.color="white";
+                btn.style.fontSize="16px";
+                btn.addEventListener("click",()=>{
+                    if(ans===q.correct){
+                        alert("🎉 Correct!");
+                        addStar();
+                        correctCount++;
+                    } else {
+                        alert(`❌ Oops! Correct answer was ${q.correct}`);
+                    }
+                    currentQuestionIndex++;
+                    if(currentQuestionIndex<questions.length){
+                        showQuestion();
+                    } else {
+                        endMiniGame();
+                    }
+                });
+                answersElem.appendChild(btn);
+            });
+        }
+
+        function endMiniGame(){
+            questionElem.innerText = `🎉 Mini-Game Complete! You got ${correctCount} out of ${questions.length} correct.`;
+            answersElem.innerHTML="";
+            closeBtn.style.display="inline-block";
+        }
+
+        closeBtn.addEventListener("click",()=>{ popup.style.display="none"; });
+
         const level1Buttons = document.querySelectorAll(".level1-btn");
-        level1Buttons.forEach(button => {
-            button.addEventListener("click", () => {
+        level1Buttons.forEach(button=>{
+            button.addEventListener("click",()=>{
                 const subject = button.getAttribute("data-subject");
                 startLevel1MiniGame(subject);
             });
         });
     }
     </script>
-</body>         
+</body>        
 </html>
 
 
