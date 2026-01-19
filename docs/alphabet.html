@@ -1,104 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Alphabet Classroom – Kid Learn Quest</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f2f8ff;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #ff9800;
-    }
-
-    .letters {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      max-width: 400px;
-      margin: auto;
-    }
-
-    .letter {
-      font-size: 32px;
-      padding: 20px;
-      background: white;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .locked {
-      background: #ddd;
-      cursor: not-allowed;
-      position: relative;
-    }
-
-    .locked::after {
-      content: "🔒 Premium";
-      font-size: 12px;
-      position: absolute;
-      bottom: 5px;
-      left: 0;
-      right: 0;
-    }
-
-    .back {
-      margin-top: 20px;
-      display: inline-block;
-      text-decoration: none;
-      color: #2196f3;
-      font-weight: bold;
-    }
-  </style>
-</head>
-
-<body>
-
-<h1>🅰️ Alphabet Classroom</h1>
-<p>Tap the letter you hear!</p>
-
-<div class="letters" id="letters"></div>
-
-<a href="index.html" class="back">⬅ Back to Home</a>
-
 <script>
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  const freeLetters = ["A","B","C","D","E","F"];
+  const data = [
+    { letter: "A", word: "Apple", emoji: "🍎" },
+    { letter: "B", word: "Ball", emoji: "⚽" },
+    { letter: "C", word: "Cat", emoji: "🐱" },
+    { letter: "D", word: "Dog", emoji: "🐶" },
+    { letter: "E", word: "Elephant", emoji: "🐘" },
+    { letter: "F", word: "Fish", emoji: "🐟" },
+    { letter: "G", word: "Grapes", emoji: "🍇" },
+    { letter: "H", word: "Hat", emoji: "🎩" },
+    { letter: "I", word: "Ice Cream", emoji: "🍦" },
+    { letter: "J", word: "Juice", emoji: "🧃" },
+    { letter: "K", word: "Kite", emoji: "🪁" },
+    { letter: "L", word: "Lion", emoji: "🦁" },
+    { letter: "M", word: "Monkey", emoji: "🐵" },
+    { letter: "N", word: "Nest", emoji: "🪺" },
+    { letter: "O", word: "Orange", emoji: "🍊" },
+    { letter: "P", word: "Penguin", emoji: "🐧" },
+    { letter: "Q", word: "Queen", emoji: "👑" },
+    { letter: "R", word: "Rabbit", emoji: "🐰" },
+    { letter: "S", word: "Sun", emoji: "☀️" },
+    { letter: "T", word: "Tiger", emoji: "🐯" },
+    { letter: "U", word: "Umbrella", emoji: "☂️" },
+    { letter: "V", word: "Van", emoji: "🚐" },
+    { letter: "W", word: "Whale", emoji: "🐋" },
+    { letter: "X", word: "Xylophone", emoji: "🎼" },
+    { letter: "Y", word: "Yo-yo", emoji: "🪀" },
+    { letter: "Z", word: "Zebra", emoji: "🦓" }
+  ];
 
+  const freeLetters = ["A","B","C","D","E","F"];
   const container = document.getElementById("letters");
 
-  letters.forEach(letter => {
+  data.forEach(item => {
     const div = document.createElement("div");
-    div.textContent = letter;
+    div.className = "letter";
 
-    if (!freeLetters.includes(letter)) {
-      div.className = "letter locked";
-      div.onclick = () => {
-        alert("🔒 This letter is Premium. Ask a parent to unlock!");
-      };
+    div.innerHTML = `
+      <div style="font-size:40px">${item.emoji}</div>
+      <strong>${item.letter}</strong>
+      <div style="font-size:14px">${item.word}</div>
+    `;
+
+    if (!freeLetters.includes(item.letter)) {
+      div.classList.add("locked");
+      div.onclick = () => alert("🔒 Premium letter. Ask a parent to unlock!");
     } else {
-      div.className = "letter";
-      div.onclick = () => {
-        speak(letter);
-      };
+      div.onclick = () => speak(item.letter + " for " + item.word);
     }
 
     container.appendChild(div);
   });
 
-  function speak(letter) {
-    const msg = new SpeechSynthesisUtterance(letter);
+  function speak(text) {
+    const msg = new SpeechSynthesisUtterance(text);
     msg.lang = "en-US";
     speechSynthesis.speak(msg);
   }
 </script>
-
-</body>
-</html>
