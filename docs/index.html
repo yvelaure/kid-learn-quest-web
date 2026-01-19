@@ -100,7 +100,7 @@
             <h1 class="title">Kid Learn Quest</h1>
             <p class="subtitle">Choose Your Adventure!</p>
         </div>
-        <div class="quest-card" style="border: 3px dashed gold;">
+        <div class="quest-card" id="premiumBox" style="border: 3px dashed gold;">
   <div class="quest-icon">🔓</div>
   <h2 class="quest-name">Unlock Full Game</h2>
   <p class="quest-desc">All levels • All games • No ads</p>
@@ -181,8 +181,6 @@
             </div>
         </div>
         
-        <div class="ad-space">Advertisement Space</div>
-        
         <div class="footer">
            <footer style="margin-top:40px; font-size:14px; text-align:center;">
   Kid Learn Quest © 2025 |
@@ -217,10 +215,7 @@
             <div class="hint-text" id="hintText"></div>
             <div class="answers-grid" id="answersGrid"></div>
         </div>
-        
-        <div class="ad-space">Advertisement Space</div>
-    </div>
-    
+     </div>      
     <!-- FEEDBACK OVERLAY -->
     <div class="feedback-overlay" id="feedbackOverlay">
         <div class="feedback-content" id="feedbackContent">
@@ -424,14 +419,17 @@
         }
         
         function startGame(type) {
-            if (!isPremium() && level > 2) {
-  alert("🔒 Premium required to unlock higher levels.");
-  level = 2;
-}
-            gameType = type;
             const p = loadProgress(type);
-            level = p.level || 1;
-            score = p.score || 0;
+
+if (!isPremium() && p.level > 2) {
+  p.level = 2;
+  saveProgress(type, p);
+  alert("🔒 Premium required to unlock higher levels.");
+}
+
+level = p.level || 1;
+score = p.score || 0;
+            gameType = type;
             questionNum = 0;
             correct = 0;
             
@@ -579,18 +577,23 @@
             updateGameUI();
             nextQuestion();
         };
-        
-        // Init
-        updateHubStats();
-    </script>
-    function unlockPremium() {
+        if (isPremium()) {
+  const box = document.getElementById("premiumBox");
+  if (box) box.style.display = "none";
+}
+        function unlockPremium() {
   localStorage.setItem("klq_premium", "true");
   alert("🎉 Premium unlocked! Enjoy all levels.");
+  location.reload();
 }
 
 function isPremium() {
   return localStorage.getItem("klq_premium") === "true";
 }
+
+// Init
+updateHubStats();
+    </script>
 </body>
 </html>
 
