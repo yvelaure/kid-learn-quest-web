@@ -71,7 +71,13 @@
         .feedback-text { font-family: 'Fredoka One', cursive; font-size: 1.5rem; }
         .feedback-content.correct .feedback-text { color: #00b894; }
         .feedback-content.wrong .feedback-text { color: #ff6b6b; }
-        
+
+        .premium-lock {
+  background: linear-gradient(90deg, #f5c542, #ff9f1a);
+  color: #333;
+  margin-top: 8px;
+  display: none;
+}
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
         .modal-content { background: #fff; padding: 30px; border-radius: 20px; text-align: center; max-width: 350px; }
@@ -141,6 +147,10 @@
    🔓 Unlock Premium – Pay with Card
 </a>
 🎮 Want more games? Unlock full access below!
+    <p style="font-size:12px; color:#555;">
+📧 After payment, please check your email for your receipt.
+Then return here and tap <strong>“I Paid – Unlock”</strong>.
+</p>        
   <small>After payment, click “Unlock” below</small>
   <button onclick="unlockPremium()" class="quest-badge">I Paid – Unlock</button>
 </div>
@@ -149,6 +159,7 @@
                 <div class="quest-icon">🔢</div>
                 <h2 class="quest-name">Math Quest</h2>
                 <p class="quest-desc">Add, subtract & multiply!</p>
+               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
                 <div class="quest-badge">Play Now</div>
             </button>
             
@@ -156,6 +167,7 @@
                 <div class="quest-icon">📚</div>
                 <h2 class="quest-name">Reading Quest</h2>
                 <p class="quest-desc">Words & spelling fun!</p>
+               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
                 <div class="quest-badge">Play Now</div>
             </button>
             
@@ -163,6 +175,7 @@
                 <div class="quest-icon">🔬</div>
                 <h2 class="quest-name">Science Quest</h2>
                 <p class="quest-desc">Discover amazing facts!</p>
+               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
                 <div class="quest-badge">Play Now</div>
             </button>
         </div>
@@ -582,16 +595,37 @@ score = p.score || 0;
   updateGameUI();
   nextQuestion();
 };
-        function unlockPremium() {
+        function unlockPremium() {     
   localStorage.setItem("klq_premium", "true");
   alert("🎉 Premium unlocked! Enjoy all levels.");
   location.reload();
 }
-
+<button onclick="restorePremium()" class="quest-badge secondary">
+🔁 Restore Purchase
+</button>
+ function restorePremium() {
+  if (localStorage.getItem("klq_premium") === "true") {
+    alert("✅ Premium already unlocked on this device.");
+  } else {
+    alert(
+      "If you already paid:\n\n" +
+      "• Use the same browser\n" +
+      "• Check your email receipt\n" +
+      "• Then tap “I Paid – Unlock”\n\n" +
+      "Need help? Contact support."
+    );
+  }
+}       
+        
 function isPremium() {
   return localStorage.getItem("klq_premium") === "true";
 }
-
+function updatePremiumBadges() {
+  document.querySelectorAll('.premium-lock').forEach(badge => {
+    badge.style.display = isPremium() ? 'none' : 'inline-block';
+  });
+}
+ updatePremiumBadges();       
 // Init
 updateHubStats();
     </script>
