@@ -235,54 +235,38 @@ const premiumRooms = [
 ];
 
 /* ========= OPEN ROOM ========= */
+function isPremium() {
+  return localStorage.getItem("klq_premium") === "true";
+}
+
 function openRoom(room) {
 
-  // BLOCK ONLY PREMIUM ROOMS
+  const premiumRooms = ["memory", "counting", "classroom"];
+
   if (premiumRooms.includes(room) && !isPremium()) {
     alert("🔒 This activity is Premium.\nAsk a parent to unlock.");
     return;
   }
 
-  // ROUTING
-  if (room === "alphabet") window.location.href = "alphabet.html";
-  if (room === "counting") window.location.href = "counting.html";
-  if (room === "memory") window.location.href = "memory.html";
-  if (room === "classroom") window.location.href = "classroom.html";
-  if (room === "mini") startMiniGame();
-}
+  if (room === "alphabet") {
+    window.location.href = "alphabet.html";
+  }
 
-/* ========= MINI GAME (FREE) ========= */
-const miniQuestions = [
-  { q: "2 + 2 = ?", a: "4", o: ["3","4","5"] },
-  { q: "Which is a fruit?", a: "Apple", o: ["Car","Apple","Chair"] },
-  { q: "We live on planet?", a: "Earth", o: ["Mars","Earth","Moon"] }
-];
+  if (room === "counting") {
+    window.location.href = "counting.html";
+  }
 
-let miniIndex = 0;
+  if (room === "memory") {
+    window.location.href = "memory.html";
+  }
 
-function startMiniGame() {
-  miniIndex = 0;
-  askMini();
-}
+  if (room === "classroom") {
+    window.location.href = "classroom.html";
+  }
 
-function askMini() {
-  const q = miniQuestions[miniIndex];
-  const answer = prompt(
-    q.q + "\n\nChoices: " + q.o.join(", ")
-  );
-
-  if (answer === q.a) alert("🎉 Correct!");
-  else alert("❌ Try again");
-
-  miniIndex++;
-  if (miniIndex < miniQuestions.length) askMini();
-  else alert("✅ Mini game finished!");
-}
-
-/* ========= HIDE UNLOCK IF PREMIUM ========= */
-if (isPremium()) {
-  const box = document.getElementById("unlockBox");
-  if (box) box.style.display = "none";
+  if (room === "mini") {
+    startMiniGame();
+  }
 }
 </script>
 </body>
