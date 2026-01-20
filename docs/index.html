@@ -1,718 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kid Learn Quest - Fun Learning Games</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; min-height: 100vh; }
-        .header { text-align: center; padding: 20px 0; }
-        .title { font-family: 'Fredoka One', cursive; font-size: 2.5rem; color: #fff; text-shadow: 3px 3px 0 #5a4fcf; animation: bounce 2s infinite; }
-        .subtitle { font-size: 1.2rem; color: #f0e6ff; margin-top: 8px; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        
-        /* Hub Page */
-        .hub { display: block; }
-        .quest-grid { display: grid; gap: 15px; padding: 15px 0; }
-        .quest-card { background: #fff; border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s; border: none; width: 100%; }
-        .quest-card:hover { transform: translateY(-5px) scale(1.02); }
-        .quest-icon { font-size: 3rem; margin-bottom: 10px; }
-        .quest-name { font-family: 'Fredoka One', cursive; font-size: 1.4rem; margin-bottom: 5px; }
-        .quest-desc { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
-        .quest-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: 700; color: #fff; font-size: 0.85rem; }
-        .math-card .quest-name { color: #ff6b6b; }
-        .math-card .quest-badge { background: linear-gradient(90deg, #ff6b6b, #ffa502); }
-        .reading-card .quest-name { color: #1dd1a1; }
-        .reading-card .quest-badge { background: linear-gradient(90deg, #1dd1a1, #10ac84); }
-        .science-card .quest-name { color: #54a0ff; }
-        .science-card .quest-badge { background: linear-gradient(90deg, #54a0ff, #5f27cd); }
-        
-        .stats-row { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
-        .stat-box { background: rgba(255,255,255,0.2); border-radius: 12px; padding: 12px 20px; text-align: center; }
-        .stat-icon { font-size: 1.5rem; }
-        .stat-label { display: block; color: #f0e6ff; font-size: 0.75rem; }
-        .stat-value { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #fff; }
-        
-        .ad-space { background: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); border-radius: 10px; padding: 15px; text-align: center; color: rgba(255,255,255,0.5); margin: 15px 0; }
-        .footer { text-align: center; padding: 15px; color: rgba(255,255,255,0.7); font-size: 0.8rem; }
-        .footer a { color: #fff; }
-        
-        /* Game Page */
-        .game { display: none; }
-        .game.active { display: block; }
-        .hub.hidden { display: none; }
-        .game-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 10px 18px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
-        .game-stats { display: flex; gap: 10px; }
-        .game-stat { background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 15px; color: #fff; font-weight: 600; font-size: 0.85rem; }
-        .game-title { font-family: 'Fredoka One', cursive; font-size: 2rem; color: #fff; text-align: center; margin-bottom: 20px; }
-        .progress-bar { background: rgba(255,255,255,0.3); border-radius: 10px; height: 12px; margin-bottom: 15px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #ffd700, #ffb347); border-radius: 10px; transition: width 0.5s; }
-        .level-badge { display: inline-block; background: linear-gradient(135deg, #ffd700, #ffb347); color: #333; padding: 5px 12px; border-radius: 12px; font-weight: 700; margin-bottom: 12px; font-size: 0.85rem; }
-        
-        .question-card { background: #fff; border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.2); margin-bottom: 15px; }
-        .question-text { font-size: 1.5rem; font-weight: 700; color: #333; margin-bottom: 20px; line-height: 1.4; }
-        .hint-text { font-size: 0.9rem; color: #888; margin-top: -10px; margin-bottom: 15px; }
-        .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .answer-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
-        .answer-btn:hover { transform: translateY(-2px); }
-        .answer-btn.correct { background: linear-gradient(135deg, #00b894, #00cec9); animation: pulse 0.5s; }
-        .answer-btn.wrong { background: linear-gradient(135deg, #ff6b6b, #ee5a5a); animation: shake 0.5s; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        
-        .feedback-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .feedback-overlay.show { opacity: 1; pointer-events: auto; }
-        .feedback-content { background: #fff; padding: 30px; border-radius: 20px; text-align: center; }
-        .feedback-icon { font-size: 4rem; margin-bottom: 10px; }
-        .feedback-text { font-family: 'Fredoka One', cursive; font-size: 1.5rem; }
-        .feedback-content.correct .feedback-text { color: #00b894; }
-        .feedback-content.wrong .feedback-text { color: #ff6b6b; }
+<meta charset="UTF-8">
+<title>Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-        .premium-lock {
-  background: linear-gradient(90deg, #f5c542, #ff9f1a);
-  color: #333;
-  margin-top: 8px;
-  display: none;
+<style>
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #6a5acd, #7b68ee);
+  color: #fff;
 }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        .modal-content { background: #fff; padding: 30px; border-radius: 20px; text-align: center; max-width: 350px; }
-        .modal-icon { font-size: 4rem; margin-bottom: 10px; }
-        .modal-title { font-family: 'Fredoka One', cursive; font-size: 1.5rem; color: #333; margin-bottom: 8px; }
-        .modal-message { color: #666; margin-bottom: 15px; }
-        .modal-stars { font-size: 2.5rem; margin-bottom: 15px; }
-        .modal-btn { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 12px 30px; border-radius: 20px; font-weight: 700; border: none; cursor: pointer; margin: 5px; font-size: 1rem; }
-        .modal-btn.secondary { background: #ddd; color: #333; }
-        
-        .math-game { background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%); }
-        .reading-game { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); }
-        .science-game { background: linear-gradient(135deg, #54a0ff 0%, #5f27cd 100%); }
-        
-        @media (max-width: 500px) {
-            .title { font-size: 1.8rem; }
-            .answers-grid { grid-template-columns: 1fr; }
-            .question-text { font-size: 1.2rem; }
-        }
-    </style>
-</head>
-<body>
-    <!-- HUB PAGE -->
-    <div class="container hub" id="hubPage">
-        <div class="header">
-            <h1 class="title">Kid Learn Quest</h1>
-            <p class="subtitle">Choose Your Adventure!</p>
-        </div>
-        <div class="quest-card" id="premiumBox" style="border: 3px dashed gold;">
-  <div class="quest-icon">🔓</div>
-  <h2 class="quest-name">Unlock Full Game</h2>
-  <p class="quest-desc">All levels • All games • No ads</p>
-           
-  <!-- PAYPAL -->
-  <a href="https://www.paypal.com/ncp/payment/ELCA44CL2QTX4"
-   target="_blank"
-   rel="noopener noreferrer"
-   style="
-     display:block;
-     margin:10px;
-     padding:12px;
-     background:#635bff;
-     color:#ffffff;
-     font-weight:bold;
-     border-radius:12px;
-     text-decoration:none;
-     text-align:center;
-   ">
-   🔓 Unlock Full Games – Pay with Card
-</a>
-  <!-- STRIPE -->
-  <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00"
-   target="_blank"
-   rel="noopener noreferrer"
-   style="
-     display:block;
-     margin:10px auto;
-     padding:12px;
-     background:#635bff;
-     color:#ffffff;
-     font-weight:bold;
-     border-radius:12px;
-     text-decoration:none;
-     text-align:center;
-     width:200px;
-   ">
-   🔓 Unlock Premium – Pay with Card
-</a>
-🎮 Want more games? Unlock full access below!
-    <p style="font-size:12px; color:#555;">
-📧 After payment, please check your email for your receipt.
-Then return here and tap <strong>“I Paid – Unlock”</strong>.
-</p>        
-  <small>After payment, click “Unlock” below</small>
-  <button onclick="unlockPremium()" class="quest-badge">I Paid – Unlock</button>
-</div>
-        <div class="quest-grid">
-            <!-- 🎮 FREE MINI GAME -->
-<div id="miniGameSection" style="display:none; text-align:center; margin-top:20px;">
-  <h2 style="color:white;">🎮 Free Mini Game</h2>
 
-  <div class="question-card">
-    <div class="question-text" id="miniQuestion">Question</div>
-    <div class="answers-grid" id="miniAnswers"></div>
+/* HEADER */
+.header {
+  padding: 20px;
+  text-align: center;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.25);
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+/* ROOM CARDS */
+.section {
+  padding: 20px;
+}
+
+.room-card {
+  position: relative;
+  background: #fff;
+  color: #333;
+  border-radius: 22px;
+  padding: 26px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.room-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+}
+
+.room-icon {
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+/* PREMIUM BADGE */
+.premium-badge {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: gold;
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* UNLOCK BOX */
+.unlock-box {
+  background: #fff;
+  color: #333;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px;
+  text-align: center;
+}
+
+.unlock-box a {
+  display: block;
+  background: #635bff;
+  color: #fff;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.unlock-box button {
+  padding: 12px;
+  width: 100%;
+  border-radius: 12px;
+  border: none;
+  background: #28a745;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  font-size: 13px;
+  padding: 20px;
+  opacity: 0.85;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: underline;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>⭐ Kid Learn Quest</h1>
+
+  <div class="stats">
+    <div class="stat">⭐ Total Stars<br><b id="stars">0</b></div>
+    <div class="stat">🏆 Best Level<br><b id="level">1</b></div>
+  </div>
+</div>
+
+<!-- UNLOCK PREMIUM -->
+<div class="unlock-box" id="unlockBox">
+  <h2>🔓 Unlock Full Game</h2>
+  <p>All rooms • All levels • No ads</p>
+  <p><b>📧 After payment, check your email for the receipt</b></p>
+
+  <!-- PAYPAL -->
+  <a href="https://www.paypal.com/ncp/payment/ELCA44CL2QTX4" target="_blank">
+    Pay with PayPal
+  </a>
+
+  <!-- STRIPE -->
+  <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00" target="_blank">
+    Pay with Card (Stripe)
+  </a>
+
+  <button onclick="unlockPremium()">I Paid – Unlock</button>
+  <button onclick="restorePurchase()">Restore Purchase</button>
+</div>
+
+<!-- CLASSROOMS -->
+<div class="section">
+  <h2>🏫 Classrooms</h2>
+
+  <div class="room-card" onclick="openRoom('alphabet')">
+    <div class="room-icon">🔤</div>
+    Alphabet Room
   </div>
 
-  <button class="back-btn" onclick="closeMiniGame()">← Back</button>
-</div>
-            
-            <button class="quest-card math-card" onclick="startGame('math')">
-                <div class="quest-icon">🔢</div>
-                <h2 class="quest-name">Math Quest</h2>
-                <p class="quest-desc">Add, subtract & multiply!</p>
-               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
-                <div class="quest-badge">Play Now</div>
-            </button>
-            
-            <button class="quest-card reading-card" onclick="startGame('reading')">
-                <div class="quest-icon">📚</div>
-                <h2 class="quest-name">Reading Quest</h2>
-                <p class="quest-desc">Words & spelling fun!</p>
-               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
-                <div class="quest-badge">Play Now</div>
-            </button>
-            
-            <button class="quest-card science-card" onclick="startGame('science')">
-                <div class="quest-icon">🔬</div>
-                <h2 class="quest-name">Science Quest</h2>
-                <p class="quest-desc">Discover amazing facts!</p>
-               <div class="quest-badge premium-lock" data-game="math">🔒 Premium</div>
-                <div class="quest-badge">Play Now</div>
-            </button>
-        </div>
+  <div class="room-card" onclick="openRoom('counting')">
+    <div class="room-icon">🔢</div>
+    Counting Room
+  </div>
 
-        <button class="quest-card" onclick="startMiniGame()">
-  <div class="quest-icon">🎮</div>
-  <h2 class="quest-name">Free Mini Game</h2>
-  <p class="quest-desc">Try a little of everything!</p>
-  <div class="quest-badge">FREE</div>
-</button>
-        
-        <div class="stats-row">
-            <div class="stat-box">
-                <span class="stat-icon">⭐</span>
-                <span class="stat-label">Total Stars</span>
-                <span class="stat-value" id="totalStars">0</span>
-            </div>
-            <div class="stat-box">
-                <span class="stat-icon">🏆</span>
-                <span class="stat-label">Best Level</span>
-                <span class="stat-value" id="bestLevel">1</span>
-            </div>
-        </div>
-        
-        <div class="footer">
-           <footer style="margin-top:40px; font-size:14px; text-align:center;">
+  <div class="room-card premium" onclick="openRoom('memory')">
+    <span class="premium-badge">⭐ Premium</span>
+    <div class="room-icon">🧠</div>
+    Memory Room
+  </div>
+
+  <div class="room-card premium" onclick="openRoom('classroom')">
+    <span class="premium-badge">⭐ Premium</span>
+    <div class="room-icon">🏫</div>
+    Classroom Activities
+  </div>
+
+  <div class="room-card premium" onclick="openRoom('mini')">
+    <span class="premium-badge">⭐ Premium</span>
+    <div class="room-icon">🎮</div>
+    Mini Games
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
   Kid Learn Quest © 2025 |
   <a href="privacy.html">Privacy Policy</a> |
-  <a href="terms.html">Terms of Service</a>
-</footer>
-        </div>
-    </div>
-    
-    <!-- GAME PAGE -->
-    <div class="container game" id="gamePage">
-        <div class="game-header">
-            <button class="back-btn" onclick="goHome()">← Back</button>
-            <div class="game-stats">
-                <div class="game-stat">⭐ <span id="score">0</span></div>
-                <div class="game-stat">Lvl <span id="level">1</span></div>
-            </div>
-        </div>
+  <a href="terms.html">Terms of Service</a> |
+  <a href="parents.html">Parent Dashboard</a>
+</div>
 
-        <a href="alphabet.html">🅰️ Alphabet Classroom</a>
-        <h1 class="game-title" id="gameTitle">Game</h1>
-        
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-        </div>
-        
-        <div style="text-align: center;">
-            <span class="level-badge" id="levelBadge">Level 1</span>
-        </div>
-        
-        <div class="question-card">
-            <div class="question-text" id="questionText">Loading...</div>
-            <div class="hint-text" id="hintText"></div>
-            <div class="answers-grid" id="answersGrid"></div>
-        </div>
-     </div>      
-    <!-- FEEDBACK OVERLAY -->
-    <div class="feedback-overlay" id="feedbackOverlay">
-        <div class="feedback-content" id="feedbackContent">
-            <div class="feedback-icon" id="feedbackIcon">✅</div>
-            <div class="feedback-text" id="feedbackText">Correct!</div>
-        </div>
-    </div>
-    
-    <!-- LEVEL COMPLETE MODAL -->
-    <div class="modal-overlay" id="levelModal">
-        <div class="modal-content">
-            <div class="modal-icon">🎉</div>
-            <div class="modal-title" id="modalTitle">Level Complete!</div>
-            <div class="modal-message" id="modalMessage">Great job!</div>
-            <div class="modal-stars" id="modalStars">⭐⭐⭐</div>
-            <button class="modal-btn" id="nextLevelBtn">Next Level</button>
-            <button class="modal-btn secondary" onclick="goHome()">Back to Hub</button>
-        </div>
-    </div>
+<script>
+/* STATS */
+document.getElementById("stars").textContent =
+  localStorage.getItem("klq_stars") || 0;
+document.getElementById("level").textContent =
+  localStorage.getItem("klq_level") || 1;
 
-    <script>
-        // ===== SOUND EFFECTS =====
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let audioCtx = null;
-        
-        function getAudioContext() {
-            if (!audioCtx) audioCtx = new AudioContext();
-            return audioCtx;
-        }
-        
-        function playCorrectSound() {
-            try {
-                const ctx = getAudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.frequency.setValueAtTime(523, ctx.currentTime);
-                osc.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.4);
-            } catch(e) {}
-        }
-        
-        function playWrongSound() {
-            try {
-                const ctx = getAudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.3);
-                gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.3);
-            } catch(e) {}
-        }
-        
-        function playLevelUpSound() {
-            try {
-                const ctx = getAudioContext();
-                [523, 659, 784, 1047].forEach((freq, i) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.12);
-                    gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.12);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.12 + 0.25);
-                    osc.start(ctx.currentTime + i * 0.12);
-                    osc.stop(ctx.currentTime + i * 0.12 + 0.25);
-                });
-            } catch(e) {}
-        }
-        
-        // ===== STORAGE =====
-        function loadStats() {
-            try {
-                const d = localStorage.getItem('klqStats');
-                return d ? JSON.parse(d) : { totalStars: 0, bestLevel: 1 };
-            } catch(e) { return { totalStars: 0, bestLevel: 1 }; }
-        }
-        
-        function saveStats(s) {
-            try { localStorage.setItem('klqStats', JSON.stringify(s)); } catch(e) {}
-        }
-        
-        function loadProgress(type) {
-            try {
-                const d = localStorage.getItem('klq_' + type);
-                return d ? JSON.parse(d) : { level: 1, score: 0, stars: 0 };
-            } catch(e) { return { level: 1, score: 0, stars: 0 }; }
-        }
-        
-        function saveProgress(type, p) {
-            try {
-                localStorage.setItem('klq_' + type, JSON.stringify(p));
-                const stats = loadStats();
-                let total = 0;
-                ['math', 'reading', 'science'].forEach(t => { total += (loadProgress(t).stars || 0); });
-                stats.totalStars = total;
-                if (p.level > stats.bestLevel) stats.bestLevel = p.level;
-                saveStats(stats);
-            } catch(e) {}
-        }
-        
-        function shuffle(arr) {
-            const a = [...arr];
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-        
-        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-        
-        // ===== GAME DATA =====
-        const words = {
-            easy: [
-                { w: 'CAT', s: 'TCA', h: 'Furry pet that meows' },
-                { w: 'DOG', s: 'GDO', h: 'Pet that barks' },
-                { w: 'SUN', s: 'NUS', h: 'Shines in the sky' },
-                { w: 'HAT', s: 'THA', h: 'Wear on your head' },
-                { w: 'BED', s: 'DEB', h: 'Sleep on it' },
-                { w: 'CUP', s: 'PUC', h: 'Drink from it' },
-                { w: 'RUN', s: 'NUR', h: 'Move fast' },
-                { w: 'BIG', s: 'GIB', h: 'Not small' },
-                { w: 'RED', s: 'DER', h: 'Color of apple' },
-                { w: 'FUN', s: 'NFU', h: 'Good time' }
-            ],
-            med: [
-                { w: 'HAPPY', s: 'PAHPY', h: 'Feeling joy' },
-                { w: 'HOUSE', s: 'OUHSE', h: 'Where you live' },
-                { w: 'WATER', s: 'TAWER', h: 'You drink it' },
-                { w: 'APPLE', s: 'PLEAP', h: 'Red or green fruit' },
-                { w: 'SMILE', s: 'LMISE', h: 'When happy' },
-                { w: 'DANCE', s: 'CNADE', h: 'Move to music' },
-                { w: 'SLEEP', s: 'PESLE', h: 'Do at night' },
-                { w: 'BEACH', s: 'CHAEB', h: 'Sandy ocean place' },
-                { w: 'CLOUD', s: 'DOLUC', h: 'Fluffy in sky' },
-                { w: 'BREAD', s: 'DEABR', h: 'Made from wheat' }
-            ],
-            hard: [
-                { w: 'RAINBOW', s: 'WBONIAR', h: 'Colorful after rain' },
-                { w: 'ELEPHANT', s: 'TNAHPELE', h: 'Big animal with trunk' },
-                { w: 'BUTTERFLY', s: 'LFYETURBT', h: 'Pretty flying insect' },
-                { w: 'DINOSAUR', s: 'RUASONID', h: 'Extinct reptile' },
-                { w: 'CHOCOLATE', s: 'ETALOOCHC', h: 'Sweet brown treat' }
-            ]
-        };
-        
-        const science = {
-            easy: [
-                { q: 'What do plants need to grow?', a: 'Sunlight & Water', w: ['Candy', 'Toys', 'Ice cream'] },
-                { q: 'How many legs does a spider have?', a: '8', w: ['4', '6', '10'] },
-                { q: 'What is the largest animal?', a: 'Blue Whale', w: ['Elephant', 'Giraffe', 'Lion'] },
-                { q: 'What do bees make?', a: 'Honey', w: ['Milk', 'Bread', 'Cheese'] },
-                { q: 'What planet do we live on?', a: 'Earth', w: ['Mars', 'Jupiter', 'Moon'] },
-                { q: 'How many rainbow colors?', a: '7', w: ['5', '3', '10'] },
-                { q: 'What falls when it rains?', a: 'Water', w: ['Juice', 'Milk', 'Sand'] },
-                { q: 'Caterpillars become...?', a: 'Butterflies', w: ['Birds', 'Fish', 'Dogs'] }
-            ],
-            med: [
-                { q: 'What is H2O?', a: 'Water', w: ['Air', 'Fire', 'Ice cream'] },
-                { q: 'Which planet is red?', a: 'Mars', w: ['Venus', 'Jupiter', 'Saturn'] },
-                { q: 'Hardest natural substance?', a: 'Diamond', w: ['Gold', 'Iron', 'Rock'] },
-                { q: 'What gas do plants release?', a: 'Oxygen', w: ['Carbon dioxide', 'Helium', 'Nitrogen'] },
-                { q: 'Which organ pumps blood?', a: 'Heart', w: ['Brain', 'Lungs', 'Stomach'] },
-                { q: 'What force keeps us on ground?', a: 'Gravity', w: ['Magnetism', 'Wind', 'Light'] }
-            ],
-            hard: [
-                { q: 'Chemical symbol for gold?', a: 'Au', w: ['Go', 'Gd', 'Ag'] },
-                { q: 'Largest organ in body?', a: 'Skin', w: ['Heart', 'Brain', 'Liver'] },
-                { q: 'What causes ocean tides?', a: "Moon's gravity", w: ['Wind', 'Fish', 'Boats'] },
-                { q: 'Powerhouse of the cell?', a: 'Mitochondria', w: ['Nucleus', 'Cytoplasm', 'Membrane'] },
-                { q: 'Days for Earth to orbit Sun?', a: '365', w: ['30', '100', '500'] }
-            ]
-        };
-        
-        // ===== GAME STATE =====
-        let gameType = '';
-        let level = 1;
-        let score = 0;
-        let questionNum = 0;
-        let correct = 0;
-        let currentQ = null;
-        const QUESTIONS_PER_LEVEL = 5;
-        
-        // ===== UI FUNCTIONS =====
-        function updateHubStats() {
-            const s = loadStats();
-            document.getElementById('totalStars').textContent = s.totalStars || 0;
-            document.getElementById('bestLevel').textContent = s.bestLevel || 1;
-        }
-        
-        function startGame(type) {
-            const p = loadProgress(type);
-
-if (!isPremium() && p.level > 2) {
-  p.level = 2;
-  saveProgress(type, p);
-  alert("🔒 Premium required to unlock higher levels.");
-}
-
-level = p.level || 1;
-score = p.score || 0;
-            gameType = type;
-            questionNum = 0;
-            correct = 0;
-            
-            document.getElementById('hubPage').classList.add('hidden');
-            const gp = document.getElementById('gamePage');
-            gp.classList.add('active');
-            gp.className = 'container game active ' + type + '-game';
-            
-            const titles = { math: '🔢 Math Quest', reading: '📚 Reading Quest', science: '🔬 Science Quest' };
-            document.getElementById('gameTitle').textContent = titles[type];
-            
-            updateGameUI();
-            nextQuestion();
-        }
-        
-        function goHome() {
-            document.getElementById('hubPage').classList.remove('hidden');
-            document.getElementById('gamePage').classList.remove('active');
-            document.getElementById('levelModal').classList.remove('show');
-            updateHubStats();
-        }
-        
-        function updateGameUI() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('level').textContent = level;
-            document.getElementById('progressFill').style.width = (questionNum / QUESTIONS_PER_LEVEL * 100) + '%';
-            const names = ['Easy', 'Easy+', 'Medium', 'Medium+', 'Hard', 'Expert'];
-            document.getElementById('levelBadge').textContent = 'Level ' + level + ' - ' + names[Math.min(level - 1, 5)];
-        }
-        
-        function nextQuestion() {
-            if (gameType === 'math') currentQ = genMathQ();
-            else if (gameType === 'reading') currentQ = genReadingQ();
-            else currentQ = genScienceQ();
-            
-            document.getElementById('questionText').textContent = currentQ.text;
-            document.getElementById('hintText').textContent = currentQ.hint || '';
-            
-            const grid = document.getElementById('answersGrid');
-            grid.innerHTML = '';
-            currentQ.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'answer-btn';
-                btn.textContent = opt;
-                btn.onclick = () => checkAnswer(opt, btn);
-                grid.appendChild(btn);
-            });
-        }
-        
-        function genMathQ() {
-            const ops = level <= 2 ? ['+'] : level <= 4 ? ['+', '-'] : ['+', '-', '*'];
-            const op = ops[rand(0, ops.length - 1)];
-            const max = Math.min(10 + level * 5, 50);
-            let n1, n2, ans;
-            
-            if (op === '+') { n1 = rand(1, max); n2 = rand(1, max); ans = n1 + n2; }
-            else if (op === '-') { n1 = rand(10, max); n2 = rand(1, n1); ans = n1 - n2; }
-            else { n1 = rand(1, 12); n2 = rand(1, 10); ans = n1 * n2; }
-            
-            const wrongs = new Set();
-            while (wrongs.size < 3) {
-                const w = ans + rand(-10, 10);
-                if (w !== ans && w > 0) wrongs.add(w);
-            }
-            
-            return { text: n1 + ' ' + op + ' ' + n2 + ' = ?', answer: ans, options: shuffle([ans, ...wrongs]) };
-        }
-        
-        function genReadingQ() {
-            const list = level <= 2 ? words.easy : level <= 4 ? words.med : words.hard;
-            const item = list[rand(0, list.length - 1)];
-            const wrongs = [];
-            while (wrongs.length < 3) {
-                const w = list[rand(0, list.length - 1)];
-                if (w.w !== item.w && !wrongs.includes(w.w)) wrongs.push(w.w);
-            }
-            return { text: 'Unscramble: ' + item.s, hint: '💡 ' + item.h, answer: item.w, options: shuffle([item.w, ...wrongs]) };
-        }
-        
-        function genScienceQ() {
-            const list = level <= 2 ? science.easy : level <= 4 ? science.med : science.hard;
-            const item = list[rand(0, list.length - 1)];
-            return { text: item.q, answer: item.a, options: shuffle([item.a, ...item.w]) };
-        }
-        
-        function checkAnswer(sel, btn) {
-            const btns = document.querySelectorAll('.answer-btn');
-            btns.forEach(b => b.disabled = true);
-            
-            const isCorrect = sel === currentQ.answer || sel === String(currentQ.answer);
-            
-            if (isCorrect) {
-                btn.classList.add('correct');
-                playCorrectSound();
-                showFeedback(true);
-                score += 10 * level;
-                correct++;
-            } else {
-                btn.classList.add('wrong');
-                playWrongSound();
-                showFeedback(false);
-                btns.forEach(b => { if (b.textContent == currentQ.answer) b.classList.add('correct'); });
-            }
-            
-            questionNum++;
-            updateGameUI();
-            
-            setTimeout(() => {
-                if (questionNum >= QUESTIONS_PER_LEVEL) completeLevel();
-                else nextQuestion();
-            }, 1000);
-        }
-        
-        function showFeedback(isCorrect) {
-            const overlay = document.getElementById('feedbackOverlay');
-            const content = document.getElementById('feedbackContent');
-            content.className = 'feedback-content ' + (isCorrect ? 'correct' : 'wrong');
-            document.getElementById('feedbackIcon').textContent = isCorrect ? '✅' : '❌';
-            document.getElementById('feedbackText').textContent = isCorrect ? 'Correct!' : 'Try Again!';
-            overlay.classList.add('show');
-            setTimeout(() => overlay.classList.remove('show'), 700);
-        }
-        
-        function completeLevel() {
-            playLevelUpSound();
-            const stars = correct >= 5 ? 3 : correct >= 3 ? 2 : 1;
-            
-            document.getElementById('modalTitle').textContent = 'Level ' + level + ' Complete!';
-            document.getElementById('modalMessage').textContent = 'You got ' + correct + '/' + QUESTIONS_PER_LEVEL + ' correct!';
-            document.getElementById('modalStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-            document.getElementById('levelModal').classList.add('show');
-            
-            const p = loadProgress(gameType);
-            p.level = level;
-            p.score = score;
-            p.stars = (p.stars || 0) + stars;
-            saveProgress(gameType, p);
-        }
-        
-        document.getElementById('nextLevelBtn').onclick = () => {
-  if (!isPremium() && level >= 2) {
-    alert("🔒 Premium required to unlock the next level.");
-    goHome();
-    return;
-  }
-
-  level++;
-  questionNum = 0;
-  correct = 0;
-  document.getElementById('levelModal').classList.remove('show');
-  updateGameUI();
-  nextQuestion();
-};
-        function unlockPremium() {     
-  localStorage.setItem("klq_premium", "true");
-  alert("🎉 Premium unlocked! Enjoy all levels.");
-  location.reload();
-}
-<button onclick="restorePremium()" class="quest-badge secondary">
-🔁 Restore Purchase
-</button>
- function restorePremium() {
-  if (localStorage.getItem("klq_premium") === "true") {
-    alert("✅ Premium already unlocked on this device.");
-  } else {
-    alert(
-      "If you already paid:\n\n" +
-      "• Use the same browser\n" +
-      "• Check your email receipt\n" +
-      "• Then tap “I Paid – Unlock”\n\n" +
-      "Need help? Contact support."
-    );
-  }
-}       
-        
+/* PREMIUM */
 function isPremium() {
   return localStorage.getItem("klq_premium") === "true";
 }
-function updatePremiumBadges() {
-  document.querySelectorAll('.premium-lock').forEach(badge => {
-    badge.style.display = isPremium() ? 'none' : 'inline-block';
-  });
-}
- updatePremiumBadges();       
-// Init
-updateHubStats();
-  | <a href="payment-info.html">Payment Info</a>      
-   // ===== MINI GAME =====
-const miniQuestions = [
-  { q: "2 + 2 = ?", a: "4", o: ["3","4","5","6"] },
-  { q: "Which is a fruit?", a: "Apple", o: ["Car","Apple","Chair","Dog"] },
-  { q: "We live on planet?", a: "Earth", o: ["Mars","Moon","Earth","Sun"] }
-];
 
-let miniIndex = 0;
-
-function startMiniGame() {
-  document.getElementById("hubPage").style.display = "none";
-  document.getElementById("miniGameSection").style.display = "block";
-  miniIndex = 0;
-  showMiniQuestion();
+function unlockPremium() {
+  localStorage.setItem("klq_premium", "true");
+  alert("🎉 Premium unlocked!");
+  location.reload();
 }
 
-function showMiniQuestion() {
-  const q = miniQuestions[miniIndex];
-  document.getElementById("miniQuestion").textContent = q.q;
-
-  const grid = document.getElementById("miniAnswers");
-  grid.innerHTML = "";
-
-  q.o.sort(() => Math.random() - 0.5).forEach(opt => {
-    const btn = document.createElement("button");
-    btn.className = "answer-btn";
-    btn.textContent = opt;
-    btn.onclick = () => {
-      alert(opt === q.a ? "🎉 Correct!" : "❌ Try again!");
-      miniIndex++;
-      miniIndex < miniQuestions.length ? showMiniQuestion() : closeMiniGame();
-    };
-    grid.appendChild(btn);
-  });
+function restorePurchase() {
+  if (isPremium()) {
+    alert("✅ Premium already restored on this device.");
+  } else {
+    alert("❌ No purchase found on this device.");
+  }
 }
 
-function closeMiniGame() {
-  document.getElementById("miniGameSection").style.display = "none";
-  document.getElementById("hubPage").style.display = "block";
+if (isPremium()) {
+  document.getElementById("unlockBox").style.display = "none";
 }
- </script>   
-</body>        
+
+/* ROOM OPEN */
+function openRoom(room) {
+  if (document.querySelector(`.premium[onclick*="${room}"]`) && !isPremium()) {
+    alert("🔒 This room is Premium.\nPlease unlock to continue.");
+    return;
+  }
+  alert("Opening: " + room);
+}
+</script>
+
+</body>
 </html>
-
-
-
-<h2 style="color:white; text-align:center;">🏫 Classrooms</h2>
-
-<div class="quest-grid">
-  <button class="quest-card">
-    <div class="quest-icon">🅰️</div>
-    <h2 class="quest-name">Alphabet Room</h2>
-    <div class="quest-badge">Coming Soon</div>
-  </button>
-
-  <button class="quest-card">
-    <div class="quest-icon">🔢</div>
-    <h2 class="quest-name">Counting Room</h2>
-    <div class="quest-badge premium-lock">🔒 Premium</div>
-  </button>
-
-  <button class="quest-card">
-    <div class="quest-icon">🧠</div>
-    <h2 class="quest-name">Memory Room</h2>
-    <div class="quest-badge premium-lock">🔒 Premium</div>
-  </button>
-</div>
