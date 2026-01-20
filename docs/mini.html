@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Mini Games</title>
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#6a5acd,#7b68ee);
+  color:#fff;
+  text-align:center;
+  padding:40px;
+}
+
+.game {
+  background:#fff;
+  color:#333;
+  padding:30px;
+  border-radius:20px;
+  max-width:300px;
+  margin:auto;
+}
+
+button {
+  margin:10px;
+  padding:15px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  background:#ffb703;
+}
+</style>
+</head>
+
+<body>
+<h1>🎮 Mini Game</h1>
+
+<div class="game">
+  <h2>What is 5 + 2?</h2>
+  <button onclick="check(7)">7</button>
+  <button onclick="check(6)">6</button>
+  <button onclick="check(8)">8</button>
+</div>
+
+<script>
+function check(answer){
+  if(answer === 7){
+    alert("✅ Great job!");
+  } else {
+    alert("❌ Try again!");
+  }
+}
+</script>
+
+</body>
+</html>
