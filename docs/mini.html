@@ -1,53 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Mini Games</title>
+<meta charset="UTF-8">
+<title>Mini Games – Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body {
-  font-family: Arial;
+  margin: 0;
+  font-family: Arial, sans-serif;
   background: linear-gradient(135deg,#6a5acd,#7b68ee);
-  color:#fff;
-  text-align:center;
-  padding:40px;
+  color: #fff;
+  text-align: center;
+  padding: 30px;
 }
 
-.game {
-  background:#fff;
-  color:#333;
-  padding:30px;
-  border-radius:20px;
-  max-width:300px;
-  margin:auto;
+.card {
+  background: #fff;
+  color: #333;
+  border-radius: 22px;
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 320px;
 }
 
 button {
-  margin:10px;
-  padding:15px;
-  font-size:18px;
-  border:none;
-  border-radius:12px;
-  background:#ffb703;
+  margin: 8px;
+  padding: 14px 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  border: none;
+  background: #ffb703;
+  cursor: pointer;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.stars {
+  font-size: 18px;
+  background: rgba(255,255,255,0.3);
+  padding: 8px 14px;
+  border-radius: 14px;
+}
+
+.back {
+  background: #fff;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 14px;
+  text-decoration: none;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
-<h1>🎮 Mini Game</h1>
 
-<div class="game">
-  <h2>What is 5 + 2?</h2>
-  <button onclick="check(7)">7</button>
-  <button onclick="check(6)">6</button>
-  <button onclick="check(8)">8</button>
+<div class="top-bar">
+  <a class="back" href="index.html">⬅ Home</a>
+  <div class="stars">⭐ <span id="stars">0</span></div>
+</div>
+
+<h1>🎮 Mini Games</h1>
+
+<!-- GAME 1 -->
+<div class="card">
+  <h2>➕ Math Game</h2>
+  <p>What is <b>5 + 2</b>?</p>
+  <button onclick="answer(7)">7</button>
+  <button onclick="answer(6)">6</button>
+  <button onclick="answer(8)">8</button>
+</div>
+
+<!-- GAME 2 -->
+<div class="card">
+  <h2>🔢 Number Match</h2>
+  <p>Tap the number <b>3</b></p>
+  <button onclick="answer(1)">1</button>
+  <button onclick="answer(3)">3</button>
+  <button onclick="answer(5)">5</button>
+</div>
+
+<!-- GAME 3 -->
+<div class="card">
+  <h2>🧠 Memory</h2>
+  <p>Which one is a 🍎?</p>
+  <button onclick="answer('🍎')">🍎</button>
+  <button onclick="answer('🍌')">🍌</button>
+  <button onclick="answer('🍇')">🍇</button>
 </div>
 
 <script>
-function check(answer){
-  if(answer === 7){
-    alert("✅ Great job!");
-  } else {
-    alert("❌ Try again!");
-  }
+let stars = parseInt(localStorage.getItem("klq_stars")) || 0;
+document.getElementById("stars").textContent = stars;
+
+function answer(correct) {
+  stars += 1;
+  localStorage.setItem("klq_stars", stars);
+  document.getElementById("stars").textContent = stars;
+  alert("⭐ Great job! You earned a star!");
 }
 </script>
 
