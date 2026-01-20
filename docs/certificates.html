@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Certificates</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+  font-family:Arial;
+  background:linear-gradient(135deg,#f7971e,#ffd200);
+  padding:30px;
+  text-align:center;
+}
+
+.cert {
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎓 Certificate</h1>
+
+<div class="cert" id="cert"></div>
+
+<script>
+const kids = JSON.parse(localStorage.getItem("klq_kids"));
+const active = localStorage.getItem("klq_active_kid");
+const kid = kids[active];
+
+document.getElementById("cert").innerHTML = `
+<h2>Certificate of Achievement</h2>
+<p>This certifies that</p>
+<h3>${kid.name}</h3>
+<p>has reached Level ${kid.level}</p>
+<p>⭐ ${kid.stars} stars earned</p>
+`;
+</script>
+
+</body>
+</html>
