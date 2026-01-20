@@ -7,365 +7,66 @@
 
 <style>
 body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
-  background: linear-gradient(135deg, #6a5acd, #7b68ee);
-  color: #fff;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#6a5acd,#7b68ee);
+  color:#fff;
 }
 
-/* HEADER */
-.header {
-  padding: 20px;
-  text-align: center;
-}
+.header { text-align:center; padding:20px; }
 
-.stats {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 10px;
-}
-
-.stat {
-  background: rgba(255,255,255,0.25);
-  padding: 12px 16px;
-  border-radius: 16px;
-  font-size: 14px;
-}
-
-/* ROOM CARDS */
-.section {
-  padding: 20px;
-}
-
-.room-card {
-  position: relative;
-  background: #fff;
-  color: #333;
-  border-radius: 22px;
-  padding: 26px;
-  margin-bottom: 18px;
-  text-align: center;
-  font-size: 20px;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.room-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
-}
-
-.room-icon {
-  font-size: 42px;
-  margin-bottom: 8px;
-}
-
-/* PREMIUM BADGE */
-.premium-badge {
-  position: absolute;
-  top: 14px;
-  right: 18px;
-  background: gold;
-  color: #000;
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-/* UNLOCK BOX */
-.unlock-box {
-  background: #fff;
-  color: #333;
-  border-radius: 20px;
-  padding: 20px;
-  margin: 20px;
-  text-align: center;
-}
-
-.unlock-box a {
-  display: block;
-  background: #635bff;
-  color: #fff;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.unlock-box button {
-  padding: 12px;
-  width: 100%;
-  border-radius: 12px;
-  border: none;
-  background: #28a745;
-  color: #fff;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* MINI GAME POPUP */
-#mini-game-popup {
-  display:none;
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
+.card {
   background:#fff;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 5px 25px rgba(0,0,0,0.5);
-  text-align:center;
-  z-index:1000;
-  width:300px;
   color:#333;
+  border-radius:22px;
+  padding:26px;
+  margin:18px;
+  text-align:center;
+  font-size:20px;
+  cursor:pointer;
 }
 
-/* FOOTER */
-.footer {
-  text-align: center;
-  font-size: 13px;
-  padding: 20px;
-  opacity: 0.85;
-}
-
-.footer a {
-  color: #fff;
-  text-decoration: underline;
+.kid {
+  background:rgba(255,255,255,0.3);
+  padding:10px;
+  border-radius:14px;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <h1>⭐ Kid Learn Quest</h1>
-
-  <div style="text-align:center; margin-top:20px;">
-  <p><a href="alphabet.html">📚 Alphabet</a></p>
-  <p><a href="counting.html">🔢 Counting</a></p>
-  <p><a href="memory.html">🧠 Memory</a></p>
-  <p><a href="classroom.html">🏫 Classroom</a></p>
-</div>
-  
-  <div class="stats">
-    <div class="stat">⭐ Total Stars<br><b id="stars">0</b></div>
-    <div class="stat">🏆 Best Level<br><b id="level">1</b></div>
+  <div class="kid">
+    👧 Active Kid:
+    <b id="kidName">None</b>
+    (Age <span id="kidAge">–</span>)
   </div>
 </div>
 
-<!-- UNLOCK PREMIUM -->
-<div class="unlock-box" id="unlockBox">
-  <h2>🔓 Unlock Full Game</h2>
-  <p>All rooms • All levels • No ads</p>
-  <p><b>📧 After payment, check your email for the receipt</b></p>
-
-  <!-- PAYPAL -->
-  <a href="https://www.paypal.com/ncp/payment/ELCA44CL2QTX4" target="_blank">
-    Pay with PayPal
-  </a>
-
-  <!-- STRIPE -->
-  <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00" target="_blank">
-    Pay with Card (Stripe)
-  </a>
-
-  <button onclick="unlockPremium()">I Paid – Unlock</button>
-  <button onclick="restorePurchase()">Restore Purchase</button>
-</div>
-
-<!-- CLASSROOMS -->
-<div class="section">
-  <h2>🏫 Classrooms</h2>
-
-  <div class="room-card" onclick="openRoom('alphabet')">
-    <div class="room-icon">🔤</div>
-    Alphabet Room
-  </div>
-
-  <div class="room-card" onclick="openRoom('counting')">
-    <div class="room-icon">🔢</div>
-    Counting Room
-  </div>
-
-  <div class="room-card premium" onclick="openRoom('memory')">
-    <span class="premium-badge">⭐ Premium</span>
-    <div class="room-icon">🧠</div>
-    Memory Room
-  </div>
-
-  <div class="room-card premium" onclick="openRoom('classroom')">
-    <span class="premium-badge">⭐ PremiumRooms Inside </span>
-    <div class="room-icon">🏫</div>
-    Classroom Activities
-  </div>
-
-  <div class="room-card" onclick="window.location.href='mini.html'">
-  <div class="room-icon">🎮</div>
-  Mini Games
-</div>
-</div>
-
-<!-- MINI-GAME POPUP -->
-<div id="mini-game-popup">
-    <h3 id="mini-game-question"></h3>
-    <div id="mini-game-answers" style="margin-top:15px;"></div>
-    <button id="mini-game-close" style="margin-top:15px; display:none; padding:8px 15px; font-size:16px; border-radius:10px; background:#FF69B4; color:white;">Close</button>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  Kid Learn Quest © 2025 |
-  <a href="privacy.html">Privacy Policy</a> |
-  <a href="terms.html">Terms of Service</a> |
-  <a href="parents.html">Parent Dashboard</a>
-</div>
+<div class="card" onclick="go('mini.html')">🎮 Mini Games</div>
+<div class="card" onclick="go('classroom.html')">🏫 Classroom</div>
+<div class="card" onclick="go('certificates.html')">🎓 Certificates</div>
+<div class="card" onclick="go('teacher.html')">🧑‍🏫 Teacher Mode</div>
 
 <script>
-/* STATS */
-document.getElementById("stars").textContent =
-  localStorage.getItem("klq_stars") || 0;
-document.getElementById("level").textContent =
-  localStorage.getItem("klq_level") || 1;
+const kids = JSON.parse(localStorage.getItem("klq_kids")) || [];
+const active = parseInt(localStorage.getItem("klq_active_kid"));
 
-/* PREMIUM */
-function isPremium() {
-  return localStorage.getItem("klq_premium") === "true";
+if(kids.length && active >= 0){
+  document.getElementById("kidName").textContent = kids[active].name;
+  document.getElementById("kidAge").textContent = kids[active].age;
 }
 
-function unlockPremium() {
-  localStorage.setItem("klq_premium", "true");
-  alert("🎉 Premium unlocked!");
-  location.reload();
-}
-
-function restorePurchase() {
-  if (isPremium()) {
-    alert("✅ Premium already active on this device.");
-  } else {
-    alert(
-      "❌ No purchase found on this device.\n\n" +
-      "If you already paid:\n" +
-      "• Use the same browser\n" +
-      "• Check your email receipt\n" +
-      "• Tap “I Paid – Unlock”"
-    );
-  }
-}
-
-/* OPEN ROOM */
-function openRoom(room) {
-  const premiumRooms = ["memory", "classroom"];
-  if (premiumRooms.includes(room) && !isPremium()) {
-    alert("🔒 This activity is Premium.\nAsk a parent to unlock.");
+function go(page){
+  if(active == null){
+    alert("👨‍👩‍👧 Please add a child in Teacher Mode first");
     return;
   }
-
-  if (room === "alphabet") window.location.href = "alphabet.html";
-  if (room === "counting") window.location.href = "counting.html";
-  if (room === "memory") window.location.href = "memory.html";
-  if (room === "classroom") window.location.href = "classroom.html";
-  if (room === "mini") startMiniGame();
+  location.href = page;
 }
-
-/* MINI-GAME */
-let currentQuestionIndex = 0;
-let miniQuestions = [];
-let correctCount = 0;
-
-function addMiniStar() {
-    let totalStars = parseInt(localStorage.getItem("klq_stars")||0) + 1;
-    localStorage.setItem("klq_stars", totalStars);
-    document.getElementById("stars").textContent = totalStars;
-}
-
-function startMiniGame() {
-    correctCount = 0;
-    currentQuestionIndex = 0;
-    miniQuestions = [];
-
-    // 3 questions
-    const subjects = ["Math","Reading","Science"];
-    subjects.forEach(sub=>{
-        let q = {};
-        if(sub==="Math"){
-            const a=Math.floor(Math.random()*10);
-            const b=Math.floor(Math.random()*10);
-            q.question=`Math: What is ${a} + ${b}?`;
-            q.answers=[a+b, a+b+1, a+b-1];
-            q.correct=a+b;
-        } else if(sub==="Reading"){
-            const words=["cat","dog","sun","hat"];
-            const word=words[Math.floor(Math.random()*words.length)];
-            q.question=`Reading: Unscramble this word: ${word.split('').sort(()=>0.5-Math.random()).join('')}`;
-            q.answers=[word,"abc","xyz"];
-            q.correct=word;
-        } else if(sub==="Science"){
-            const qList=[
-                {question:"Science: What planet do we live on?", answer:"Earth"},
-                {question:"Science: What is H2O commonly called?", answer:"Water"}
-            ];
-            const chosen=qList[Math.floor(Math.random()*qList.length)];
-            q.question=chosen.question;
-            q.answers=[chosen.answer,"Sun","Mars"];
-            q.correct=chosen.answer;
-        }
-        q.answers.sort(()=>0.5-Math.random());
-        miniQuestions.push(q);
-    });
-
-    document.getElementById("mini-game-popup").style.display="block";
-    document.getElementById("mini-game-close").style.display="none";
-    showMiniQuestion();
-}
-
-function showMiniQuestion(){
-    const q = miniQuestions[currentQuestionIndex];
-    document.getElementById("mini-game-question").textContent = q.question;
-
-    const grid = document.getElementById("mini-game-answers");
-    grid.innerHTML = "";
-
-    q.answers.forEach(ans=>{
-        const btn=document.createElement("button");
-        btn.textContent=ans;
-        btn.style.margin="5px";
-        btn.style.padding="10px 15px";
-        btn.style.borderRadius="12px";
-        btn.style.background="#FFA500";
-        btn.style.color="white";
-        btn.style.fontSize="16px";
-        btn.addEventListener("click",()=>{
-            if(ans==q.correct){
-                alert("🎉 Correct!");
-                addMiniStar();
-                correctCount++;
-            } else {
-                alert(`❌ Oops! Correct answer was ${q.correct}`);
-            }
-            currentQuestionIndex++;
-            if(currentQuestionIndex<miniQuestions.length){
-                showMiniQuestion();
-            } else {
-                endMiniGame();
-            }
-        });
-        grid.appendChild(btn);
-    });
-}
-
-function endMiniGame(){
-    document.getElementById("mini-game-question").textContent = `🎉 Mini-Game Complete! You got ${correctCount} / ${miniQuestions.length} correct.`;
-    document.getElementById("mini-game-answers").innerHTML = "";
-    document.getElementById("mini-game-close").style.display="inline-block";
-}
-
-document.getElementById("mini-game-close").addEventListener("click",()=>{
-    document.getElementById("mini-game-popup").style.display="none";
-});
 </script>
 
 </body>
