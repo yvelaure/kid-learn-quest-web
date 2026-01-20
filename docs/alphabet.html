@@ -1,59 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alphabet Room</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f8ff;
+  text-align: center;
+}
+
+h1 {
+  color: #ff9800;
+}
+
+#letters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  padding: 20px;
+}
+
+.letter {
+  background: white;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.locked {
+  opacity: 0.4;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔤 Alphabet Room</h1>
+<p>Tap a letter to hear it!</p>
+
+<!-- 🔴 THIS WAS MISSING BEFORE -->
+<div id="letters"></div>
+
 <script>
-  const data = [
-    { letter: "A", word: "Apple", emoji: "🍎" },
-    { letter: "B", word: "Ball", emoji: "⚽" },
-    { letter: "C", word: "Cat", emoji: "🐱" },
-    { letter: "D", word: "Dog", emoji: "🐶" },
-    { letter: "E", word: "Elephant", emoji: "🐘" },
-    { letter: "F", word: "Fish", emoji: "🐟" },
-    { letter: "G", word: "Grapes", emoji: "🍇" },
-    { letter: "H", word: "Hat", emoji: "🎩" },
-    { letter: "I", word: "Ice Cream", emoji: "🍦" },
-    { letter: "J", word: "Juice", emoji: "🧃" },
-    { letter: "K", word: "Kite", emoji: "🪁" },
-    { letter: "L", word: "Lion", emoji: "🦁" },
-    { letter: "M", word: "Monkey", emoji: "🐵" },
-    { letter: "N", word: "Nest", emoji: "🪺" },
-    { letter: "O", word: "Orange", emoji: "🍊" },
-    { letter: "P", word: "Penguin", emoji: "🐧" },
-    { letter: "Q", word: "Queen", emoji: "👑" },
-    { letter: "R", word: "Rabbit", emoji: "🐰" },
-    { letter: "S", word: "Sun", emoji: "☀️" },
-    { letter: "T", word: "Tiger", emoji: "🐯" },
-    { letter: "U", word: "Umbrella", emoji: "☂️" },
-    { letter: "V", word: "Van", emoji: "🚐" },
-    { letter: "W", word: "Whale", emoji: "🐋" },
-    { letter: "X", word: "Xylophone", emoji: "🎼" },
-    { letter: "Y", word: "Yo-yo", emoji: "🪀" },
-    { letter: "Z", word: "Zebra", emoji: "🦓" }
-  ];
+const data = [
+  { letter: "A", word: "Apple", emoji: "🍎" },
+  { letter: "B", word: "Ball", emoji: "⚽" },
+  { letter: "C", word: "Cat", emoji: "🐱" },
+  { letter: "D", word: "Dog", emoji: "🐶" },
+  { letter: "E", word: "Elephant", emoji: "🐘" },
+  { letter: "F", word: "Fish", emoji: "🐟" },
+  { letter: "G", word: "Grapes", emoji: "🍇" },
+  { letter: "H", word: "Hat", emoji: "🎩" },
+  { letter: "I", word: "Ice Cream", emoji: "🍦" },
+  { letter: "J", word: "Juice", emoji: "🧃" },
+  { letter: "K", word: "Kite", emoji: "🪁" },
+  { letter: "L", word: "Lion", emoji: "🦁" },
+  { letter: "M", word: "Monkey", emoji: "🐵" },
+  { letter: "N", word: "Nest", emoji: "🪺" },
+  { letter: "O", word: "Orange", emoji: "🍊" },
+  { letter: "P", word: "Penguin", emoji: "🐧" },
+  { letter: "Q", word: "Queen", emoji: "👑" },
+  { letter: "R", word: "Rabbit", emoji: "🐰" },
+  { letter: "S", word: "Sun", emoji: "☀️" },
+  { letter: "T", word: "Tiger", emoji: "🐯" },
+  { letter: "U", word: "Umbrella", emoji: "☂️" },
+  { letter: "V", word: "Van", emoji: "🚐" },
+  { letter: "W", word: "Whale", emoji: "🐋" },
+  { letter: "X", word: "Xylophone", emoji: "🎼" },
+  { letter: "Y", word: "Yo-yo", emoji: "🪀" },
+  { letter: "Z", word: "Zebra", emoji: "🦓" }
+];
 
-  const freeLetters = ["A","B","C","D","E","F"];
-  const container = document.getElementById("letters");
+const freeLetters = ["A","B","C","D","E","F"];
+const container = document.getElementById("letters");
 
-  data.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "letter";
+data.forEach(item => {
+  const div = document.createElement("div");
+  div.className = "letter";
 
-    div.innerHTML = `
-      <div style="font-size:40px">${item.emoji}</div>
-      <strong>${item.letter}</strong>
-      <div style="font-size:14px">${item.word}</div>
-    `;
+  div.innerHTML = `
+    <div style="font-size:40px">${item.emoji}</div>
+    <strong>${item.letter}</strong>
+    <div style="font-size:14px">${item.word}</div>
+  `;
 
-    if (!freeLetters.includes(item.letter)) {
-      div.classList.add("locked");
-      div.onclick = () => alert("🔒 Premium letter. Ask a parent to unlock!");
-    } else {
-      div.onclick = () => speak(item.letter + " for " + item.word);
-    }
-
-    container.appendChild(div);
-  });
-
-  function speak(text) {
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.lang = "en-US";
-    speechSynthesis.speak(msg);
+  if (!freeLetters.includes(item.letter)) {
+    div.classList.add("locked");
+    div.onclick = () => alert("🔒 Premium letter. Ask a parent to unlock!");
+  } else {
+    div.onclick = () => speak(item.letter + " for " + item.word);
   }
+
+  container.appendChild(div);
+});
+
+function speak(text) {
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "en-US";
+  speechSynthesis.speak(msg);
+}
 </script>
+
+</body>
+</html>
