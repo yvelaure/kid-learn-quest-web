@@ -2,37 +2,225 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Classroom</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classroom Activities – Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body {
+  margin:0;
   font-family: Arial, sans-serif;
-  background: #e8f5e9;
-  text-align: center;
-  padding: 20px;
+  background: linear-gradient(135deg,#6a5acd,#7b68ee);
+  color: #fff;
+  text-align:center;
+  padding:20px;
 }
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 25px;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+
+h1 {
+  margin-bottom:20px;
 }
-.lock {
-  font-size: 40px;
+
+/* Activity Cards */
+.activity-card {
+  background:#fff;
+  color:#333;
+  border-radius:20px;
+  padding:20px;
+  margin:12px auto;
+  font-size:18px;
+  width:80%;
+  cursor:pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.activity-card:hover {
+  transform:scale(1.03);
+  box-shadow:0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* Premium Activity Badge */
+.premium-activity {
+  position: relative;
+}
+
+.premium-activity::after {
+  content: "⭐ Premium";
+  position: absolute;
+  top:10px;
+  right:15px;
+  background: gold;
+  color:#000;
+  padding:4px 8px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+/* Star Display */
+#starsDisplay {
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+/* Activity Popup */
+#activity-popup {
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  color:#333;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 5px 25px rgba(0,0,0,0.5);
+  width:300px;
+  text-align:center;
+  z-index:1000;
+}
+
+#activity-popup button {
+  margin-top:15px;
+  padding:8px 15px;
+  border-radius:10px;
+  font-size:16px;
+  background:#FF69B4;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
 </style>
 </head>
-
 <body>
-  <div class="card">
-    <h1>🏫 Classroom</h1>
-    <div class="lock">🔒</div>
-    <p>Premium Feature</p>
-    <p>This area is for parents and progress tracking.</p>
-    <a href="index.html">⬅ Back to Home</a>
-  </div>
+
+<h1>🏫 Classroom Activities</h1>
+<div id="starsDisplay">⭐ Total Stars: <span id="stars">0</span></div>
+
+<!-- Activities -->
+<div class="activity-card" onclick="startActivity('activity1')">📝 Activity 1: Quick Math Quiz (Free)</div>
+<div class="activity-card" onclick="startActivity('activity2')">🧪 Activity 2: Science True/False (Free)</div>
+<div class="activity-card premium-activity" onclick="startActivity('activity3')">🎨 Activity 3: Word Scramble (Premium)</div>
+
+<!-- Activity Popup -->
+<div id="activity-popup">
+  <h3 id="activity-question"></h3>
+  <div id="activity-answers" style="margin-top:15px;"></div>
+  <button id="activity-close" style="display:none;">Close</button>
+</div>
+
+<script>
+/* Get stars from main game */
+document.getElementById("stars").textContent = localStorage.getItem("klq_stars") || 0;
+
+/* Premium check from main game */
+function isPremium() {
+  return localStorage.getItem("klq_premium") === "true";
+}
+
+/* Activity system */
+let activityQuestions = [];
+let activityIndex = 0;
+let activityCorrect = 0;
+
+/* Add a star to total */
+function addStar() {
+  let total = parseInt(localStorage.getItem("klq_stars") || 0) + 1;
+  localStorage.setItem("klq_stars", total);
+  document.getElementById("stars").textContent = total;
+}
+
+/* Start an activity */
+function startActivity(activity) {
+  const premiumActivities = ["activity3"]; // activity3 is premium
+
+  if(premiumActivities.includes(activity) && !isPremium()) {
+    alert("🔒 This activity is Premium. Ask a parent to unlock!");
+    return;
+  }
+
+  activityQuestions = [];
+  activityIndex = 0;
+  activityCorrect = 0;
+
+  if(activity === "activity1"){
+    // Quick Math Quiz (Free)
+    for(let i=0;i<3;i++){
+      const a=Math.floor(Math.random()*10);
+      const b=Math.floor(Math.random()*10);
+      activityQuestions.push({
+        question: `What is ${a} + ${b}?`,
+        answers: [a+b, a+b+1, a+b-1],
+        correct: a+b
+      });
+    }
+  } else if(activity === "activity2"){
+    // Science True/False (Free)
+    const qList = [
+      {question:"The Earth is flat?", correct:"False", answers:["True","False"]},
+      {question:"Water freezes at 0°C?", correct:"True", answers:["True","False"]},
+      {question:"The sun is a planet?", correct:"False", answers:["True","False"]}
+    ];
+    activityQuestions = qList.sort(()=>0.5-Math.random()).slice(0,3);
+  } else if(activity === "activity3"){
+    // Word Scramble (Premium)
+    const words=["cat","dog","sun","hat"];
+    for(let i=0;i<3;i++){
+      const word = words[Math.floor(Math.random()*words.length)];
+      activityQuestions.push({
+        question: `Unscramble this word: ${word.split('').sort(()=>0.5-Math.random()).join('')}`,
+        answers: [word,"abc","xyz"],
+        correct: word
+      });
+    }
+  }
+
+  document.getElementById("activity-popup").style.display="block";
+  document.getElementById("activity-close").style.display="none";
+  showActivityQuestion();
+}
+
+/* Show current question */
+function showActivityQuestion(){
+  const q = activityQuestions[activityIndex];
+  document.getElementById("activity-question").textContent = q.question;
+
+  const answersDiv = document.getElementById("activity-answers");
+  answersDiv.innerHTML="";
+
+  q.answers.forEach(ans=>{
+    const btn=document.createElement("button");
+    btn.textContent=ans;
+    btn.style.margin="5px";
+    btn.style.padding="8px 12px";
+    btn.style.borderRadius="10px";
+    btn.style.background="#FFA500";
+    btn.style.color="white";
+    btn.style.fontSize="16px";
+    btn.addEventListener("click",()=>{
+      if(ans===q.correct){
+        alert("🎉 Correct!");
+        activityCorrect++;
+        addStar();
+      } else alert(`❌ Wrong! Correct: ${q.correct}`);
+      activityIndex++;
+      if(activityIndex<activityQuestions.length) showActivityQuestion();
+      else endActivity();
+    });
+    answersDiv.appendChild(btn);
+  });
+}
+
+/* End activity */
+function endActivity(){
+  document.getElementById("activity-question").textContent = `🎉 Activity Complete! Correct: ${activityCorrect}/${activityQuestions.length}`;
+  document.getElementById("activity-answers").innerHTML="";
+  document.getElementById("activity-close").style.display="inline-block";
+}
+
+/* Close popup */
+document.getElementById("activity-close").addEventListener("click",()=>{
+  document.getElementById("activity-popup").style.display="none";
+});
+</script>
+
 </body>
 </html>
