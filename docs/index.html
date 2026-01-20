@@ -201,7 +201,8 @@ document.getElementById("stars").textContent =
 document.getElementById("level").textContent =
   localStorage.getItem("klq_level") || 1;
 
-/* PREMIUM */
+
+/* ========= PREMIUM STATE ========= */
 function isPremium() {
   return localStorage.getItem("klq_premium") === "true";
 }
@@ -214,25 +215,75 @@ function unlockPremium() {
 
 function restorePurchase() {
   if (isPremium()) {
-    alert("✅ Premium already restored on this device.");
+    alert("✅ Premium already active on this device.");
   } else {
-    alert("❌ No purchase found on this device.");
+    alert(
+      "❌ No purchase found on this device.\n\n" +
+      "If you already paid:\n" +
+      "• Use the same browser\n" +
+      "• Check your email receipt\n" +
+      "• Tap “I Paid – Unlock”"
+    );
   }
 }
 
-if (isPremium()) {
-  document.getElementById("unlockBox").style.display = "none";
-}
+/* ========= FREE vs PREMIUM ROOMS ========= */
+const premiumRooms = [
+  "memory",
+  "classroom",
+  "mini-premium"
+];
 
-/* ROOM OPEN */
+/* ========= OPEN ROOM ========= */
 function openRoom(room) {
-  if (document.querySelector(`.premium[onclick*="${room}"]`) && !isPremium()) {
-    alert("🔒 This room is Premium.\nPlease unlock to continue.");
+
+  // BLOCK ONLY PREMIUM ROOMS
+  if (premiumRooms.includes(room) && !isPremium()) {
+    alert("🔒 This activity is Premium.\nAsk a parent to unlock.");
     return;
   }
-  alert("Opening: " + room);
+
+  // ROUTING
+  if (room === "alphabet") window.location.href = "alphabet.html";
+  if (room === "counting") window.location.href = "counting.html";
+  if (room === "memory") window.location.href = "memory.html";
+  if (room === "classroom") window.location.href = "classroom.html";
+  if (room === "mini") startMiniGame();
+}
+
+/* ========= MINI GAME (FREE) ========= */
+const miniQuestions = [
+  { q: "2 + 2 = ?", a: "4", o: ["3","4","5"] },
+  { q: "Which is a fruit?", a: "Apple", o: ["Car","Apple","Chair"] },
+  { q: "We live on planet?", a: "Earth", o: ["Mars","Earth","Moon"] }
+];
+
+let miniIndex = 0;
+
+function startMiniGame() {
+  miniIndex = 0;
+  askMini();
+}
+
+function askMini() {
+  const q = miniQuestions[miniIndex];
+  const answer = prompt(
+    q.q + "\n\nChoices: " + q.o.join(", ")
+  );
+
+  if (answer === q.a) alert("🎉 Correct!");
+  else alert("❌ Try again");
+
+  miniIndex++;
+  if (miniIndex < miniQuestions.length) askMini();
+  else alert("✅ Mini game finished!");
+}
+
+/* ========= HIDE UNLOCK IF PREMIUM ========= */
+if (isPremium()) {
+  const box = document.getElementById("unlockBox");
+  if (box) box.style.display = "none";
 }
 </script>
-
 </body>
 </html>
