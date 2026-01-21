@@ -11,16 +11,15 @@ body{
   background:#eef2ff;
   text-align:center;
 }
-h2{margin:8px}
+h2{margin:10px}
 .menu{
   display:flex;
   justify-content:center;
-  gap:10px;
+  gap:8px;
   flex-wrap:wrap;
-  margin-bottom:8px;
 }
 .menu button{
-  padding:10px 14px;
+  padding:10px 12px;
   border:none;
   border-radius:14px;
   background:#6a5acd;
@@ -31,7 +30,7 @@ h2{margin:8px}
   display:flex;
   justify-content:space-around;
   font-size:16px;
-  margin-bottom:6px;
+  margin:8px 0;
 }
 canvas{
   background:#fff;
@@ -60,11 +59,11 @@ canvas{
 <canvas id="game" width="320" height="420"></canvas>
 
 <script>
-/* ================= CHILD ================= */
+/* ===== PROFILE ===== */
 let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
 let idx = localStorage.getItem("klq_active_kid")||0;
 let kid = kids[idx] || {age:4,stars:0,level:1};
-kid.level ||= 1; kid.stars ||= 0;
+kid.stars ||= 0; kid.level ||= 1;
 stars.textContent = kid.stars;
 level.textContent = kid.level;
 
@@ -73,179 +72,208 @@ function save(){
   localStorage.setItem("klq_kids",JSON.stringify(kids));
 }
 
-/* ================= CANVAS ================= */
-const c = game;
-const ctx = c.getContext("2d");
+/* ===== CANVAS ===== */
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 
-/* ================= GLOBAL ================= */
-let mode="", objs=[], cards=[], target=null, score=0;
+/* ===== GLOBAL ===== */
+let mode="";
+let objects=[], cards=[], selected=[];
+let shapes=[], targets=[];
+let colors=[], targetColor="";
+let score=0;
 
-/* ================= RESET ================= */
+/* ===== RESET ===== */
 function reset(){
   ctx.clearRect(0,0,320,420);
-  objs=[]; cards=[]; target=null; score=0;
+  objects=[]; cards=[]; selected=[];
+  shapes=[]; targets=[]; colors=[];
+  score=0;
 }
 
-/* ================= DIFFICULTY ================= */
-let speed = kid.age<5?1:kid.age<7?1.5:2;
+/* ===== DIFFICULTY ===== */
+let speed = kid.age<5?1:kid.age<7?1.6:2.3;
 
-/* ================= COUNTING ================= */
+/* ===== COUNTING ===== */
 function startCounting(){
   reset(); mode="count";
-  setInterval(()=>{
-    if(mode==="count") objs.push({x:Math.random()*260+30,y:-20,r:16});
-  },1200);
 }
+function spawnStar(){
+  objects.push({x:Math.random()*260+30,y:-20,r:16});
+}
+setInterval(()=>{ if(mode==="count") spawnStar(); },1200);
+
 function drawCount(){
   ctx.clearRect(0,0,320,420);
-  objs.forEach(o=>{
-    o.y+=speed+kid.level*0.2;
+  objects.forEach(o=>{
+    o.y+=speed;
     ctx.beginPath();
     ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
-    ctx.fillStyle="gold"; ctx.fill();
+    ctx.fillStyle="gold";
+    ctx.fill();
   });
-  objs=objs.filter(o=>o.y<440);
+  objects=objects.filter(o=>o.y<450);
 }
 
-/* ================= LETTERS ================= */
+/* ===== LETTERS ===== */
 function startLetters(){
   reset(); mode="letter";
-  target = String.fromCharCode(65+Math.random()*26|0);
+  objects=[String.fromCharCode(65+Math.random()*26|0)];
 }
-function drawLetter(){
+function drawLetters(){
   ctx.clearRect(0,0,320,420);
   ctx.font="90px Arial";
-  ctx.textAlign="center";
   ctx.fillStyle="#6a5acd";
-  ctx.fillText(target,160,260);
+  ctx.textAlign="center";
+  ctx.fillText(objects[0],160,260);
 }
 
-/* ================= MEMORY ================= */
+/* ===== MEMORY ===== */
 function startMemory(){
   reset(); mode="memory";
   let s=["🐶","🐱","🐶","🐱","🐸","🐸"];
   s.sort(()=>Math.random()-0.5);
-  s.forEach((v,i)=>{
-    cards.push({v,x:(i%3)*100+40,y:Math.floor(i/3)*120+90,o:false,m:false});
-  });
+  s.forEach((v,i)=>cards.push({
+    v,x:(i%3)*100+40,y:Math.floor(i/3)*120+90,
+    open:false,done:false
+  }));
 }
 function drawMemory(){
   ctx.clearRect(0,0,320,420);
   cards.forEach(c=>{
-    ctx.fillStyle=c.o||c.m?"#fff":"#6a5acd";
+    ctx.fillStyle=c.open||c.done?"#fff":"#6a5acd";
     ctx.fillRect(c.x-40,c.y-40,80,80);
-    if(c.o||c.m){
-      ctx.font="40px Arial"; ctx.textAlign="center";
+    if(c.open||c.done){
+      ctx.font="40px Arial";
       ctx.fillStyle="#000";
+      ctx.textAlign="center";
       ctx.fillText(c.v,c.x,c.y+14);
     }
   });
 }
 
-/* ================= SHAPES ================= */
+/* ===== SHAPES ===== */
 function startShapes(){
-  reset(); mode="shape";
-  let shapes=["circle","square","triangle"];
-  target=shapes[Math.random()*3|0];
-  shapes.forEach((s,i)=>{
-    objs.push({s,x:i*100+60,y:220});
-  });
+  reset(); mode="shapes";
+  shapes=[
+    {type:"circle",x:80,y:100},
+    {type:"square",x:160,y:100},
+    {type:"triangle",x:240,y:100}
+  ];
+  targets=[
+    {type:"circle",x:80,y:300},
+    {type:"square",x:160,y:300},
+    {type:"triangle",x:240,y:300}
+  ];
 }
 function drawShapes(){
   ctx.clearRect(0,0,320,420);
-  ctx.font="18px Arial"; ctx.fillStyle="#000";
-  ctx.fillText("Find: "+target,160,60);
-  objs.forEach(o=>{
+  targets.forEach(t=>drawShape(t.type,t.x,t.y,"#ddd"));
+  shapes.forEach(s=>drawShape(s.type,s.x,s.y,"#6a5acd"));
+}
+function drawShape(type,x,y,color){
+  ctx.fillStyle=color;
+  if(type==="circle"){ ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill(); }
+  if(type==="square"){ ctx.fillRect(x-22,y-22,44,44); }
+  if(type==="triangle"){
     ctx.beginPath();
-    if(o.s==="circle") ctx.arc(o.x,o.y,30,0,Math.PI*2);
-    if(o.s==="square") ctx.rect(o.x-30,o.y-30,60,60);
-    if(o.s==="triangle"){
-      ctx.moveTo(o.x,o.y-35);
-      ctx.lineTo(o.x-30,o.y+30);
-      ctx.lineTo(o.x+30,o.y+30);
-      ctx.closePath();
-    }
-    ctx.fillStyle="#6a5acd"; ctx.fill();
-  });
+    ctx.moveTo(x,y-24); ctx.lineTo(x-24,y+24); ctx.lineTo(x+24,y+24);
+    ctx.closePath(); ctx.fill();
+  }
 }
 
-/* ================= COLORS ================= */
+/* ===== COLORS ===== */
 function startColors(){
-  reset(); mode="color";
-  let colors=["red","blue","green"];
-  target=colors[Math.random()*3|0];
-  colors.forEach((c,i)=>{
-    objs.push({c,x:i*100+60,y:220});
-  });
+  reset(); mode="colors";
+  colors=["red","blue","green","yellow"];
+  targetColor=colors[Math.random()*colors.length|0];
 }
 function drawColors(){
   ctx.clearRect(0,0,320,420);
-  ctx.font="18px Arial"; ctx.fillStyle="#000";
-  ctx.fillText("Tap: "+target,160,60);
-  objs.forEach(o=>{
-    ctx.beginPath();
-    ctx.arc(o.x,o.y,35,0,Math.PI*2);
-    ctx.fillStyle=o.c; ctx.fill();
+  ctx.font="24px Arial";
+  ctx.fillStyle="#000";
+  ctx.textAlign="center";
+  ctx.fillText("Tap the color:",160,60);
+  ctx.fillStyle=targetColor;
+  ctx.fillText(targetColor.toUpperCase(),160,90);
+  colors.forEach((c,i)=>{
+    ctx.fillStyle=c;
+    ctx.fillRect(40+i*70,180,50,50);
   });
 }
 
-/* ================= CLICK ================= */
-c.onclick=e=>{
-  let r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
-
+/* ===== INPUT ===== */
+let drag=null;
+canvas.addEventListener("mousedown",e=>{
+  let x=e.offsetX,y=e.offsetY;
+  if(mode==="shapes"){
+    shapes.forEach(s=>{
+      if(Math.hypot(x-s.x,y-s.y)<30) drag=s;
+    });
+  }
+});
+canvas.addEventListener("mousemove",e=>{
+  if(drag){ drag.x=e.offsetX; drag.y=e.offsetY; }
+});
+canvas.addEventListener("mouseup",()=>{
+  if(drag){
+    targets.forEach(t=>{
+      if(t.type===drag.type && Math.hypot(drag.x-t.x,drag.y-t.y)<30){
+        kid.stars++; kid.level++;
+        stars.textContent=kid.stars;
+        level.textContent=kid.level;
+        save();
+        startShapes();
+      }
+    });
+    drag=null;
+  }
+});
+canvas.addEventListener("click",e=>{
+  let x=e.offsetX,y=e.offsetY;
   if(mode==="count"){
-    objs.forEach((o,i)=>{
+    objects.forEach((o,i)=>{
       if(Math.hypot(x-o.x,y-o.y)<o.r){
-        objs.splice(i,1); score++;
-        if(score>=5){levelUp()}
+        objects.splice(i,1);
+        score++;
+        if(score>=5){ kid.stars++; kid.level++; save(); score=0; }
       }
     });
   }
-
-  if(mode==="letter"){levelUp(); startLetters();}
-
+  if(mode==="letter"){ kid.stars++; kid.level++; save(); startLetters(); }
   if(mode==="memory"){
     cards.forEach(c=>{
-      if(!c.o&&!c.m&&x>c.x-40&&x<c.x+40&&y>c.y-40&&y<c.y+40){
-        c.o=true; selected.push(c);
+      if(!c.open&&!c.done && x>c.x-40&&x<c.x+40&&y>c.y-40&&y<c.y+40){
+        c.open=true; selected.push(c);
         if(selected.length===2){
           if(selected[0].v===selected[1].v){
-            selected.forEach(c=>c.m=true); kid.stars++; save();
+            selected.forEach(s=>s.done=true);
+            kid.stars++; save();
           }
-          setTimeout(()=>selected.forEach(c=>c.o=false),600);
-          selected=[];
+          setTimeout(()=>{selected.forEach(s=>s.open=false); selected=[];},600);
         }
       }
     });
   }
-
-  if(mode==="shape"){
-    objs.forEach(o=>{
-      if(Math.hypot(x-o.x,y-o.y)<40 && o.s===target){levelUp(); startShapes();}
+  if(mode==="colors"){
+    colors.forEach((c,i)=>{
+      if(x>40+i*70&&x<90+i*70&&y>180&&y<230){
+        if(c===targetColor){
+          kid.stars++; kid.level++; save();
+          startColors();
+        }
+      }
     });
   }
+});
 
-  if(mode==="color"){
-    objs.forEach(o=>{
-      if(Math.hypot(x-o.x,y-o.y)<40 && o.c===target){levelUp(); startColors();}
-    });
-  }
-};
-
-function levelUp(){
-  kid.level++; kid.stars++;
-  stars.textContent=kid.stars;
-  level.textContent=kid.level;
-  save();
-}
-
-/* ================= LOOP ================= */
+/* ===== LOOP ===== */
 function loop(){
   if(mode==="count") drawCount();
-  if(mode==="letter") drawLetter();
+  if(mode==="letter") drawLetters();
   if(mode==="memory") drawMemory();
-  if(mode==="shape") drawShapes();
-  if(mode==="color") drawColors();
+  if(mode==="shapes") drawShapes();
+  if(mode==="colors") drawColors();
   requestAnimationFrame(loop);
 }
 loop();
