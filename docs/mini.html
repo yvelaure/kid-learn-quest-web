@@ -1,111 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Mini Games – Kid Learn Quest</title>
+<title>Mini Games</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg,#6a5acd,#7b68ee);
-  color: #fff;
-  text-align: center;
-  padding: 30px;
-}
-
-.card {
-  background: #fff;
-  color: #333;
-  border-radius: 22px;
-  padding: 25px;
-  margin: 20px auto;
-  max-width: 320px;
-}
-
-button {
-  margin: 8px;
-  padding: 14px 18px;
-  font-size: 18px;
-  border-radius: 14px;
-  border: none;
-  background: #ffb703;
-  cursor: pointer;
-}
-
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.stars {
-  font-size: 18px;
-  background: rgba(255,255,255,0.3);
-  padding: 8px 14px;
-  border-radius: 14px;
-}
-
-.back {
-  background: #fff;
-  color: #333;
-  padding: 8px 14px;
-  border-radius: 14px;
-  text-decoration: none;
-  font-weight: bold;
-}
+body{text-align:center;font-family:Arial;background:#eef2ff}
+.choice{
+display:inline-block;background:#fff;
+padding:20px;margin:10px;
+border-radius:16px;font-size:24px;cursor:pointer}
 </style>
 </head>
-
 <body>
 
-<div class="top-bar">
-  <a class="back" href="index.html">⬅ Home</a>
-  <div class="stars">⭐ <span id="stars">0</span></div>
-</div>
+<h2>🎮 Mini Games</h2>
+<button onclick="countGame()">🔢 Counting</button>
+<button onclick="letterGame()">🔤 Letters</button>
+<button onclick="memoryGame()">🧠 Memory</button>
 
-<h1>🎮 Mini Games</h1>
-
-<!-- GAME 1 -->
-<div class="card">
-  <h2>➕ Math Game</h2>
-  <p>What is <b>5 + 2</b>?</p>
-  <button onclick="answer(7)">7</button>
-  <button onclick="answer(6)">6</button>
-  <button onclick="answer(8)">8</button>
-</div>
-
-<!-- GAME 2 -->
-<div class="card">
-  <h2>🔢 Number Match</h2>
-  <p>Tap the number <b>3</b></p>
-  <button onclick="answer(1)">1</button>
-  <button onclick="answer(3)">3</button>
-  <button onclick="answer(5)">5</button>
-</div>
-
-<!-- GAME 3 -->
-<div class="card">
-  <h2>🧠 Memory</h2>
-  <p>Which one is a 🍎?</p>
-  <button onclick="answer('🍎')">🍎</button>
-  <button onclick="answer('🍌')">🍌</button>
-  <button onclick="answer('🍇')">🍇</button>
-</div>
+<div id="game"></div>
 
 <script>
-let stars = parseInt(localStorage.getItem("klq_stars")) || 0;
-document.getElementById("stars").textContent = stars;
+let kids=JSON.parse(localStorage.getItem("klq_kids"));
+let k=kids[localStorage.getItem("klq_active_kid")||0];
 
-function answer(correct) {
-  stars += 1;
-  localStorage.setItem("klq_stars", stars);
-  document.getElementById("stars").textContent = stars;
-  alert("⭐ Great job! You earned a star!");
+function speak(t){
+let u=new SpeechSynthesisUtterance(t);
+u.rate=k.age<5?0.7:1;
+speechSynthesis.speak(u);
 }
-</script>
 
+function saveStar(){
+k.stars=(k.stars||0)+1;
+k.weekly=k.weekly||[];
+k.weekly.push({date:new Date().toDateString(),stars:1});
+localStorage.setItem("klq_kids",JSON.stringify(kids));
+}
+
+function countGame(){
+let a=Math.floor(Math.random()*5)+1;
+game.innerHTML="⭐".repeat(a)+"<br>";
+[ a, a+1, a-1 ].filter(n=>n>0).forEach(n=>{
+game.innerHTML+=`<div class="choice" onclick="check(${n},${a})">${n}</div>`;
+});
+speak("Count the stars");
+}
+
+function check(n,a){
+if(n===a){alert("Correct!");saveStar();}
+else alert("Try again");
+countGame();
+}
+
+function letterGame(){
+let l=String.fromCharCode(65+Math.random()*26|0);
+game.innerHTML=`<h3>Tap ${l}</h3><div class="choice" onclick="win()">${l}</div>`;
+speak("Tap the letter "+l);
+}
+function win(){alert("Great!");saveStar();}
+
+function memoryGame(){
+let cards=["🐶","🐱","🐶","🐱"].sort(()=>Math.random()-0.5);
+game.innerHTML="";
+cards.forEach((c,i)=>{
+game.innerHTML+=`<div class="choice" onclick="flip(this,'${c}')">❓</div>`;
+});
+speak("Match the animals");
+}
+function flip(el,c){el.textContent=c;}
+</script>
 </body>
 </html>
