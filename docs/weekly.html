@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weekly Report</title>
+<style>
+body{font-family:Arial;padding:20px}
+.card{
+ background:#f0f0ff;
+ padding:16px;
+ margin:10px;
+ border-radius:16px;
+}
+</style>
+</head>
+<body>
+
+<h2>📅 Weekly Report</h2>
+<div id="report"></div>
+
+<script>
+let kids=JSON.parse(localStorage.getItem("klq_kids"));
+let k=kids[localStorage.getItem("klq_active_kid")||0];
+let r=document.getElementById("report");
+
+(k.weekly||[]).slice(-7).forEach(w=>{
+ r.innerHTML+=`
+ <div class="card">
+ 📆 ${w.date} – ⭐ ${w.stars}
+ </div>`;
+});
+</script>
+</body>
+</html>
