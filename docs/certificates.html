@@ -1,44 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Certificates</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta charset="UTF-8">
+<title>Certificate</title>
 <style>
-body {
-  font-family:Arial;
-  background:linear-gradient(135deg,#f7971e,#ffd200);
-  padding:30px;
+body{
+  font-family:Georgia;
   text-align:center;
+  padding:40px;
+  border:10px solid gold;
 }
-
-.cert {
-  background:#fff;
-  padding:30px;
-  border-radius:20px;
-}
+h1{font-size:40px}
+.name{font-size:32px;margin:20px}
 </style>
 </head>
-
 <body>
 
-<h1>🎓 Certificate</h1>
+<h1>🎓 Certificate of Achievement</h1>
+<p>This certifies that</p>
+<div class="name" id="name"></div>
+<p>has successfully completed learning activities</p>
+<p>⭐ Stars Earned: <span id="stars"></span></p>
+<p>Date: <span id="date"></span></p>
 
-<div class="cert" id="cert"></div>
+<button onclick="window.print()">📄 Download PDF</button>
 
 <script>
-const kids = JSON.parse(localStorage.getItem("klq_kids"));
-const active = localStorage.getItem("klq_active_kid");
-const kid = kids[active];
+let kids=JSON.parse(localStorage.getItem("klq_kids"));
+let k=kids[localStorage.getItem("klq_active_kid")||0];
 
-document.getElementById("cert").innerHTML = `
-<h2>Certificate of Achievement</h2>
-<p>This certifies that</p>
-<h3>${kid.name}</h3>
-<p>has reached Level ${kid.level}</p>
-<p>⭐ ${kid.stars} stars earned</p>
-`;
+name.textContent=k.name;
+stars.textContent=k.stars;
+date.textContent=new Date().toDateString();
 </script>
-
 </body>
 </html>
