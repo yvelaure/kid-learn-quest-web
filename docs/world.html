@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Learning World – Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(#a5b4fc,#c7d2fe);
+  text-align:center;
+}
+h2{margin:10px;color:#fff}
+.map{
+  position:relative;
+  height:520px;
+}
+.node{
+  position:absolute;
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 8px 18px rgba(0,0,0,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  cursor:pointer;
+}
+.locked{
+  background:#e5e7eb;
+  opacity:.6;
+}
+.path{
+  position:absolute;
+  width:6px;
+  background:#fff;
+  opacity:.8;
+}
+.footer{
+  font-size:14px;
+  padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🌍 Learning World</h2>
+
+<div class="map">
+
+  <!-- PATHS -->
+  <div class="path" style="height:120px; left:50%; top:100px"></div>
+  <div class="path" style="height:120px; left:50%; top:240px"></div>
+
+  <!-- NODES -->
+  <div class="node" style="left:50%;top:20px;transform:translateX(-50%)"
+       onclick="go('classroom')">🏫</div>
+
+  <div class="node" id="miniNode"
+       style="left:50%;top:160px;transform:translateX(-50%)"
+       onclick="go('mini')">🎮</div>
+
+  <div class="node locked" id="nextNode"
+       style="left:50%;top:300px;transform:translateX(-50%)">
+    ⭐
+  </div>
+
+</div>
+
+<div class="footer">
+  Complete activities to unlock new worlds
+</div>
+
+<script>
+let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
+let idx = localStorage.getItem("klq_active_kid")||0;
+let kid = kids[idx] || {level:1};
+
+if(kid.level>=3){
+  document.getElementById("nextNode").classList.remove("locked");
+  document.getElementById("nextNode").onclick=()=>alert("🚧 Next world coming soon!");
+}
+
+function go(where){
+  if(where==="classroom") location.href="classroom.html";
+  if(where==="mini") location.href="mini.html";
+}
+</script>
+
+</body>
+</html>
