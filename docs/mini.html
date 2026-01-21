@@ -2,281 +2,227 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mini Games – Kid Learn Quest</title>
+<title>Mini Games | Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body{
   margin:0;
-  font-family:Arial;
-  background:#eef2ff;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#22c55e,#16a34a);
+  color:#fff;
+}
+
+.header{
+  padding:16px;
   text-align:center;
 }
-h2{margin:10px}
-.menu{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
+
+.levels, .games{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:14px;
+  padding:20px;
 }
-.menu button{
-  padding:10px 12px;
+
+.card{
+  background:#fff;
+  color:#333;
+  border-radius:20px;
+  padding:16px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.card:hover{transform:scale(1.05)}
+.card span{font-size:40px;display:block}
+
+.locked{
+  opacity:.5;
+  pointer-events:none;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#fff;
+  color:#333;
+  border-radius:20px;
+  padding:20px;
+  width:90%;
+  max-width:420px;
+  text-align:center;
+}
+
+button{
+  margin-top:12px;
+  padding:10px 18px;
   border:none;
   border-radius:14px;
-  background:#6a5acd;
+  background:#4f46e5;
   color:#fff;
-  font-size:13px;
-}
-.top{
-  display:flex;
-  justify-content:space-around;
   font-size:16px;
-  margin:8px 0;
+  cursor:pointer;
 }
-canvas{
-  background:#fff;
-  border-radius:20px;
-  box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+.color{
+  width:60px;height:60px;
+  border-radius:50%;
+  display:inline-block;
+  margin:10px;
 }
 </style>
 </head>
+
 <body>
 
-<h2>🎮 Mini Games</h2>
-
-<div class="menu">
-  <button onclick="startCounting()">🔢 Count</button>
-  <button onclick="startLetters()">🔤 Letters</button>
-  <button onclick="startMemory()">🧠 Memory</button>
-  <button onclick="startShapes()">🔺 Shapes</button>
-  <button onclick="startColors()">🎨 Colors</button>
+<div class="header">
+  <h1>🎮 Mini Games</h1>
+  <p id="kidInfo"></p>
+  <p>⭐ Stars: <b id="stars">0</b> | Level: <b id="level">1</b></p>
 </div>
 
-<div class="top">
-  <div>⭐ <span id="stars">0</span></div>
-  <div>🏆 Level <span id="level">1</span></div>
-</div>
+<div class="levels" id="levels"></div>
+<div class="games" id="games" style="display:none"></div>
 
-<canvas id="game" width="320" height="420"></canvas>
+<button style="width:90%;margin:20px" onclick="goHome()">⬅ Back Home</button>
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
 
 <script>
-/* ===== PROFILE ===== */
-let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
-let idx = localStorage.getItem("klq_active_kid")||0;
-let kid = kids[idx] || {age:4,stars:0,level:1};
-kid.stars ||= 0; kid.level ||= 1;
-stars.textContent = kid.stars;
-level.textContent = kid.level;
+/* ===== ACTIVE KID ===== */
+const kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
+const active = localStorage.getItem("klq_active_kid");
+const kid = kids[active];
 
-function save(){
-  kids[idx]=kid;
+if(!kid){
+  alert("No child selected");
+  location.href="index.html";
+}
+
+kid.level = kid.level || 1;
+kid.stars = kid.stars || 0;
+
+document.getElementById("kidInfo").innerText =
+  `${kid.avatar} ${kid.name} • Age ${kid.age}`;
+document.getElementById("stars").innerText = kid.stars;
+document.getElementById("level").innerText = kid.level;
+
+/* ===== LEVEL SELECT ===== */
+const levelsDiv=document.getElementById("levels");
+for(let i=1;i<=5;i++){
+  const d=document.createElement("div");
+  d.className="card"+(i>kid.level?" locked":"");
+  d.innerHTML=`<span>⭐</span>Level ${i}`;
+  d.onclick=()=>openGames(i);
+  levelsDiv.appendChild(d);
+}
+
+/* ===== OPEN GAMES ===== */
+function openGames(level){
+  levelsDiv.style.display="none";
+  games.style.display="grid";
+  games.innerHTML=`
+    <div class="card" onclick="shapeGame(${level})"><span>🔺</span>Shapes</div>
+    <div class="card" onclick="colorGame(${level})"><span>🎨</span>Colors</div>
+    <div class="card" onclick="memoryGame(${level})"><span>🧠</span>Memory</div>
+  `;
+}
+
+/* ===== MODAL ===== */
+function show(html){
+  modalContent.innerHTML=html;
+  modal.style.display="flex";
+}
+function closeModal(){modal.style.display="none"}
+
+/* ===== REWARD ===== */
+function reward(stars){
+  kid.stars+=stars;
+  if(kid.stars>=kid.level*5 && kid.level<5){
+    kid.level++;
+    alert("🎉 Level Up!");
+  }
   localStorage.setItem("klq_kids",JSON.stringify(kids));
-}
-
-/* ===== CANVAS ===== */
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
-
-/* ===== GLOBAL ===== */
-let mode="";
-let objects=[], cards=[], selected=[];
-let shapes=[], targets=[];
-let colors=[], targetColor="";
-let score=0;
-
-/* ===== RESET ===== */
-function reset(){
-  ctx.clearRect(0,0,320,420);
-  objects=[]; cards=[]; selected=[];
-  shapes=[]; targets=[]; colors=[];
-  score=0;
-}
-
-/* ===== DIFFICULTY ===== */
-let speed = kid.age<5?1:kid.age<7?1.6:2.3;
-
-/* ===== COUNTING ===== */
-function startCounting(){
-  reset(); mode="count";
-}
-function spawnStar(){
-  objects.push({x:Math.random()*260+30,y:-20,r:16});
-}
-setInterval(()=>{ if(mode==="count") spawnStar(); },1200);
-
-function drawCount(){
-  ctx.clearRect(0,0,320,420);
-  objects.forEach(o=>{
-    o.y+=speed;
-    ctx.beginPath();
-    ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
-    ctx.fillStyle="gold";
-    ctx.fill();
-  });
-  objects=objects.filter(o=>o.y<450);
-}
-
-/* ===== LETTERS ===== */
-function startLetters(){
-  reset(); mode="letter";
-  objects=[String.fromCharCode(65+Math.random()*26|0)];
-}
-function drawLetters(){
-  ctx.clearRect(0,0,320,420);
-  ctx.font="90px Arial";
-  ctx.fillStyle="#6a5acd";
-  ctx.textAlign="center";
-  ctx.fillText(objects[0],160,260);
-}
-
-/* ===== MEMORY ===== */
-function startMemory(){
-  reset(); mode="memory";
-  let s=["🐶","🐱","🐶","🐱","🐸","🐸"];
-  s.sort(()=>Math.random()-0.5);
-  s.forEach((v,i)=>cards.push({
-    v,x:(i%3)*100+40,y:Math.floor(i/3)*120+90,
-    open:false,done:false
-  }));
-}
-function drawMemory(){
-  ctx.clearRect(0,0,320,420);
-  cards.forEach(c=>{
-    ctx.fillStyle=c.open||c.done?"#fff":"#6a5acd";
-    ctx.fillRect(c.x-40,c.y-40,80,80);
-    if(c.open||c.done){
-      ctx.font="40px Arial";
-      ctx.fillStyle="#000";
-      ctx.textAlign="center";
-      ctx.fillText(c.v,c.x,c.y+14);
-    }
-  });
+  location.reload();
 }
 
 /* ===== SHAPES ===== */
-function startShapes(){
-  reset(); mode="shapes";
-  shapes=[
-    {type:"circle",x:80,y:100},
-    {type:"square",x:160,y:100},
-    {type:"triangle",x:240,y:100}
-  ];
-  targets=[
-    {type:"circle",x:80,y:300},
-    {type:"square",x:160,y:300},
-    {type:"triangle",x:240,y:300}
-  ];
-}
-function drawShapes(){
-  ctx.clearRect(0,0,320,420);
-  targets.forEach(t=>drawShape(t.type,t.x,t.y,"#ddd"));
-  shapes.forEach(s=>drawShape(s.type,s.x,s.y,"#6a5acd"));
-}
-function drawShape(type,x,y,color){
-  ctx.fillStyle=color;
-  if(type==="circle"){ ctx.beginPath(); ctx.arc(x,y,22,0,Math.PI*2); ctx.fill(); }
-  if(type==="square"){ ctx.fillRect(x-22,y-22,44,44); }
-  if(type==="triangle"){
-    ctx.beginPath();
-    ctx.moveTo(x,y-24); ctx.lineTo(x-24,y+24); ctx.lineTo(x+24,y+24);
-    ctx.closePath(); ctx.fill();
-  }
+function shapeGame(level){
+  const shapes=["⬛","🔺","⚪","⭐"];
+  const max=level+1;
+  const set=shapes.slice(0,max);
+  const answer=set[Math.floor(Math.random()*set.length)];
+  show(`
+    <h2>🔺 Shape Match</h2>
+    <h1>${answer}</h1>
+    ${set.map(s=>`<button onclick="pick('${s}','${answer}')">${s}</button>`).join("")}
+    <button onclick="closeModal()">Exit</button>
+  `);
 }
 
 /* ===== COLORS ===== */
-function startColors(){
-  reset(); mode="colors";
-  colors=["red","blue","green","yellow"];
-  targetColor=colors[Math.random()*colors.length|0];
+function colorGame(level){
+  const colors=["red","blue","yellow","green"];
+  const set=colors.slice(0,level+1);
+  const answer=set[Math.floor(Math.random()*set.length)];
+  show(`
+    <h2>🎨 Tap ${answer.toUpperCase()}</h2>
+    ${set.map(c=>`<div class="color" style="background:${c}" onclick="pick('${c}','${answer}')"></div>`).join("")}
+    <br><button onclick="closeModal()">Exit</button>
+  `);
 }
-function drawColors(){
-  ctx.clearRect(0,0,320,420);
-  ctx.font="24px Arial";
-  ctx.fillStyle="#000";
-  ctx.textAlign="center";
-  ctx.fillText("Tap the color:",160,60);
-  ctx.fillStyle=targetColor;
-  ctx.fillText(targetColor.toUpperCase(),160,90);
-  colors.forEach((c,i)=>{
-    ctx.fillStyle=c;
-    ctx.fillRect(40+i*70,180,50,50);
+
+/* ===== MEMORY ===== */
+function memoryGame(level){
+  let icons=["🐶","🐱","🐸","🦊"].slice(0,level+1);
+  let cards=[...icons,...icons].sort(()=>Math.random()-0.5);
+  let first=null,lock=false;
+  show(`<h2>🧠 Memory</h2><div id="board"></div><button onclick="closeModal()">Exit</button>`);
+  const board=document.getElementById("board");
+
+  cards.forEach(c=>{
+    const b=document.createElement("button");
+    b.innerText="❓";
+    b.style.margin="6px";
+    b.onclick=()=>{
+      if(lock||b.innerText!=="❓")return;
+      b.innerText=c;
+      if(!first){first=b;}
+      else{
+        lock=true;
+        setTimeout(()=>{
+          if(first.innerText===b.innerText){
+            reward(2);
+          }else{
+            first.innerText="❓";b.innerText="❓";
+          }
+          first=null;lock=false;
+        },600);
+      }
+    };
+    board.appendChild(b);
   });
 }
 
-/* ===== INPUT ===== */
-let drag=null;
-canvas.addEventListener("mousedown",e=>{
-  let x=e.offsetX,y=e.offsetY;
-  if(mode==="shapes"){
-    shapes.forEach(s=>{
-      if(Math.hypot(x-s.x,y-s.y)<30) drag=s;
-    });
-  }
-});
-canvas.addEventListener("mousemove",e=>{
-  if(drag){ drag.x=e.offsetX; drag.y=e.offsetY; }
-});
-canvas.addEventListener("mouseup",()=>{
-  if(drag){
-    targets.forEach(t=>{
-      if(t.type===drag.type && Math.hypot(drag.x-t.x,drag.y-t.y)<30){
-        kid.stars++; kid.level++;
-        stars.textContent=kid.stars;
-        level.textContent=kid.level;
-        save();
-        startShapes();
-      }
-    });
-    drag=null;
-  }
-});
-canvas.addEventListener("click",e=>{
-  let x=e.offsetX,y=e.offsetY;
-  if(mode==="count"){
-    objects.forEach((o,i)=>{
-      if(Math.hypot(x-o.x,y-o.y)<o.r){
-        objects.splice(i,1);
-        score++;
-        if(score>=5){ kid.stars++; kid.level++; save(); score=0; }
-      }
-    });
-  }
-  if(mode==="letter"){ kid.stars++; kid.level++; save(); startLetters(); }
-  if(mode==="memory"){
-    cards.forEach(c=>{
-      if(!c.open&&!c.done && x>c.x-40&&x<c.x+40&&y>c.y-40&&y<c.y+40){
-        c.open=true; selected.push(c);
-        if(selected.length===2){
-          if(selected[0].v===selected[1].v){
-            selected.forEach(s=>s.done=true);
-            kid.stars++; save();
-          }
-          setTimeout(()=>{selected.forEach(s=>s.open=false); selected=[];},600);
-        }
-      }
-    });
-  }
-  if(mode==="colors"){
-    colors.forEach((c,i)=>{
-      if(x>40+i*70&&x<90+i*70&&y>180&&y<230){
-        if(c===targetColor){
-          kid.stars++; kid.level++; save();
-          startColors();
-        }
-      }
-    });
-  }
-});
-
-/* ===== LOOP ===== */
-function loop(){
-  if(mode==="count") drawCount();
-  if(mode==="letter") drawLetters();
-  if(mode==="memory") drawMemory();
-  if(mode==="shapes") drawShapes();
-  if(mode==="colors") drawColors();
-  requestAnimationFrame(loop);
+/* ===== PICK ===== */
+function pick(pick,correct){
+  if(pick===correct){
+    reward(2);
+    alert("⭐ Correct!");
+  }else alert("❌ Try again");
 }
-loop();
+
+function goHome(){location.href="index.html";}
 </script>
 
 </body>
