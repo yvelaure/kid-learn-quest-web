@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analytics</title>
+<style>
+.bar{
+ height:24px;
+ background:#6a5acd;
+ margin:6px 0;
+ color:#fff;
+ padding-left:8px;
+}
+</style>
+</head>
+<body>
+
+<h2>📊 Teacher Analytics</h2>
+<div id="chart"></div>
+
+<script>
+let kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
+let c=document.getElementById("chart");
+
+kids.forEach(k=>{
+ let width=Math.min(k.stars*10,300);
+ c.innerHTML+=`
+ <div>${k.name}</div>
+ <div class="bar" style="width:${width}px">
+ ⭐ ${k.stars}
+ </div>`;
+});
+</script>
+</body>
+</html>
