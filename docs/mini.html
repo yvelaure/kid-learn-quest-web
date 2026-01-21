@@ -1,74 +1,255 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mini Games</title>
+<title>Mini Games – Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body{text-align:center;font-family:Arial;background:#eef2ff}
-.choice{
-display:inline-block;background:#fff;
-padding:20px;margin:10px;
-border-radius:16px;font-size:24px;cursor:pointer}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#eef2ff;
+  text-align:center;
+}
+h2{margin:8px}
+.menu{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+.menu button{
+  padding:10px 14px;
+  border:none;
+  border-radius:14px;
+  background:#6a5acd;
+  color:#fff;
+  font-size:13px;
+}
+.top{
+  display:flex;
+  justify-content:space-around;
+  font-size:16px;
+  margin-bottom:6px;
+}
+canvas{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);
+}
 </style>
 </head>
 <body>
 
 <h2>🎮 Mini Games</h2>
-<button onclick="countGame()">🔢 Counting</button>
-<button onclick="letterGame()">🔤 Letters</button>
-<button onclick="memoryGame()">🧠 Memory</button>
 
-<div id="game"></div>
+<div class="menu">
+  <button onclick="startCounting()">🔢 Count</button>
+  <button onclick="startLetters()">🔤 Letters</button>
+  <button onclick="startMemory()">🧠 Memory</button>
+  <button onclick="startShapes()">🔺 Shapes</button>
+  <button onclick="startColors()">🎨 Colors</button>
+</div>
+
+<div class="top">
+  <div>⭐ <span id="stars">0</span></div>
+  <div>🏆 Level <span id="level">1</span></div>
+</div>
+
+<canvas id="game" width="320" height="420"></canvas>
 
 <script>
-let kids=JSON.parse(localStorage.getItem("klq_kids"));
-let k=kids[localStorage.getItem("klq_active_kid")||0];
+/* ================= CHILD ================= */
+let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
+let idx = localStorage.getItem("klq_active_kid")||0;
+let kid = kids[idx] || {age:4,stars:0,level:1};
+kid.level ||= 1; kid.stars ||= 0;
+stars.textContent = kid.stars;
+level.textContent = kid.level;
 
-function speak(t){
-let u=new SpeechSynthesisUtterance(t);
-u.rate=k.age<5?0.7:1;
-speechSynthesis.speak(u);
+function save(){
+  kids[idx]=kid;
+  localStorage.setItem("klq_kids",JSON.stringify(kids));
 }
 
-function saveStar(){
-k.stars=(k.stars||0)+1;
-k.weekly=k.weekly||[];
-k.weekly.push({date:new Date().toDateString(),stars:1});
-localStorage.setItem("klq_kids",JSON.stringify(kids));
+/* ================= CANVAS ================= */
+const c = game;
+const ctx = c.getContext("2d");
+
+/* ================= GLOBAL ================= */
+let mode="", objs=[], cards=[], target=null, score=0;
+
+/* ================= RESET ================= */
+function reset(){
+  ctx.clearRect(0,0,320,420);
+  objs=[]; cards=[]; target=null; score=0;
 }
 
-function countGame(){
-let a=Math.floor(Math.random()*5)+1;
-game.innerHTML="⭐".repeat(a)+"<br>";
-[ a, a+1, a-1 ].filter(n=>n>0).forEach(n=>{
-game.innerHTML+=`<div class="choice" onclick="check(${n},${a})">${n}</div>`;
-});
-speak("Count the stars");
+/* ================= DIFFICULTY ================= */
+let speed = kid.age<5?1:kid.age<7?1.5:2;
+
+/* ================= COUNTING ================= */
+function startCounting(){
+  reset(); mode="count";
+  setInterval(()=>{
+    if(mode==="count") objs.push({x:Math.random()*260+30,y:-20,r:16});
+  },1200);
+}
+function drawCount(){
+  ctx.clearRect(0,0,320,420);
+  objs.forEach(o=>{
+    o.y+=speed+kid.level*0.2;
+    ctx.beginPath();
+    ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+    ctx.fillStyle="gold"; ctx.fill();
+  });
+  objs=objs.filter(o=>o.y<440);
 }
 
-function check(n,a){
-if(n===a){alert("Correct!");saveStar();}
-else alert("Try again");
-countGame();
+/* ================= LETTERS ================= */
+function startLetters(){
+  reset(); mode="letter";
+  target = String.fromCharCode(65+Math.random()*26|0);
+}
+function drawLetter(){
+  ctx.clearRect(0,0,320,420);
+  ctx.font="90px Arial";
+  ctx.textAlign="center";
+  ctx.fillStyle="#6a5acd";
+  ctx.fillText(target,160,260);
 }
 
-function letterGame(){
-let l=String.fromCharCode(65+Math.random()*26|0);
-game.innerHTML=`<h3>Tap ${l}</h3><div class="choice" onclick="win()">${l}</div>`;
-speak("Tap the letter "+l);
+/* ================= MEMORY ================= */
+function startMemory(){
+  reset(); mode="memory";
+  let s=["🐶","🐱","🐶","🐱","🐸","🐸"];
+  s.sort(()=>Math.random()-0.5);
+  s.forEach((v,i)=>{
+    cards.push({v,x:(i%3)*100+40,y:Math.floor(i/3)*120+90,o:false,m:false});
+  });
 }
-function win(){alert("Great!");saveStar();}
+function drawMemory(){
+  ctx.clearRect(0,0,320,420);
+  cards.forEach(c=>{
+    ctx.fillStyle=c.o||c.m?"#fff":"#6a5acd";
+    ctx.fillRect(c.x-40,c.y-40,80,80);
+    if(c.o||c.m){
+      ctx.font="40px Arial"; ctx.textAlign="center";
+      ctx.fillStyle="#000";
+      ctx.fillText(c.v,c.x,c.y+14);
+    }
+  });
+}
 
-function memoryGame(){
-let cards=["🐶","🐱","🐶","🐱"].sort(()=>Math.random()-0.5);
-game.innerHTML="";
-cards.forEach((c,i)=>{
-game.innerHTML+=`<div class="choice" onclick="flip(this,'${c}')">❓</div>`;
-});
-speak("Match the animals");
+/* ================= SHAPES ================= */
+function startShapes(){
+  reset(); mode="shape";
+  let shapes=["circle","square","triangle"];
+  target=shapes[Math.random()*3|0];
+  shapes.forEach((s,i)=>{
+    objs.push({s,x:i*100+60,y:220});
+  });
 }
-function flip(el,c){el.textContent=c;}
+function drawShapes(){
+  ctx.clearRect(0,0,320,420);
+  ctx.font="18px Arial"; ctx.fillStyle="#000";
+  ctx.fillText("Find: "+target,160,60);
+  objs.forEach(o=>{
+    ctx.beginPath();
+    if(o.s==="circle") ctx.arc(o.x,o.y,30,0,Math.PI*2);
+    if(o.s==="square") ctx.rect(o.x-30,o.y-30,60,60);
+    if(o.s==="triangle"){
+      ctx.moveTo(o.x,o.y-35);
+      ctx.lineTo(o.x-30,o.y+30);
+      ctx.lineTo(o.x+30,o.y+30);
+      ctx.closePath();
+    }
+    ctx.fillStyle="#6a5acd"; ctx.fill();
+  });
+}
+
+/* ================= COLORS ================= */
+function startColors(){
+  reset(); mode="color";
+  let colors=["red","blue","green"];
+  target=colors[Math.random()*3|0];
+  colors.forEach((c,i)=>{
+    objs.push({c,x:i*100+60,y:220});
+  });
+}
+function drawColors(){
+  ctx.clearRect(0,0,320,420);
+  ctx.font="18px Arial"; ctx.fillStyle="#000";
+  ctx.fillText("Tap: "+target,160,60);
+  objs.forEach(o=>{
+    ctx.beginPath();
+    ctx.arc(o.x,o.y,35,0,Math.PI*2);
+    ctx.fillStyle=o.c; ctx.fill();
+  });
+}
+
+/* ================= CLICK ================= */
+c.onclick=e=>{
+  let r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+
+  if(mode==="count"){
+    objs.forEach((o,i)=>{
+      if(Math.hypot(x-o.x,y-o.y)<o.r){
+        objs.splice(i,1); score++;
+        if(score>=5){levelUp()}
+      }
+    });
+  }
+
+  if(mode==="letter"){levelUp(); startLetters();}
+
+  if(mode==="memory"){
+    cards.forEach(c=>{
+      if(!c.o&&!c.m&&x>c.x-40&&x<c.x+40&&y>c.y-40&&y<c.y+40){
+        c.o=true; selected.push(c);
+        if(selected.length===2){
+          if(selected[0].v===selected[1].v){
+            selected.forEach(c=>c.m=true); kid.stars++; save();
+          }
+          setTimeout(()=>selected.forEach(c=>c.o=false),600);
+          selected=[];
+        }
+      }
+    });
+  }
+
+  if(mode==="shape"){
+    objs.forEach(o=>{
+      if(Math.hypot(x-o.x,y-o.y)<40 && o.s===target){levelUp(); startShapes();}
+    });
+  }
+
+  if(mode==="color"){
+    objs.forEach(o=>{
+      if(Math.hypot(x-o.x,y-o.y)<40 && o.c===target){levelUp(); startColors();}
+    });
+  }
+};
+
+function levelUp(){
+  kid.level++; kid.stars++;
+  stars.textContent=kid.stars;
+  level.textContent=kid.level;
+  save();
+}
+
+/* ================= LOOP ================= */
+function loop(){
+  if(mode==="count") drawCount();
+  if(mode==="letter") drawLetter();
+  if(mode==="memory") drawMemory();
+  if(mode==="shape") drawShapes();
+  if(mode==="color") drawColors();
+  requestAnimationFrame(loop);
+}
+loop();
 </script>
+
 </body>
 </html>
