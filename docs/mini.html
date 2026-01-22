@@ -2,227 +2,223 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mini Games | Kid Learn Quest</title>
+<title>Learning Games | Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+:root{
+  --bg:#0f172a;
+  --card:#ffffff;
+  --accent:#22c55e;
+  --accent2:#6366f1;
+}
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#22c55e,#16a34a);
+  font-family:system-ui, Arial;
+  background:linear-gradient(135deg,#0ea5e9,#22c55e);
   color:#fff;
 }
-
-.header{
-  padding:16px;
+header{
   text-align:center;
-}
-
-.levels, .games{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:14px;
   padding:20px;
 }
-
-.card{
-  background:#fff;
-  color:#333;
+.progress{
+  width:90%;
+  height:12px;
+  background:#0003;
   border-radius:20px;
-  padding:16px;
+  margin:10px auto;
+}
+.progress span{
+  display:block;
+  height:100%;
+  background:var(--accent);
+  border-radius:20px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;
+  padding:20px;
+}
+.card{
+  background:var(--card);
+  color:#333;
+  border-radius:18px;
+  padding:18px;
   text-align:center;
+  box-shadow:0 8px 20px #0003;
   cursor:pointer;
   transition:.2s;
 }
 .card:hover{transform:scale(1.05)}
-.card span{font-size:40px;display:block}
-
-.locked{
-  opacity:.5;
-  pointer-events:none;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-
-.modal-content{
-  background:#fff;
-  color:#333;
-  border-radius:20px;
+.card span{font-size:42px}
+.game{
   padding:20px;
-  width:90%;
-  max-width:420px;
   text-align:center;
 }
-
 button{
-  margin-top:12px;
-  padding:10px 18px;
+  padding:12px 20px;
   border:none;
   border-radius:14px;
-  background:#4f46e5;
+  background:var(--accent2);
   color:#fff;
   font-size:16px;
   cursor:pointer;
+  margin:6px;
 }
-
-.color{
-  width:60px;height:60px;
-  border-radius:50%;
-  display:inline-block;
-  margin:10px;
+.choice{
+  font-size:40px;
+  padding:12px;
 }
+.hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>🎮 Mini Games</h1>
-  <p id="kidInfo"></p>
-  <p>⭐ Stars: <b id="stars">0</b> | Level: <b id="level">1</b></p>
+<header>
+  <h1>🎮 Learning Games</h1>
+  <p id="kid"></p>
+  <div class="progress"><span id="xpBar"></span></div>
+  <p>⭐ Stars: <b id="stars"></b> | 🏆 Level: <b id="level"></b></p>
+</header>
+
+<div class="grid" id="hub">
+  <div class="card" onclick="start('abc')"><span>🔤</span><br>ABC</div>
+  <div class="card" onclick="start('math')"><span>🔢</span><br>Math</div>
+  <div class="card" onclick="start('shapes')"><span>🔺</span><br>Shapes</div>
+  <div class="card" onclick="start('colors')"><span>🎨</span><br>Colors</div>
+  <div class="card" onclick="start('memory')"><span>🧠</span><br>Memory</div>
 </div>
 
-<div class="levels" id="levels"></div>
-<div class="games" id="games" style="display:none"></div>
-
-<button style="width:90%;margin:20px" onclick="goHome()">⬅ Back Home</button>
-
-<div class="modal" id="modal">
-  <div class="modal-content" id="modalContent"></div>
-</div>
+<div class="game hidden" id="game"></div>
 
 <script>
-/* ===== ACTIVE KID ===== */
-const kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
-const active = localStorage.getItem("klq_active_kid");
-const kid = kids[active];
+/* ========= CHILD PROFILE ========= */
+let kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
+let active=localStorage.getItem("klq_active_kid")||0;
+let kid=kids[active]||{name:"Player",age:5,stars:0,level:1,skill:{}};
+kid.skill=kid.skill||{};
+["abc","math","shapes","colors","memory"].forEach(s=>{
+  kid.skill[s]=kid.skill[s]||{xp:0,level:1};
+});
 
-if(!kid){
-  alert("No child selected");
-  location.href="index.html";
-}
-
-kid.level = kid.level || 1;
-kid.stars = kid.stars || 0;
-
-document.getElementById("kidInfo").innerText =
-  `${kid.avatar} ${kid.name} • Age ${kid.age}`;
-document.getElementById("stars").innerText = kid.stars;
-document.getElementById("level").innerText = kid.level;
-
-/* ===== LEVEL SELECT ===== */
-const levelsDiv=document.getElementById("levels");
-for(let i=1;i<=5;i++){
-  const d=document.createElement("div");
-  d.className="card"+(i>kid.level?" locked":"");
-  d.innerHTML=`<span>⭐</span>Level ${i}`;
-  d.onclick=()=>openGames(i);
-  levelsDiv.appendChild(d);
-}
-
-/* ===== OPEN GAMES ===== */
-function openGames(level){
-  levelsDiv.style.display="none";
-  games.style.display="grid";
-  games.innerHTML=`
-    <div class="card" onclick="shapeGame(${level})"><span>🔺</span>Shapes</div>
-    <div class="card" onclick="colorGame(${level})"><span>🎨</span>Colors</div>
-    <div class="card" onclick="memoryGame(${level})"><span>🧠</span>Memory</div>
-  `;
-}
-
-/* ===== MODAL ===== */
-function show(html){
-  modalContent.innerHTML=html;
-  modal.style.display="flex";
-}
-function closeModal(){modal.style.display="none"}
-
-/* ===== REWARD ===== */
-function reward(stars){
-  kid.stars+=stars;
-  if(kid.stars>=kid.level*5 && kid.level<5){
-    kid.level++;
-    alert("🎉 Level Up!");
-  }
+function save(){
+  kids[active]=kid;
   localStorage.setItem("klq_kids",JSON.stringify(kids));
-  location.reload();
 }
 
-/* ===== SHAPES ===== */
-function shapeGame(level){
-  const shapes=["⬛","🔺","⚪","⭐"];
-  const max=level+1;
-  const set=shapes.slice(0,max);
-  const answer=set[Math.floor(Math.random()*set.length)];
-  show(`
-    <h2>🔺 Shape Match</h2>
-    <h1>${answer}</h1>
-    ${set.map(s=>`<button onclick="pick('${s}','${answer}')">${s}</button>`).join("")}
-    <button onclick="closeModal()">Exit</button>
-  `);
+/* ========= UI ========= */
+kid.stars ||=0; kid.level ||=1;
+document.getElementById("kid").textContent=`👧 ${kid.name} • Age ${kid.age}`;
+document.getElementById("stars").textContent=kid.stars;
+document.getElementById("level").textContent=kid.level;
+document.getElementById("xpBar").style.width=Math.min(kid.stars*5,100)+"%";
+
+/* ========= VOICE ========= */
+function speak(text){
+  speechSynthesis.cancel();
+  let u=new SpeechSynthesisUtterance(text);
+  u.rate=0.9;
+  speechSynthesis.speak(u);
 }
 
-/* ===== COLORS ===== */
-function colorGame(level){
-  const colors=["red","blue","yellow","green"];
-  const set=colors.slice(0,level+1);
-  const answer=set[Math.floor(Math.random()*set.length)];
-  show(`
-    <h2>🎨 Tap ${answer.toUpperCase()}</h2>
-    ${set.map(c=>`<div class="color" style="background:${c}" onclick="pick('${c}','${answer}')"></div>`).join("")}
-    <br><button onclick="closeModal()">Exit</button>
-  `);
+/* ========= CORE ========= */
+function reward(subject){
+  kid.stars++;
+  kid.skill[subject].xp++;
+  if(kid.skill[subject].xp>=5){
+    kid.skill[subject].level++;
+    kid.skill[subject].xp=0;
+  }
+  if(kid.stars%10===0) kid.level++;
+  save();
 }
 
-/* ===== MEMORY ===== */
-function memoryGame(level){
-  let icons=["🐶","🐱","🐸","🦊"].slice(0,level+1);
-  let cards=[...icons,...icons].sort(()=>Math.random()-0.5);
-  let first=null,lock=false;
-  show(`<h2>🧠 Memory</h2><div id="board"></div><button onclick="closeModal()">Exit</button>`);
-  const board=document.getElementById("board");
+function back(){
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("hub").classList.remove("hidden");
+}
 
-  cards.forEach(c=>{
-    const b=document.createElement("button");
-    b.innerText="❓";
-    b.style.margin="6px";
-    b.onclick=()=>{
-      if(lock||b.innerText!=="❓")return;
-      b.innerText=c;
-      if(!first){first=b;}
-      else{
-        lock=true;
-        setTimeout(()=>{
-          if(first.innerText===b.innerText){
-            reward(2);
+/* ========= GAMES ========= */
+function start(type){
+  document.getElementById("hub").classList.add("hidden");
+  const g=document.getElementById("game");
+  g.classList.remove("hidden");
+
+  if(type==="abc"){
+    const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    const l=letters[Math.floor(Math.random()*5)];
+    speak(`Find the letter ${l}`);
+    g.innerHTML=`<h2>🔤 Tap ${l}</h2>`+
+      letters.slice(0,5).map(x=>`<button class="choice" onclick="pick('${type}','${x}','${l}')">${x}</button>`).join("")+
+      `<br><button onclick="back()">⬅ Back</button>`;
+  }
+
+  if(type==="math"){
+    let a=Math.floor(Math.random()*5)+kid.skill.math.level;
+    speak(`What is ${a} plus one`);
+    g.innerHTML=`<h2>${a} + 1 = ?</h2>
+      <button onclick="pick('${type}',${a+1},${a+1})">${a+1}</button>
+      <button onclick="pick('${type}',${a+2},${a+1})">${a+2}</button>
+      <br><button onclick="back()">⬅ Back</button>`;
+  }
+
+  if(type==="shapes"){
+    let s=["⬛","🔺","⚪","⭐"];
+    let ans=s[Math.floor(Math.random()*3)];
+    speak(`Find the shape`);
+    g.innerHTML=`<h2>Select ${ans}</h2>`+
+      s.slice(0,3).map(x=>`<button class="choice" onclick="pick('${type}','${x}','${ans}')">${x}</button>`).join("")+
+      `<br><button onclick="back()">⬅ Back</button>`;
+  }
+
+  if(type==="colors"){
+    let c=["red","blue","yellow"];
+    let ans=c[Math.floor(Math.random()*3)];
+    speak(`Tap ${ans}`);
+    g.innerHTML=`<h2>Tap ${ans.toUpperCase()}</h2>`+
+      c.map(x=>`<div onclick="pick('${type}','${x}','${ans}')" style="background:${x};width:70px;height:70px;border-radius:50%;display:inline-block;margin:10px"></div>`).join("")+
+      `<br><button onclick="back()">⬅ Back</button>`;
+  }
+
+  if(type==="memory"){
+    let icons=["🐶","🐱","🐸","🦊"];
+    let cards=[...icons,...icons].sort(()=>Math.random()-0.5);
+    let open=null;
+    g.innerHTML=`<h2>🧠 Memory Match</h2><div id="board"></div><button onclick="back()">⬅ Back</button>`;
+    const b=document.getElementById("board");
+    cards.forEach(c=>{
+      let btn=document.createElement("button");
+      btn.textContent="❓";
+      btn.className="choice";
+      btn.onclick=()=>{
+        btn.textContent=c;
+        if(!open){open=btn;}
+        else{
+          if(open.textContent===btn.textContent){
+            reward("memory");
           }else{
-            first.innerText="❓";b.innerText="❓";
+            setTimeout(()=>{btn.textContent="❓";open.textContent="❓"},500);
           }
-          first=null;lock=false;
-        },600);
-      }
-    };
-    board.appendChild(b);
-  });
+          open=null;
+        }
+      };
+      b.appendChild(btn);
+    });
+  }
 }
 
-/* ===== PICK ===== */
-function pick(pick,correct){
-  if(pick===correct){
-    reward(2);
-    alert("⭐ Correct!");
-  }else alert("❌ Try again");
+function pick(subject,choice,answer){
+  if(choice==answer){
+    reward(subject);
+    speak("Great job");
+    start(subject);
+  }else{
+    speak("Try again");
+  }
 }
-
-function goHome(){location.href="index.html";}
 </script>
 
 </body>
