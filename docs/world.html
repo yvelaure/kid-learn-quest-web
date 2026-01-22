@@ -8,147 +8,69 @@
 <style>
 body{
   margin:0;
-  font-family:"Arial Rounded MT Bold",Arial,sans-serif;
-  background:linear-gradient(180deg,#60a5fa,#34d399);
+  font-family:system-ui, Arial;
+  background:linear-gradient(135deg,#22c55e,#3b82f6);
   color:#fff;
 }
-
-/* HEADER */
-.header{
-  padding:16px;
-  text-align:center;
-}
-
-/* MAP */
+header{text-align:center;padding:20px}
 .map{
-  position:relative;
-  height:520px;
-  margin:20px;
-  background:#e0f2fe;
-  border-radius:30px;
-  overflow:hidden;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:18px;
+  padding:20px;
 }
-
-/* PATH */
-.path{
-  position:absolute;
-  width:6px;
-  background:#94a3b8;
-  left:50%;
-  top:40px;
-  bottom:40px;
-  transform:translateX(-50%);
-  border-radius:6px;
-}
-
-/* LEVEL NODE */
-.node{
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  width:70px;
-  height:70px;
-  border-radius:50%;
+.world{
   background:#fff;
   color:#333;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-  cursor:pointer;
-  transition:.25s;
-}
-
-.node.locked{
-  opacity:.4;
-  pointer-events:none;
-}
-
-.node.active{
-  background:#facc15;
-}
-
-.node:hover{
-  transform:translateX(-50%) scale(1.1);
-}
-
-/* FOOTER */
-.footer{
+  border-radius:22px;
+  padding:20px;
   text-align:center;
-  padding:16px;
-}
-
-button{
-  padding:12px 22px;
-  border:none;
-  border-radius:16px;
-  background:#facc15;
-  font-size:16px;
   cursor:pointer;
+  box-shadow:0 10px 25px #0003;
 }
+.locked{opacity:.4;pointer-events:none}
+.world span{font-size:48px}
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>🗺️ Learning World</h1>
-  <p id="kidInfo"></p>
-  ⭐ Stars: <b id="stars">0</b> | Level: <b id="level">1</b>
-</div>
+<header>
+  <h1>🌍 Learning World</h1>
+  <p id="info"></p>
+</header>
 
-<div class="map">
-  <div class="path"></div>
+<div class="map" id="map"></div>
 
-  <div class="node" style="top:40px" onclick="openLevel(1)">🌱</div>
-  <div class="node" style="top:130px" onclick="openLevel(2)">🔤</div>
-  <div class="node" style="top:220px" onclick="openLevel(3)">🔢</div>
-  <div class="node" style="top:310px" onclick="openLevel(4)">🎨</div>
-  <div class="node" style="top:400px" onclick="openLevel(5)">🧠</div>
-</div>
-
-<div class="footer">
-  <button onclick="goHome()">⬅ Back Home</button>
-</div>
+<button onclick="location.href='index.html'">⬅ Home</button>
 
 <script>
-/* ===== LOAD KID ===== */
-const kids = JSON.parse(localStorage.getItem("klq_kids") || "[]");
-const idx = localStorage.getItem("klq_active_kid");
-const kid = kids[idx];
+/* ===== CHILD ===== */
+const kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
+const active=localStorage.getItem("klq_active_kid")||0;
+const kid=kids[active]||{name:"Player",age:5,stars:0};
 
-if(!kid){ location.href="index.html"; }
+document.getElementById("info").innerText =
+`${kid.name} • Age ${kid.age} • ⭐ ${kid.stars}`;
 
-kid.level ||= 1;
-kid.stars ||= 0;
-kid.avatar ||= "🧒";
+/* ===== WORLDS ===== */
+const worlds=[
+ {id:1,name:"Letters Land",icon:"🔤",req:0,page:"mini.html"},
+ {id:2,name:"Numbers Valley",icon:"🔢",req:10,page:"mini.html"},
+ {id:3,name:"Shapes City",icon:"🔺",req:20,page:"mini.html"},
+ {id:4,name:"Logic Forest",icon:"🧠",req:30,page:"mini.html"},
+ {id:5,name:"Creative World",icon:"🎨",req:40,page:"classroom.html"}
+];
 
-document.getElementById("kidInfo").innerText =
-`${kid.avatar} ${kid.name} • Age ${kid.age}`;
+const map=document.getElementById("map");
 
-stars.innerText = kid.stars;
-level.innerText = kid.level;
-
-/* ===== LOCK LEVELS ===== */
-const nodes = document.querySelectorAll(".node");
-nodes.forEach((node,i)=>{
-  const lvl = i+1;
-  if(lvl > kid.level) node.classList.add("locked");
-  if(lvl === kid.level) node.classList.add("active");
+worlds.forEach(w=>{
+  const d=document.createElement("div");
+  d.className="world"+(kid.stars<w.req?" locked":"");
+  d.innerHTML=`<span>${w.icon}</span><br><b>${w.name}</b><br>⭐ ${w.req}+`;
+  d.onclick=()=>location.href=w.page;
+  map.appendChild(d);
 });
-
-/* ===== OPEN LEVEL ===== */
-function openLevel(lvl){
-  if(lvl === 1 || lvl === 2){
-    location.href="classroom.html";
-  } else {
-    location.href="mini.html";
-  }
-}
-
-function goHome(){
-  location.href="index.html";
-}
 </script>
 
 </body>
