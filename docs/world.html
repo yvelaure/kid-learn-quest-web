@@ -2,70 +2,89 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>World Map | Kid Learn Quest</title>
+<title>Learning World | Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(#60a5fa,#34d399);
+  font-family:"Arial Rounded MT Bold",Arial,sans-serif;
+  background:linear-gradient(180deg,#60a5fa,#34d399);
   color:#fff;
 }
 
+/* HEADER */
 .header{
   padding:16px;
   text-align:center;
 }
 
+/* MAP */
 .map{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:20px;
-  padding:20px;
+  position:relative;
+  height:520px;
+  margin:20px;
+  background:#e0f2fe;
+  border-radius:30px;
+  overflow:hidden;
 }
 
-.world{
-  width:90%;
-  max-width:420px;
+/* PATH */
+.path{
+  position:absolute;
+  width:6px;
+  background:#94a3b8;
+  left:50%;
+  top:40px;
+  bottom:40px;
+  transform:translateX(-50%);
+  border-radius:6px;
+}
+
+/* LEVEL NODE */
+.node{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  width:70px;
+  height:70px;
+  border-radius:50%;
   background:#fff;
   color:#333;
-  border-radius:24px;
-  padding:20px;
-  text-align:center;
-  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  cursor:pointer;
+  transition:.25s;
 }
 
-.world.locked{
+.node.locked{
   opacity:.4;
+  pointer-events:none;
 }
 
-.world span{
-  font-size:48px;
-  display:block;
+.node.active{
+  background:#facc15;
 }
 
-.world button{
-  margin-top:10px;
-  padding:10px 18px;
+.node:hover{
+  transform:translateX(-50%) scale(1.1);
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  padding:16px;
+}
+
+button{
+  padding:12px 22px;
   border:none;
-  border-radius:14px;
-  background:#4f46e5;
-  color:#fff;
+  border-radius:16px;
+  background:#facc15;
   font-size:16px;
   cursor:pointer;
-}
-
-.path{
-  width:6px;
-  height:30px;
-  background:#fff;
-  border-radius:10px;
-}
-
-.footer{
-  padding:20px;
 }
 </style>
 </head>
@@ -73,76 +92,62 @@ body{
 <body>
 
 <div class="header">
-  <h1>🌍 Learning World</h1>
+  <h1>🗺️ Learning World</h1>
   <p id="kidInfo"></p>
-  <p>⭐ Stars: <b id="stars">0</b> | Level: <b id="level">1</b></p>
+  ⭐ Stars: <b id="stars">0</b> | Level: <b id="level">1</b>
 </div>
 
-<div class="map" id="map"></div>
+<div class="map">
+  <div class="path"></div>
+
+  <div class="node" style="top:40px" onclick="openLevel(1)">🌱</div>
+  <div class="node" style="top:130px" onclick="openLevel(2)">🔤</div>
+  <div class="node" style="top:220px" onclick="openLevel(3)">🔢</div>
+  <div class="node" style="top:310px" onclick="openLevel(4)">🎨</div>
+  <div class="node" style="top:400px" onclick="openLevel(5)">🧠</div>
+</div>
 
 <div class="footer">
-  <button style="width:100%" onclick="goHome()">⬅ Back Home</button>
+  <button onclick="goHome()">⬅ Back Home</button>
 </div>
 
 <script>
-/* ===== ACTIVE KID ===== */
-const kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
-const active = localStorage.getItem("klq_active_kid");
-const kid = kids[active];
+/* ===== LOAD KID ===== */
+const kids = JSON.parse(localStorage.getItem("klq_kids") || "[]");
+const idx = localStorage.getItem("klq_active_kid");
+const kid = kids[idx];
 
-if(!kid){
-  alert("No child selected");
-  location.href="index.html";
-}
+if(!kid){ location.href="index.html"; }
 
-kid.level = kid.level || 1;
-kid.stars = kid.stars || 0;
+kid.level ||= 1;
+kid.stars ||= 0;
+kid.avatar ||= "🧒";
 
 document.getElementById("kidInfo").innerText =
-  `${kid.avatar} ${kid.name} • Age ${kid.age}`;
-document.getElementById("stars").innerText = kid.stars;
-document.getElementById("level").innerText = kid.level;
+`${kid.avatar} ${kid.name} • Age ${kid.age}`;
 
-/* ===== WORLDS ===== */
-const worlds = [
-  {id:1, name:"Alphabet Land", icon:"🔤", unlock:1},
-  {id:2, name:"Number Valley", icon:"🔢", unlock:2},
-  {id:3, name:"Shape City", icon:"🔺", unlock:3},
-  {id:4, name:"Color Forest", icon:"🎨", unlock:4},
-  {id:5, name:"Memory Mountain", icon:"🧠", unlock:5}
-];
+stars.innerText = kid.stars;
+level.innerText = kid.level;
 
-const map = document.getElementById("map");
-
-worlds.forEach((w,i)=>{
-  const div=document.createElement("div");
-  const locked = kid.level < w.unlock;
-  div.className = "world"+(locked?" locked":"");
-  div.innerHTML = `
-    <span>${w.icon}</span>
-    <h2>${w.name}</h2>
-    ${locked
-      ? `<p>🔒 Unlock at Level ${w.unlock}</p>`
-      : `<button onclick="enterWorld(${w.id})">Enter</button>`
-    }
-  `;
-  map.appendChild(div);
-
-  if(i < worlds.length-1){
-    const path=document.createElement("div");
-    path.className="path";
-    map.appendChild(path);
-  }
+/* ===== LOCK LEVELS ===== */
+const nodes = document.querySelectorAll(".node");
+nodes.forEach((node,i)=>{
+  const lvl = i+1;
+  if(lvl > kid.level) node.classList.add("locked");
+  if(lvl === kid.level) node.classList.add("active");
 });
 
-/* ===== ENTER WORLD ===== */
-function enterWorld(id){
-  // For now all worlds lead to Mini Games
-  window.location.href = "mini.html";
+/* ===== OPEN LEVEL ===== */
+function openLevel(lvl){
+  if(lvl === 1 || lvl === 2){
+    location.href="classroom.html";
+  } else {
+    location.href="mini.html";
+  }
 }
 
 function goHome(){
-  window.location.href="index.html";
+  location.href="index.html";
 }
 </script>
 
