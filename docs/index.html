@@ -1,187 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Kid Learn Quest</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#6a5acd,#7b68ee);
-  color:#fff;
-  text-align:center;
-}
-
-/* HEADER */
-.header{
-  padding:30px 20px;
-}
-.stats{
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  margin-top:15px;
-}
-.stat{
-  background:rgba(255,255,255,.25);
-  padding:12px 18px;
-  border-radius:18px;
-  font-size:14px;
-}
-
-/* MAIN */
-.main{
-  padding:20px;
-}
-.start-btn{
-  padding:18px 28px;
-  border:none;
-  border-radius:22px;
-  background:#22c55e;
-  color:#fff;
-  font-size:20px;
-  cursor:pointer;
-}
-
-/* PREMIUM BOX */
-.unlock-box{
-  background:#fff;
-  color:#333;
-  border-radius:22px;
-  padding:20px;
-  margin:24px auto;
-  max-width:340px;
-}
-.unlock-box a,
-.unlock-box button{
-  display:block;
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  border-radius:14px;
-  border:none;
-  text-decoration:none;
-  font-weight:bold;
-  cursor:pointer;
-}
-.unlock-box a{
-  background:#635bff;
-  color:#fff;
-}
-.unlock-box .stripe{
-  background:#0a2540;
-}
-.unlock-box button{
-  background:#22c55e;
-  color:#fff;
-}
-
-/* FOOTER */
-.footer{
-  font-size:13px;
-  padding:20px;
-  opacity:.85;
-}
-.footer a{
-  color:#fff;
-  text-decoration:underline;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Kid Learn Quest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <h1>⭐ Kid Learn Quest</h1>
-  <p>A fun learning adventure for kids</p>
-
-  <div class="stats">
-    <div class="stat">⭐ Stars<br><b id="stars">0</b></div>
-    <div class="stat">🏆 Level<br><b id="level">1</b></div>
+  <div class="header">
+    <h1>🌈 Kid Learn Quest</h1>
+    <p>Play • Learn • Grow</p>
   </div>
-</div>
 
-<!-- MAIN -->
-<div class="main">
-  <button class="start-btn" onclick="startGame()">
-    ▶ Start Learning
-  </button>
-</div>
+  <div class="section">
 
-<!-- PREMIUM -->
-<div class="unlock-box" id="premiumBox">
-  <h2>🔓 Unlock Full Game</h2>
-  <p>• All games<br>• All worlds<br>• Teacher tools</p>
+    <div class="card" onclick="location.href='mini.html'">
+      <span>🎮</span>
+      <h2>Mini Games</h2>
+      <p>Math • Reading • Logic</p>
+    </div>
 
-  <!-- PAYPAL -->
-  <a href="https://www.paypal.com/ncp/payment/ELCA44CL2QTX4" target="_blank">
-    Pay with PayPal
-  </a>
+    <div class="card" onclick="location.href='classroom.html'">
+      <span>🏫</span>
+      <h2>Interactive Classroom</h2>
+      <p>Hands-on learning</p>
+    </div>
 
-  <!-- STRIPE -->
-  <a class="stripe"
-     href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00"
-     target="_blank">
-    Pay with Card (Stripe)
-  </a>
+    <div class="card" onclick="location.href='world.html'">
+      <span>🗺️</span>
+      <h2>Learning World</h2>
+      <p>Progress map</p>
+    </div>
 
-  <button onclick="unlockPremium()">I Paid – Unlock</button>
-  <button onclick="restorePurchase()">Restore Purchase</button>
-</div>
+    <div class="card" onclick="location.href='parent.html'">
+      <span>👨‍👩‍👧</span>
+      <h2>Parents & Teachers</h2>
+      <p>Reports & analytics</p>
+    </div>
 
-<!-- FOOTER -->
-<div class="footer">
-  Kid Learn Quest © 2025 |
-  <a href="parents.html">Parent Dashboard</a> |
-  <a href="privacy.html">Privacy Policy</a> |
-  <a href="terms.html">Terms</a>
-</div>
+  </div>
 
-<script>
-/* ===== LOAD CHILD ===== */
-let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
-let idx = localStorage.getItem("klq_active_kid")||0;
-let kid = kids[idx] || {stars:0,level:1};
-
-document.getElementById("stars").textContent = kid.stars || 0;
-document.getElementById("level").textContent = kid.level || 1;
-
-/* ===== PREMIUM ===== */
-function isPremium(){
-  return localStorage.getItem("klq_premium")==="true";
-}
-
-function unlockPremium(){
-  localStorage.setItem("klq_premium","true");
-  alert("🎉 Premium unlocked!");
-  document.getElementById("premiumBox").style.display="none";
-}
-
-function restorePurchase(){
-  if(isPremium()){
-    alert("✅ Premium already active on this device.");
-  }else{
-    alert(
-      "❌ No purchase found.\n\n" +
-      "• Use the same browser\n" +
-      "• Check your email receipt\n" +
-      "• Then tap 'I Paid – Unlock'"
-    );
-  }
-}
-
-if(isPremium()){
-  document.getElementById("premiumBox").style.display="none";
-}
-
-/* ===== START ===== */
-function startGame(){
-  window.location.href="world.html";
-}
-</script>
+  <div class="footer">© 2026 Kid Learn Quest</div>
 
 </body>
 </html>
