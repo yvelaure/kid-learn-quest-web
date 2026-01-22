@@ -1,37 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Certificate</title>
+<title>Certificates | Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 body{
-  font-family:Georgia;
-  text-align:center;
-  padding:40px;
-  border:10px solid gold;
+  font-family:system-ui, Arial;
+  background:#f8fafc;
+  margin:0;
+  padding:20px;
 }
-h1{font-size:40px}
-.name{font-size:32px;margin:20px}
+.cert{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px #0002;
+  text-align:center;
+}
+h1{color:#4f46e5}
+.badge{font-size:60px}
+button{
+  margin-top:20px;
+  padding:12px 20px;
+  border:none;
+  border-radius:12px;
+  background:#4f46e5;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<h1>🎓 Certificate of Achievement</h1>
-<p>This certifies that</p>
-<div class="name" id="name"></div>
-<p>has successfully completed learning activities</p>
-<p>⭐ Stars Earned: <span id="stars"></span></p>
-<p>Date: <span id="date"></span></p>
+<div class="cert" id="cert">
+  <div class="badge">🏆</div>
+  <h1>Certificate of Achievement</h1>
+  <p>This certificate is proudly presented to</p>
+  <h2 id="name"></h2>
+  <p>For completing learning activities and earning</p>
+  <h3>⭐ <span id="stars"></span> Stars</h3>
+  <p>Kid Learn Quest</p>
+  <small id="date"></small>
+</div>
 
-<button onclick="window.print()">📄 Download PDF</button>
+<button onclick="window.print()">🖨️ Print / Save PDF</button>
+<button onclick="location.href='index.html'">⬅ Back</button>
 
 <script>
-let kids=JSON.parse(localStorage.getItem("klq_kids"));
-let k=kids[localStorage.getItem("klq_active_kid")||0];
+const kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
+const active=localStorage.getItem("klq_active_kid")||0;
+const kid=kids[active]||{name:"Student",stars:0};
 
-name.textContent=k.name;
-stars.textContent=k.stars;
-date.textContent=new Date().toDateString();
+document.getElementById("name").innerText=kid.name;
+document.getElementById("stars").innerText=kid.stars;
+document.getElementById("date").innerText=new Date().toDateString();
 </script>
+
 </body>
 </html>
