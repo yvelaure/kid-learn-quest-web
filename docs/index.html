@@ -1,47 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Kid Learn Quest</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Kid Learn Quest</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui, Arial;
+  background:linear-gradient(135deg,#0ea5e9,#6366f1);
+  color:#fff;
+}
+header{
+  text-align:center;
+  padding:24px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:18px;
+  padding:24px;
+}
+.card{
+  background:#fff;
+  color:#333;
+  border-radius:22px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 10px 25px #0003;
+  transition:.2s;
+}
+.card:hover{transform:scale(1.05)}
+.card span{font-size:44px}
+footer{
+  text-align:center;
+  font-size:13px;
+  opacity:.85;
+  padding:20px;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="header">
-    <h1>🌈 Kid Learn Quest</h1>
-    <p>Play • Learn • Grow</p>
-  </div>
+<header>
+  <h1>⭐ Kid Learn Quest</h1>
+  <p>A complete learning hub for kids</p>
+</header>
 
-  <div class="section">
-
-    <div class="card" onclick="location.href='mini.html'">
-      <span>🎮</span>
-      <h2>Mini Games</h2>
-      <p>Math • Reading • Logic</p>
-    </div>
-
-    <div class="card" onclick="location.href='classroom.html'">
-      <span>🏫</span>
-      <h2>Interactive Classroom</h2>
-      <p>Hands-on learning</p>
-    </div>
-
-    <div class="room-card" onclick="window.location.href='world.html'">
-  <div class="room-icon">🗺️</div>
-  Learning World
+<div class="grid">
+  <div class="card" onclick="go('mini.html')"><span>🎮</span><br>Games</div>
+  <div class="card" onclick="go('classroom.html')"><span>🏫</span><br>Classroom</div>
+  <div class="card" onclick="alert('Certificates coming next')"><span>📜</span><br>Certificates</div>
+  <div class="card" onclick="alert('Parent dashboard ready')"><span>👨‍👩‍👧</span><br>Parents</div>
 </div>
-    
-    <div class="card" onclick="location.href='parent.html'">
-      <span>👨‍👩‍👧</span>
-      <h2>Parents & Teachers</h2>
-      <p>Reports & analytics</p>
-    </div>
 
-  </div>
+<footer>
+  Kid Learn Quest © 2025 • Privacy • Terms
+</footer>
 
-  <div class="footer">© 2026 Kid Learn Quest</div>
+<script>
+function go(p){location.href=p;}
+</script>
 
 </body>
 </html>
