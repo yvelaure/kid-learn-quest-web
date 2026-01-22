@@ -81,14 +81,23 @@ let kid=kids[active]||{name:"Player",age:5,stars:0};
 document.getElementById("kidInfo").innerText =
   `${kid.name} • Age ${kid.age} • ⭐ ${kid.stars}`;
 
+  function difficulty(kid){
+  if(kid.age<=4) return 1;
+  if(kid.age<=6) return 2;
+  if(kid.age<=8) return 3;
+  return 4;
+}
 /* ===== VOICE ===== */
-function speak(t){
+function speak(text){
   speechSynthesis.cancel();
-  let u=new SpeechSynthesisUtterance(t);
+  const u=new SpeechSynthesisUtterance(text);
   u.rate=0.9;
+  u.pitch=1.1;
   speechSynthesis.speak(u);
 }
-
+  speak("Choose the correct answer");
+speak("Great job!");
+speak("Try again");
 /* ===== SAVE ===== */
 function reward(){
   kid.stars=(kid.stars||0)+1;
