@@ -104,6 +104,12 @@ kid.skill=kid.skill||{};
   kid.skill[s]=kid.skill[s]||{xp:0,level:1};
 });
 
+  function difficulty(kid){
+  if(kid.age<=4) return 1;
+  if(kid.age<=6) return 2;
+  if(kid.age<=8) return 3;
+  return 4;
+}
 function save(){
   kids[active]=kid;
   localStorage.setItem("klq_kids",JSON.stringify(kids));
@@ -119,11 +125,11 @@ document.getElementById("xpBar").style.width=Math.min(kid.stars*5,100)+"%";
 /* ========= VOICE ========= */
 function speak(text){
   speechSynthesis.cancel();
-  let u=new SpeechSynthesisUtterance(text);
+  const u=new SpeechSynthesisUtterance(text);
   u.rate=0.9;
+  u.pitch=1.1;
   speechSynthesis.speak(u);
 }
-
 /* ========= CORE ========= */
 function reward(subject){
   kid.stars++;
@@ -136,6 +142,9 @@ function reward(subject){
   save();
 }
 
+  speak("Choose the correct answer");
+speak("Great job!");
+speak("Try again");
 function back(){
   document.getElementById("game").classList.add("hidden");
   document.getElementById("hub").classList.remove("hidden");
