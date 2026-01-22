@@ -1,213 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Classroom – Kid Learn Quest</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f3f6ff;
-  text-align:center;
-}
-h2{margin:10px}
-.menu{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.menu button{
-  padding:10px 14px;
-  border:none;
-  border-radius:14px;
-  background:#4f46e5;
-  color:white;
-  font-size:14px;
-}
-.top{
-  display:flex;
-  justify-content:space-around;
-  margin:10px 0;
-  font-size:16px;
-}
-canvas{
-  background:#fff;
-  border-radius:20px;
-  box-shadow:0 10px 24px rgba(0,0,0,.2);
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Classroom</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-<h2>🏫 Classroom</h2>
-
-<div class="menu">
-  <button onclick="startTrace()">✏️ Trace</button>
-  <button onclick="startMatch()">🧩 Match</button>
-  <button onclick="startMath()">➕ Math</button>
-  <button onclick="startListening()">🎧 Listen</button>
+<div class="header">
+  <h1>🏫 Classroom</h1>
+  <p>Select a subject</p>
 </div>
 
-<div class="top">
-  <div>⭐ <span id="stars">0</span></div>
-  <div>🏆 Level <span id="level">1</span></div>
+<div class="section">
+
+  <div class="card" onclick="alert('Alphabet Tracing Game')">
+    <span>🔤</span>
+    <h2>ABC Writing</h2>
+    <p>Trace letters</p>
+  </div>
+
+  <div class="card" onclick="alert('Numbers Game')">
+    <span>🔢</span>
+    <h2>Counting</h2>
+    <p>Count objects</p>
+  </div>
+
+  <div class="card" onclick="alert('Shapes Canvas')">
+    <span>🔺</span>
+    <h2>Shapes</h2>
+    <p>Match & draw</p>
+  </div>
+
+  <div class="card" onclick="alert('Colors Game')">
+    <span>🎨</span>
+    <h2>Colors</h2>
+    <p>Mix & identify</p>
+  </div>
+
+  <div class="card" onclick="alert('Science Lab')">
+    <span>🧪</span>
+    <h2>Science</h2>
+    <p>Explore nature</p>
+  </div>
+
 </div>
-
-<canvas id="board" width="320" height="420"></canvas>
-
-<script>
-/* ===== LOAD CHILD ===== */
-let kids = JSON.parse(localStorage.getItem("klq_kids")||"[]");
-let idx = localStorage.getItem("klq_active_kid")||0;
-let kid = kids[idx] || {age:4,stars:0,level:1};
-kid.stars ||= 0; kid.level ||= 1;
-
-stars.textContent = kid.stars;
-level.textContent = kid.level;
-
-function save(){
-  kids[idx]=kid;
-  localStorage.setItem("klq_kids",JSON.stringify(kids));
-}
-
-/* ===== CANVAS ===== */
-const c = board;
-const ctx = c.getContext("2d");
-
-let mode="";
-let drawing=false,lastX=0,lastY=0;
-let target="";
-let cards=[],selected=[];
-let answer=0;
-
-/* ===== RESET ===== */
-function reset(){
-  ctx.clearRect(0,0,320,420);
-  cards=[]; selected=[];
-}
-
-/* ===== TRACE ===== */
-function startTrace(){
-  reset(); mode="trace";
-  target = String.fromCharCode(65+Math.random()*26|0);
-  ctx.font="180px Arial";
-  ctx.globalAlpha=0.2;
-  ctx.textAlign="center";
-  ctx.fillText(target,160,260);
-  ctx.globalAlpha=1;
-}
-
-/* ===== MATCH ===== */
-function startMatch(){
-  reset(); mode="match";
-  let icons=["🍎","🍌","🍎","🍌"];
-  icons.sort(()=>Math.random()-0.5);
-  icons.forEach((v,i)=>{
-    cards.push({v,x:(i%2)*140+90,y:Math.floor(i/2)*140+160,open:false,done:false});
-  });
-}
-function drawMatch(){
-  ctx.clearRect(0,0,320,420);
-  cards.forEach(c=>{
-    ctx.fillStyle=c.open||c.done?"#fff":"#4f46e5";
-    ctx.fillRect(c.x-45,c.y-45,90,90);
-    if(c.open||c.done){
-      ctx.font="40px Arial";
-      ctx.fillStyle="#000";
-      ctx.textAlign="center";
-      ctx.fillText(c.v,c.x,c.y+14);
-    }
-  });
-}
-
-/* ===== MATH ===== */
-function startMath(){
-  reset(); mode="math";
-  let a=Math.floor(Math.random()*5)+1;
-  let b=Math.floor(Math.random()*5)+1;
-  answer=a+b;
-  ctx.font="48px Arial";
-  ctx.fillStyle="#000";
-  ctx.fillText(`${a} + ${b} = ?`,160,220);
-}
-
-/* ===== LISTEN ===== */
-function startListening(){
-  reset(); mode="listen";
-  let letters="ABC";
-  target = letters[Math.random()*letters.length|0];
-  let utter = new SpeechSynthesisUtterance(target);
-  speechSynthesis.speak(utter);
-  ctx.font="70px Arial";
-  ctx.fillStyle="#4f46e5";
-  ctx.fillText("Tap when you hear it",160,230);
-}
-
-/* ===== INPUT ===== */
-c.onmousedown = e=>{
-  drawing=true;
-  lastX=e.offsetX; lastY=e.offsetY;
-};
-c.onmousemove = e=>{
-  if(!drawing || mode!=="trace") return;
-  ctx.beginPath();
-  ctx.moveTo(lastX,lastY);
-  ctx.lineTo(e.offsetX,e.offsetY);
-  ctx.lineWidth=6;
-  ctx.strokeStyle="#000";
-  ctx.stroke();
-  lastX=e.offsetX; lastY=e.offsetY;
-};
-c.onmouseup = ()=>drawing=false;
-
-c.onclick = e=>{
-  let x=e.offsetX,y=e.offsetY;
-
-  if(mode==="match"){
-    cards.forEach(c=>{
-      if(!c.open&&!c.done && x>c.x-45&&x<c.x+45&&y>c.y-45&&y<c.y+45){
-        c.open=true; selected.push(c);
-        if(selected.length===2){
-          if(selected[0].v===selected[1].v){
-            selected.forEach(s=>s.done=true);
-            kid.stars++; kid.level++;
-            save();
-            stars.textContent=kid.stars;
-            level.textContent=kid.level;
-          }
-          setTimeout(()=>{selected.forEach(s=>s.open=false);selected=[]},600);
-        }
-      }
-    });
-  }
-
-  if(mode==="math"){
-    kid.stars++; kid.level++;
-    save();
-    stars.textContent=kid.stars;
-    level.textContent=kid.level;
-    startMath();
-  }
-
-  if(mode==="listen"){
-    kid.stars++; kid.level++;
-    save();
-    stars.textContent=kid.stars;
-    level.textContent=kid.level;
-    startListening();
-  }
-};
-
-/* ===== LOOP ===== */
-function loop(){
-  if(mode==="match") drawMatch();
-  requestAnimationFrame(loop);
-}
-loop();
-</script>
 
 </body>
 </html>
