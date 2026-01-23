@@ -1,91 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Kid Learn Quest</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<!-- CONFETTI -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<meta charset="UTF-8" />
+<title>Kid Learn Quest – Learning Hub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
+/* ===== GLOBAL STYLE SYSTEM ===== */
 :root{
   --bg1:#0ea5e9;
   --bg2:#6366f1;
   --card:#ffffff;
-  --accent:#4f46e5;
+  --accent:#22c55e;
 }
+*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:system-ui, -apple-system, BlinkMacSystemFont;
+  font-family:system-ui,Arial;
   background:linear-gradient(135deg,var(--bg1),var(--bg2));
   color:#fff;
 }
+.hidden{display:none}
+
+/* ===== ANIMATIONS ===== */
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+  100%{transform:translateY(0)}
+}
+@keyframes pop{
+  0%{transform:scale(.5);opacity:0}
+  100%{transform:scale(1);opacity:1}
+}
+.confetti{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+
+/* ===== UI ===== */
 header{
-  padding:26px;
+  padding:20px;
   text-align:center;
 }
-header h1{margin:0;font-size:28px}
-header p{opacity:.9}
-
-.topbar{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:14px;
-}
-.topbar button{
-  background:#ffffff22;
-  color:#fff;
+h1{margin:0}
+button{
   border:none;
-  border-radius:14px;
-  padding:8px 14px;
+  border-radius:16px;
+  padding:12px 18px;
+  font-size:16px;
   cursor:pointer;
+  background:#4f46e5;
+  color:#fff;
 }
-
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:18px;
-  padding:24px;
-  max-width:1000px;
-  margin:auto;
+  gap:16px;
+  padding:20px;
 }
 .card{
   background:var(--card);
   color:#333;
   border-radius:22px;
-  padding:22px;
+  padding:20px;
   text-align:center;
+  box-shadow:0 12px 30px #0003;
   cursor:pointer;
-  box-shadow:0 12px 28px rgba(0,0,0,.25);
-  transition:.25s;
+  animation:float 3s ease-in-out infinite;
 }
-.card:hover{transform:translateY(-6px)}
-.card span{
-  font-size:46px;
-  display:block;
-  margin-bottom:6px;
+.card span{font-size:48px}
+
+/* ===== GAME ===== */
+.dropzone{
+  border:3px dashed #999;
+  border-radius:18px;
+  padding:30px;
+  margin:20px;
+  font-size:40px;
+}
+.draggable{
+  font-size:48px;
+  margin:12px;
+  cursor:grab;
 }
 
-.badge{
-  font-size:12px;
-  background:gold;
-  color:#000;
-  padding:2px 8px;
-  border-radius:8px;
-  display:inline-block;
-  margin-top:6px;
+/* ===== DRAW ===== */
+canvas{
+  background:#fff;
+  border-radius:16px;
+  touch-action:none;
 }
-
-footer{
-  text-align:center;
-  font-size:13px;
-  opacity:.85;
-  padding:24px;
-}
-footer a{color:#fff;text-decoration:underline}
 </style>
 </head>
 
@@ -93,100 +98,163 @@ footer a{color:#fff;text-decoration:underline}
 
 <header>
   <h1>⭐ Kid Learn Quest</h1>
-  <p>Your child’s complete learning world</p>
-
-  <div class="topbar">
-    <button onclick="switchChild()">👧 Switch Child</button>
-    <button onclick="parent()">👨‍👩‍👧 Parent</button>
-    <button onclick="login()">☁️ Sync</button>
-  </div>
-
-  <p id="childInfo"></p>
+  <p id="subtitle">A fun learning world</p>
 </header>
 
-<div class="grid">
-
-  <div class="card" onclick="go('world.html')">
-    <span>🌍</span>
-    Learning World
+<!-- SETUP -->
+<div id="setup" class="grid">
+  <div class="card">
+    <h3>👧 Child Name</h3>
+    <input id="name" placeholder="Name" />
+    <h3>🎂 Age</h3>
+    <input id="age" type="number" min="3" max="10" />
+    <br><br>
+    <button onclick="start()">Start Learning</button>
   </div>
-
-  <div class="card" onclick="go('classroom.html')">
-    <span>🏫</span>
-    Classroom
-  </div>
-
-  <div class="card" onclick="go('mini.html')">
-    <span>🎮</span>
-    Mini Games
-  </div>
-
-  <div class="card" onclick="go('draw.html')">
-    <span>✏️</span>
-    Draw & Trace
-  </div>
-
-  <div class="card" onclick="go('parents.html')">
-    <span>📊</span>
-    Reports
-    <div class="badge">Parents</div>
-  </div>
-
 </div>
 
-<footer>
-  Kid Learn Quest © 2025 •
-  <a href="privacy.html">Privacy</a> •
-  <a href="terms.html">Terms</a>
-</footer>
+<!-- HUB -->
+<div id="hub" class="hidden">
+  <p style="text-align:center">
+    ⭐ Stars: <b id="stars">0</b> |
+    🎯 Level: <b id="level">1</b>
+  </p>
+
+  <div class="grid">
+    <div class="card" onclick="letters()"><span>🔤</span><br>Letters</div>
+    <div class="card" onclick="numbers()"><span>🔢</span><br>Numbers</div>
+    <div class="card" onclick="shapes()"><span>🔺</span><br>Shapes</div>
+    <div class="card" onclick="colors()"><span>🎨</span><br>Colors</div>
+    <div class="card" onclick="draw()"><span>✏️</span><br>Draw</div>
+    <div class="card" onclick="parent()"><span>👨‍👩‍👧</span><br>Parent</div>
+  </div>
+</div>
+
+<!-- GAME AREA -->
+<div id="game" class="hidden"></div>
+
+<!-- CONFETTI -->
+<canvas id="confetti" class="confetti"></canvas>
 
 <script>
-/* ===============================
-   GLOBAL CHILD STATE
-================================ */
-let child = JSON.parse(localStorage.getItem("klq_child"));
+/* ===== STATE ===== */
+let kid={name:"",age:0,stars:0,level:1,trial:true};
 
-if(!child){
-  // first-time setup (trial-safe)
-  child = {
-    name:"Guest",
-    grade:"K",
-    age:5,
-    level:1,
-    stars:0,
-    trial:true
-  };
-  localStorage.setItem("klq_child",JSON.stringify(child));
+/* ===== START ===== */
+function start(){
+  kid.name=name.value;
+  kid.age=+age.value||5;
+  setup.classList.add("hidden");
+  hub.classList.remove("hidden");
 }
 
-document.getElementById("childInfo").innerText =
-  `${child.name} • Grade ${child.grade} • ⭐ ${child.stars} • Level ${child.level}`;
-
-/* ===============================
-   NAV
-================================ */
-function go(p){ location.href=p; }
-function parent(){ location.href="parents.html"; }
-function switchChild(){ location.href="profiles.html"; }
-
-/* ===============================
-   CONFETTI (GLOBAL)
-================================ */
-function celebrate(){
-  confetti({
-    particleCount:120,
-    spread:80,
-    origin:{y:.6}
-  });
+/* ===== REWARD ===== */
+function reward(){
+  kid.stars++;
+  if(kid.stars%5===0)kid.level++;
+  stars.innerText=kid.stars;
+  level.innerText=kid.level;
+  confetti();
 }
 
-/* ===============================
-   CLOUD SYNC (READY)
-================================ */
-function login(){
-  alert("Firebase sync ready.\nAdd your Firebase keys to enable cloud accounts.");
+/* ===== LETTER GAME (DRAG) ===== */
+function letters(){
+  openGame(`
+    <h2>Drag the Letter A</h2>
+    <div class="draggable" draggable="true" ondragstart="drag(event)">A</div>
+    <div class="dropzone" ondrop="drop(event,'A')" ondragover="allow(event)">A</div>
+  `);
+}
+
+/* ===== NUMBERS ===== */
+function numbers(){
+  openGame(`
+    <h2>Tap Number 3</h2>
+    <button onclick="check(1)">1</button>
+    <button onclick="check(3)">3</button>
+    <button onclick="check(2)">2</button>
+  `);
+}
+
+/* ===== SHAPES ===== */
+function shapes(){
+  openGame(`
+    <h2>Pick the Triangle</h2>
+    <button onclick="check('🔺')">🔺</button>
+    <button onclick="fail()">⚪</button>
+  `);
+}
+
+/* ===== COLORS ===== */
+function colors(){
+  openGame(`
+    <h2>Tap Red</h2>
+    <div style="background:red;width:60px;height:60px;border-radius:50%" onclick="reward()"></div>
+  `);
+}
+
+/* ===== DRAW ===== */
+function draw(){
+  openGame(`
+    <h2>Draw Anything</h2>
+    <canvas id="c" width="300" height="300"></canvas>
+    <br><button onclick="reward()">Finish</button>
+  `);
+  initDraw();
+}
+
+/* ===== PARENT ===== */
+function parent(){
+  openGame(`
+    <h2>Parent Dashboard</h2>
+    <p>Name: ${kid.name}</p>
+    <p>Age: ${kid.age}</p>
+    <p>Stars: ${kid.stars}</p>
+    <p>Level: ${kid.level}</p>
+    <p>Status: Trial (payments disabled)</p>
+  `);
+}
+
+/* ===== HELPERS ===== */
+function openGame(html){
+  hub.classList.add("hidden");
+  game.classList.remove("hidden");
+  game.innerHTML=`<button onclick="back()">⬅ Back</button>${html}`;
+}
+function back(){
+  game.classList.add("hidden");
+  hub.classList.remove("hidden");
+}
+function check(v){reward()}
+function fail(){alert("Try again")}
+function allow(e){e.preventDefault()}
+function drag(e){e.dataTransfer.setData("t",e.target.innerText)}
+function drop(e,c){
+  e.preventDefault();
+  if(e.dataTransfer.getData("t")==c)reward();
+}
+
+/* ===== DRAW LOGIC ===== */
+function initDraw(){
+  const c=document.getElementById("c");
+  const x=c.getContext("2d");
+  let d=false;
+  c.onpointerdown=e=>{d=true;x.moveTo(e.offsetX,e.offsetY)};
+  c.onpointermove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke()}};
+  c.onpointerup=()=>d=false;
+}
+
+/* ===== CONFETTI ===== */
+function confetti(){
+  const c=confetti;
+  const x=c.getContext("2d");
+  c.width=innerWidth;c.height=innerHeight;
+  for(let i=0;i<80;i++){
+    x.fillStyle=`hsl(${Math.random()*360},80%,60%)`;
+    x.fillRect(Math.random()*c.width,Math.random()*c.height,6,6);
+  }
+  setTimeout(()=>x.clearRect(0,0,c.width,c.height),500);
 }
 </script>
-
 </body>
 </html>
