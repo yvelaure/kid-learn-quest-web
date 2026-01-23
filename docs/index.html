@@ -1,260 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Kid Learn Quest – Learning Hub</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<style>
-/* ===== GLOBAL STYLE SYSTEM ===== */
-:root{
-  --bg1:#0ea5e9;
-  --bg2:#6366f1;
-  --card:#ffffff;
-  --accent:#22c55e;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:system-ui,Arial;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2));
-  color:#fff;
-}
-.hidden{display:none}
-
-/* ===== ANIMATIONS ===== */
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-8px)}
-  100%{transform:translateY(0)}
-}
-@keyframes pop{
-  0%{transform:scale(.5);opacity:0}
-  100%{transform:scale(1);opacity:1}
-}
-.confetti{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-}
-
-/* ===== UI ===== */
-header{
-  padding:20px;
-  text-align:center;
-}
-h1{margin:0}
-button{
-  border:none;
-  border-radius:16px;
-  padding:12px 18px;
-  font-size:16px;
-  cursor:pointer;
-  background:#4f46e5;
-  color:#fff;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:16px;
-  padding:20px;
-}
-.card{
-  background:var(--card);
-  color:#333;
-  border-radius:22px;
-  padding:20px;
-  text-align:center;
-  box-shadow:0 12px 30px #0003;
-  cursor:pointer;
-  animation:float 3s ease-in-out infinite;
-}
-.card span{font-size:48px}
-
-/* ===== GAME ===== */
-.dropzone{
-  border:3px dashed #999;
-  border-radius:18px;
-  padding:30px;
-  margin:20px;
-  font-size:40px;
-}
-.draggable{
-  font-size:48px;
-  margin:12px;
-  cursor:grab;
-}
-
-/* ===== DRAW ===== */
-canvas{
-  background:#fff;
-  border-radius:16px;
-  touch-action:none;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kid Learn Quest</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<header>
-  <h1>⭐ Kid Learn Quest</h1>
-  <p id="subtitle">A fun learning world</p>
-</header>
+    <header>
+        <h1>⭐ Kid Learn Quest</h1>
+        <div class="stats">
+            <span>🌟 Stars: <b id="star-count">0</b></span> | 
+            <span>🎯 Level: <b id="level-count">1</b></span>
+        </div>
+    </header>
 
-<!-- SETUP -->
-<div id="setup" class="grid">
-  <div class="card">
-    <h3>👧 Child Name</h3>
-    <input id="name" placeholder="Name" />
-    <h3>🎂 Age</h3>
-    <input id="age" type="number" min="3" max="10" />
-    <br><br>
-    <button onclick="start()">Start Learning</button>
-  </div>
-</div>
+    <main id="game-container">
+        <div class="grid">
+            <div class="card" onclick="handleCategory('Letters', 'Let\'s learn letters!')">
+                <span class="emoji">🔤</span>
+                <h3>Letters</h3>
+            </div>
+            <div class="card" onclick="handleCategory('Numbers', 'One, two, three! Let\'s count!')">
+                <span class="emoji">🔢</span>
+                <h3>Numbers</h3>
+            </div>
+            <div class="card" onclick="handleCategory('Shapes', 'Circle, Square, Triangle!')">
+                <span class="emoji">🔺</span>
+                <h3>Shapes</h3>
+            </div>
+            <div class="card" onclick="handleCategory('Colors', 'What is your favorite color?')">
+                <span class="emoji">🎨</span>
+                <h3>Colors</h3>
+            </div>
+            <div class="card draw" onclick="handleCategory('Draw', 'Time to be an artist!')">
+                <span class="emoji">✏️</span>
+                <h3>Draw</h3>
+            </div>
+            <div class="card parent" onclick="openParentGate()">
+                <span class="emoji">👨‍👩‍👧</span>
+                <h3>Parent</h3>
+            </div>
+        </div>
+    </main>
 
-<!-- HUB -->
-<div id="hub" class="hidden">
-  <p style="text-align:center">
-    ⭐ Stars: <b id="stars">0</b> |
-    🎯 Level: <b id="level">1</b>
-  </p>
+    <div id="parent-modal" class="modal">
+        <div class="modal-content">
+            <h3>Parents Only!</h3>
+            <p id="math-problem"></p>
+            <input type="number" id="parent-answer" placeholder="?">
+            <button onclick="checkParentAnswer()">Unlock Settings</button>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
 
-  <div class="grid">
-    <div class="card" onclick="letters()"><span>🔤</span><br>Letters</div>
-    <div class="card" onclick="numbers()"><span>🔢</span><br>Numbers</div>
-    <div class="card" onclick="shapes()"><span>🔺</span><br>Shapes</div>
-    <div class="card" onclick="colors()"><span>🎨</span><br>Colors</div>
-    <div class="card" onclick="draw()"><span>✏️</span><br>Draw</div>
-    <div class="card" onclick="parent()"><span>👨‍👩‍👧</span><br>Parent</div>
-  </div>
-</div>
-
-<!-- GAME AREA -->
-<div id="game" class="hidden"></div>
-
-<!-- CONFETTI -->
-<canvas id="confetti" class="confetti"></canvas>
-
-<script>
-/* ===== STATE ===== */
-let kid={name:"",age:0,stars:0,level:1,trial:true};
-
-/* ===== START ===== */
-function start(){
-  kid.name=name.value;
-  kid.age=+age.value||5;
-  setup.classList.add("hidden");
-  hub.classList.remove("hidden");
-}
-
-/* ===== REWARD ===== */
-function reward(){
-  kid.stars++;
-  if(kid.stars%5===0)kid.level++;
-  stars.innerText=kid.stars;
-  level.innerText=kid.level;
-  confetti();
-}
-
-/* ===== LETTER GAME (DRAG) ===== */
-function letters(){
-  openGame(`
-    <h2>Drag the Letter A</h2>
-    <div class="draggable" draggable="true" ondragstart="drag(event)">A</div>
-    <div class="dropzone" ondrop="drop(event,'A')" ondragover="allow(event)">A</div>
-  `);
-}
-
-/* ===== NUMBERS ===== */
-function numbers(){
-  openGame(`
-    <h2>Tap Number 3</h2>
-    <button onclick="check(1)">1</button>
-    <button onclick="check(3)">3</button>
-    <button onclick="check(2)">2</button>
-  `);
-}
-
-/* ===== SHAPES ===== */
-function shapes(){
-  openGame(`
-    <h2>Pick the Triangle</h2>
-    <button onclick="check('🔺')">🔺</button>
-    <button onclick="fail()">⚪</button>
-  `);
-}
-
-/* ===== COLORS ===== */
-function colors(){
-  openGame(`
-    <h2>Tap Red</h2>
-    <div style="background:red;width:60px;height:60px;border-radius:50%" onclick="reward()"></div>
-  `);
-}
-
-/* ===== DRAW ===== */
-function draw(){
-  openGame(`
-    <h2>Draw Anything</h2>
-    <canvas id="c" width="300" height="300"></canvas>
-    <br><button onclick="reward()">Finish</button>
-  `);
-  initDraw();
-}
-
-/* ===== PARENT ===== */
-function parent(){
-  openGame(`
-    <h2>Parent Dashboard</h2>
-    <p>Name: ${kid.name}</p>
-    <p>Age: ${kid.age}</p>
-    <p>Stars: ${kid.stars}</p>
-    <p>Level: ${kid.level}</p>
-    <p>Status: Trial (payments disabled)</p>
-  `);
-}
-
-/* ===== HELPERS ===== */
-function openGame(html){
-  hub.classList.add("hidden");
-  game.classList.remove("hidden");
-  game.innerHTML=`<button onclick="back()">⬅ Back</button>${html}`;
-}
-function back(){
-  game.classList.add("hidden");
-  hub.classList.remove("hidden");
-}
-function check(v){reward()}
-function fail(){alert("Try again")}
-function allow(e){e.preventDefault()}
-function drag(e){e.dataTransfer.setData("t",e.target.innerText)}
-function drop(e,c){
-  e.preventDefault();
-  if(e.dataTransfer.getData("t")==c)reward();
-}
-
-/* ===== DRAW LOGIC ===== */
-function initDraw(){
-  const c=document.getElementById("c");
-  const x=c.getContext("2d");
-  let d=false;
-  c.onpointerdown=e=>{d=true;x.moveTo(e.offsetX,e.offsetY)};
-  c.onpointermove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke()}};
-  c.onpointerup=()=>d=false;
-}
-
-/* ===== CONFETTI ===== */
-function confetti(){
-  const c=confetti;
-  const x=c.getContext("2d");
-  c.width=innerWidth;c.height=innerHeight;
-  for(let i=0;i<80;i++){
-    x.fillStyle=`hsl(${Math.random()*360},80%,60%)`;
-    x.fillRect(Math.random()*c.width,Math.random()*c.height,6,6);
-  }
-  setTimeout(()=>x.clearRect(0,0,c.width,c.height),500);
-}
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
