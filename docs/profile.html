@@ -1,30 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Child Profile</title>
-<link rel="stylesheet" href="assets/style.css">
+<meta charset="UTF-8">
+<title>Profiles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  font-family:system-ui;
+  background:#4f46e5;
+  color:#fff;
+  text-align:center;
+}
+input,button{
+  padding:10px;
+  margin:8px;
+  border-radius:10px;
+  border:none;
+}
+</style>
 </head>
 <body>
-<h2>Create Child Profile</h2>
 
-<input id="name" placeholder="Child Name">
-<select id="grade">
-  <option value="prek">Pre-K</option>
-  <option value="k">Kindergarten</option>
-  <option value="1">Grade 1</option>
-</select>
+<h1>👧 Child Profile</h1>
 
-<button onclick="saveProfile()">Start Learning</button>
+<input id="name" placeholder="Child name">
+<button onclick="save()">Save</button>
+
+<p><a href="index.html">⬅ Home</a></p>
 
 <script>
-function saveProfile(){
-  localStorage.setItem('child',JSON.stringify({
-    name: name.value,
-    grade: grade.value,
+function save(){
+  const child={
+    name:document.getElementById("name").value||"Guest",
+    grade:"K",
+    stars:0,
+    level:1,
     trial:true
-  }));
-  location.href='classroom.html';
+  };
+  localStorage.setItem("klq_child",JSON.stringify(child));
+  location.href="index.html";
 }
- <script src="js/profile.js"></script> 
+</script>
+
 </body>
 </html>
