@@ -4,64 +4,27 @@
 <meta charset="UTF-8">
 <title>Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<style>
-body{
-  margin:0;
-  font-family:system-ui, Arial;
-  background:linear-gradient(135deg,#0ea5e9,#6366f1);
-  color:#fff;
-}
-header{
-  text-align:center;
-  padding:24px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:18px;
-  padding:24px;
-}
-.card{
-  background:#fff;
-  color:#333;
-  border-radius:22px;
-  padding:20px;
-  text-align:center;
-  cursor:pointer;
-  box-shadow:0 10px 25px #0003;
-  transition:.2s;
-}
-.card:hover{transform:scale(1.05)}
-.card span{font-size:44px}
-footer{
-  text-align:center;
-  font-size:13px;
-  opacity:.85;
-  padding:20px;
-}
-</style>
+<link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
-
 <header>
   <h1>⭐ Kid Learn Quest</h1>
-  <p>A complete learning hub for kids</p>
+  <p>Your child’s personalized learning world</p>
 </header>
 
-<div class="card" onclick="go('world.html')">
-  <span>🌍</span><br>Learning World
-</div>
+<section class="grid">
+  <div class="card" onclick="go('profile.html')">👧 Child Profiles</div>
+  <div class="card" onclick="go('classroom.html')">🏫 Classroom</div>
+  <div class="card" onclick="go('mini.html')">🎮 Mini Games</div>
+</section>
 
-
-<footer>
-  Kid Learn Quest © 2025 • Privacy • Terms
-</footer>
-
-<script>
-function go(p){location.href=p;}
-</script>
-
+ function save(){
+  const name=document.getElementById('name').value
+  const grade=document.getElementById('grade').value
+  localStorage.setItem('child',JSON.stringify({name,grade}))
+  location.href='index.html'
+} 
+<footer>© 2025 Kid Learn Quest</footer>
+<script>function go(p){location.href=p}</script>
 </body>
 </html>
