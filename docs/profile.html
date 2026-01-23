@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Child Profile</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<h2>Create Child Profile</h2>
+
+<input id="name" placeholder="Child Name">
+<select id="grade">
+  <option value="prek">Pre-K</option>
+  <option value="k">Kindergarten</option>
+  <option value="1">Grade 1</option>
+</select>
+
+<button onclick="saveProfile()">Start Learning</button>
+
+<script>
+function saveProfile(){
+  localStorage.setItem('child',JSON.stringify({
+    name: name.value,
+    grade: grade.value,
+    trial:true
+  }));
+  location.href='classroom.html';
+}
+</script>
+</body>
+</html>
