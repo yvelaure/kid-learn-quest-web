@@ -1,17 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Classroom</title>
-<link rel="stylesheet" href="css/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#6366f1;
+  color:#fff;
+  text-align:center;
+}
+.card{
+  background:#fff;
+  color:#333;
+  border-radius:20px;
+  margin:20px auto;
+  padding:20px;
+  max-width:320px;
+}
+.draggable{
+  font-size:36px;
+  cursor:grab;
+}
+.drop{
+  border:2px dashed #999;
+  border-radius:14px;
+  padding:30px;
+  margin-top:10px;
+}
+</style>
 </head>
 <body>
-<h2>📚 Classroom Activities</h2>
-<div class="grid">
-  <div class="card">🔤 Letter Tracing</div>
-  <div class="card">🔢 Counting Objects</div>
-  <div class="card">🔺 Shapes Match</div>
-  <div class="card">🎨 Color Sorting</div>
-  <div class="card">📖 Sight Words</div>
+
+<h1>🏫 Classroom</h1>
+
+<div class="card">
+  <h3>Drag the letter A</h3>
+  <div class="draggable" draggable="true" id="drag">A</div>
+  <div class="drop" id="drop">Drop here</div>
 </div>
+
+<p><a href="index.html">⬅ Home</a></p>
+
+<script>
+const drag=document.getElementById("drag");
+const drop=document.getElementById("drop");
+
+drag.ondragstart=e=>e.dataTransfer.setData("t","A");
+drop.ondragover=e=>e.preventDefault();
+drop.ondrop=e=>{
+  e.preventDefault();
+  drop.innerHTML="✅ Correct!";
+};
+</script>
+
 </body>
 </html>
