@@ -1,76 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Learning World | Kid Learn Quest</title>
+<title>Learning World</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 body{
   margin:0;
-  font-family:system-ui, Arial;
-  background:linear-gradient(135deg,#22c55e,#3b82f6);
+  font-family:system-ui;
+  background:#0ea5e9;
   color:#fff;
+  text-align:center;
 }
-header{text-align:center;padding:20px}
-.map{
+h1{margin:20px}
+.world{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:18px;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:16px;
   padding:20px;
 }
-.world{
+.level{
   background:#fff;
   color:#333;
-  border-radius:22px;
-  padding:20px;
-  text-align:center;
+  border-radius:18px;
+  padding:18px;
   cursor:pointer;
-  box-shadow:0 10px 25px #0003;
 }
-.locked{opacity:.4;pointer-events:none}
-.world span{font-size:48px}
+.level span{font-size:40px}
 </style>
 </head>
-
 <body>
 
-<header>
-  <h1>🌍 Learning World</h1>
-  <p id="info"></p>
-</header>
+<h1>🌍 Learning World</h1>
 
-<div class="map" id="map"></div>
+<div class="world">
+  <div class="level" onclick="go('classroom.html')">
+    <span>🔤</span><br>Letters
+  </div>
+  <div class="level" onclick="go('classroom.html')">
+    <span>🔢</span><br>Numbers
+  </div>
+  <div class="level" onclick="go('mini.html')">
+    <span>🧠</span><br>Logic
+  </div>
+  <div class="level" onclick="go('draw.html')">
+    <span>✏️</span><br>Tracing
+  </div>
+</div>
 
-<button onclick="location.href='index.html'">⬅ Home</button>
+<p><a href="index.html">⬅ Home</a></p>
 
 <script>
-/* ===== CHILD ===== */
-const kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
-const active=localStorage.getItem("klq_active_kid")||0;
-const kid=kids[active]||{name:"Player",age:5,stars:0};
-
-document.getElementById("info").innerText =
-`${kid.name} • Age ${kid.age} • ⭐ ${kid.stars}`;
-
-/* ===== WORLDS ===== */
-const worlds=[
- {id:1,name:"Letters Land",icon:"🔤",req:0,page:"mini.html"},
- {id:2,name:"Numbers Valley",icon:"🔢",req:10,page:"mini.html"},
- {id:3,name:"Shapes City",icon:"🔺",req:20,page:"mini.html"},
- {id:4,name:"Logic Forest",icon:"🧠",req:30,page:"mini.html"},
- {id:5,name:"Creative World",icon:"🎨",req:40,page:"classroom.html"}
-];
-
-const map=document.getElementById("map");
-
-worlds.forEach(w=>{
-  const d=document.createElement("div");
-  d.className="world"+(kid.stars<w.req?" locked":"");
-  d.innerHTML=`<span>${w.icon}</span><br><b>${w.name}</b><br>⭐ ${w.req}+`;
-  d.onclick=()=>location.href=w.page;
-  map.appendChild(d);
-});
+function go(p){location.href=p;}
 </script>
 
 </body>
