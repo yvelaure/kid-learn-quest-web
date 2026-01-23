@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Classroom | Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<link rel="stylesheet" href="assets/style.css">
 <style>
 body{
   margin:0;
@@ -83,6 +83,8 @@ header{
 <body>
 
 <header>
+ <h2>Welcome 🎒</h2>
+<p id="welcome"></p>
   <h1>🏫 Classroom</h1>
   <p id="childInfo"></p>
   <div class="stats">
@@ -105,7 +107,9 @@ header{
 const child = JSON.parse(localStorage.getItem("klq_child"));
 child.progress = child.progress || {};
 child.stars = child.stars || 0;
-
+const child = JSON.parse(localStorage.getItem('child'));
+if(!child) location.href='profile.html';
+  
 childInfo.innerText =
  `${child.name} • Age ${child.age} • ${child.grade}`;
 stars.innerText = child.stars;
@@ -250,6 +254,8 @@ function goBack(){
 function range(a,b){return Array.from({length:b-a+1},(_,i)=>i+a);}
 function shuffle(arr){return arr.sort(()=>Math.random()-0.5);}
 </script>
-
+document.getElementById('welcome').innerText =
+`Hello ${child.name}! Grade: ${child.grade}`;
+</script>
 </body>
 </html>
