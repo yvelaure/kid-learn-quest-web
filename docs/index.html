@@ -4,27 +4,189 @@
 <meta charset="UTF-8">
 <title>Kid Learn Quest</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/style.css">
+
+<!-- CONFETTI -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root{
+  --bg1:#0ea5e9;
+  --bg2:#6366f1;
+  --card:#ffffff;
+  --accent:#4f46e5;
+}
+body{
+  margin:0;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:#fff;
+}
+header{
+  padding:26px;
+  text-align:center;
+}
+header h1{margin:0;font-size:28px}
+header p{opacity:.9}
+
+.topbar{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.topbar button{
+  background:#ffffff22;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  padding:8px 14px;
+  cursor:pointer;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:18px;
+  padding:24px;
+  max-width:1000px;
+  margin:auto;
+}
+.card{
+  background:var(--card);
+  color:#333;
+  border-radius:22px;
+  padding:22px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  transition:.25s;
+}
+.card:hover{transform:translateY(-6px)}
+.card span{
+  font-size:46px;
+  display:block;
+  margin-bottom:6px;
+}
+
+.badge{
+  font-size:12px;
+  background:gold;
+  color:#000;
+  padding:2px 8px;
+  border-radius:8px;
+  display:inline-block;
+  margin-top:6px;
+}
+
+footer{
+  text-align:center;
+  font-size:13px;
+  opacity:.85;
+  padding:24px;
+}
+footer a{color:#fff;text-decoration:underline}
+</style>
 </head>
+
 <body>
+
 <header>
   <h1>⭐ Kid Learn Quest</h1>
-  <p>Your child’s personalized learning world</p>
+  <p>Your child’s complete learning world</p>
+
+  <div class="topbar">
+    <button onclick="switchChild()">👧 Switch Child</button>
+    <button onclick="parent()">👨‍👩‍👧 Parent</button>
+    <button onclick="login()">☁️ Sync</button>
+  </div>
+
+  <p id="childInfo"></p>
 </header>
 
-<section class="grid">
-  <div class="card" onclick="go('profile.html')">👧 Child Profiles</div>
-  <div class="card" onclick="go('classroom.html')">🏫 Classroom</div>
-  <div class="card" onclick="go('mini.html')">🎮 Mini Games</div>
-</section>
+<div class="grid">
 
- function save(){
-  const name=document.getElementById('name').value
-  const grade=document.getElementById('grade').value
-  localStorage.setItem('child',JSON.stringify({name,grade}))
-  location.href='index.html'
-} 
-<footer>© 2025 Kid Learn Quest</footer>
-<script>function go(p){location.href=p}</script>
+  <div class="card" onclick="go('world.html')">
+    <span>🌍</span>
+    Learning World
+  </div>
+
+  <div class="card" onclick="go('classroom.html')">
+    <span>🏫</span>
+    Classroom
+  </div>
+
+  <div class="card" onclick="go('mini.html')">
+    <span>🎮</span>
+    Mini Games
+  </div>
+
+  <div class="card" onclick="go('draw.html')">
+    <span>✏️</span>
+    Draw & Trace
+  </div>
+
+  <div class="card" onclick="go('parents.html')">
+    <span>📊</span>
+    Reports
+    <div class="badge">Parents</div>
+  </div>
+
+</div>
+
+<footer>
+  Kid Learn Quest © 2025 •
+  <a href="privacy.html">Privacy</a> •
+  <a href="terms.html">Terms</a>
+</footer>
+
+<script>
+/* ===============================
+   GLOBAL CHILD STATE
+================================ */
+let child = JSON.parse(localStorage.getItem("klq_child"));
+
+if(!child){
+  // first-time setup (trial-safe)
+  child = {
+    name:"Guest",
+    grade:"K",
+    age:5,
+    level:1,
+    stars:0,
+    trial:true
+  };
+  localStorage.setItem("klq_child",JSON.stringify(child));
+}
+
+document.getElementById("childInfo").innerText =
+  `${child.name} • Grade ${child.grade} • ⭐ ${child.stars} • Level ${child.level}`;
+
+/* ===============================
+   NAV
+================================ */
+function go(p){ location.href=p; }
+function parent(){ location.href="parents.html"; }
+function switchChild(){ location.href="profiles.html"; }
+
+/* ===============================
+   CONFETTI (GLOBAL)
+================================ */
+function celebrate(){
+  confetti({
+    particleCount:120,
+    spread:80,
+    origin:{y:.6}
+  });
+}
+
+/* ===============================
+   CLOUD SYNC (READY)
+================================ */
+function login(){
+  alert("Firebase sync ready.\nAdd your Firebase keys to enable cloud accounts.");
+}
+</script>
+
 </body>
 </html>
