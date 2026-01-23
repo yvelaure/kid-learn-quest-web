@@ -9,180 +9,246 @@
 body{
   margin:0;
   font-family:system-ui, Arial;
-  background:linear-gradient(135deg,#6366f1,#22c55e);
-  color:#fff;
+  background:linear-gradient(135deg,#fde68a,#fb923c);
+  color:#333;
 }
 header{
-  padding:20px;
   text-align:center;
+  padding:20px;
+}
+.stats{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  font-weight:bold;
 }
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
   gap:16px;
   padding:20px;
 }
 .card{
   background:#fff;
-  color:#333;
-  border-radius:20px;
-  padding:18px;
+  border-radius:22px;
+  padding:16px;
   text-align:center;
   cursor:pointer;
-  box-shadow:0 8px 20px #0003;
-  transition:.2s;
+  box-shadow:0 10px 24px #0002;
+  transition:.25s;
 }
 .card:hover{transform:scale(1.05)}
-.card span{font-size:42px}
-.activity{
-  padding:20px;
+.card span{font-size:38px}
+
+#activity{
+  display:none;
   text-align:center;
+  padding:20px;
 }
-canvas{
-  border-radius:16px;
-  background:#fff;
-  touch-action:none;
+.question{
+  font-size:80px;
+  animation:bounce 1s infinite alternate;
 }
-button{
-  margin:10px;
-  padding:12px 20px;
+@keyframes bounce{
+  from{transform:translateY(0)}
+  to{transform:translateY(-10px)}
+}
+
+.options button{
+  font-size:22px;
+  margin:8px;
+  padding:14px 18px;
   border:none;
-  border-radius:14px;
-  background:#4f46e5;
-  color:#fff;
-  font-size:16px;
+  border-radius:16px;
   cursor:pointer;
+  background:#6366f1;
+  color:#fff;
 }
-.hidden{display:none}
+.options button:hover{background:#4f46e5}
+
+.correct{
+  background:#22c55e !important;
+}
+.wrong{
+  background:#ef4444 !important;
+}
+
+.back{
+  margin-top:20px;
+  background:#111827;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🏫 Classroom Activities</h1>
-  <p id="kidInfo"></p>
+  <h1>🏫 Classroom</h1>
+  <p id="childInfo"></p>
+  <div class="stats">
+    <div>⭐ Stars: <span id="stars">0</span></div>
+    <div>🏆 Level: <span id="lvl">1</span></div>
+  </div>
 </header>
 
-<div class="grid" id="menu">
-  <div class="card" onclick="openActivity('draw')"><span>✏️</span><br>Draw</div>
-  <div class="card" onclick="openActivity('trace')"><span>🔤</span><br>Trace Letters</div>
-  <div class="card" onclick="openActivity('count')"><span>🔢</span><br>Counting</div>
-  <div class="card" onclick="openActivity('color')"><span>🎨</span><br>Coloring</div>
+<div class="grid" id="subjects"></div>
+
+<div id="activity">
+  <h2 id="title"></h2>
+  <div class="question" id="question"></div>
+  <div class="options" id="options"></div>
+  <button class="back" onclick="goBack()">⬅ Back</button>
 </div>
 
-<div class="activity hidden" id="activity"></div>
-
 <script>
-/* ===== CHILD ===== */
-let kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
-let active=localStorage.getItem("klq_active_kid")||0;
-let kid=kids[active]||{name:"Player",age:5,stars:0};
-document.getElementById("kidInfo").innerText =
-  `${kid.name} • Age ${kid.age} • ⭐ ${kid.stars}`;
+/* ===== CHILD DATA ===== */
+const child = JSON.parse(localStorage.getItem("klq_child"));
+child.progress = child.progress || {};
+child.stars = child.stars || 0;
 
-  function difficulty(kid){
-  if(kid.age<=4) return 1;
-  if(kid.age<=6) return 2;
-  if(kid.age<=8) return 3;
-  return 4;
-}
-/* ===== VOICE ===== */
-function speak(text){
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=0.9;
-  u.pitch=1.1;
-  speechSynthesis.speak(u);
-}
-  speak("Choose the correct answer");
-speak("Great job!");
-speak("Try again");
-/* ===== SAVE ===== */
-function reward(){
-  kid.stars=(kid.stars||0)+1;
-  kids[active]=kid;
-  localStorage.setItem("klq_kids",JSON.stringify(kids));
+childInfo.innerText =
+ `${child.name} • Age ${child.age} • ${child.grade}`;
+stars.innerText = child.stars;
+lvl.innerText = child.progress.level || 1;
+
+/* ===== SUBJECTS ===== */
+const SUBJECTS = [
+ ["letters","🔤","Letters"],
+ ["words","📖","Sight Words"],
+ ["numbers","🔢","Numbers"],
+ ["math","➕","Math"],
+ ["shapes","🔺","Shapes"],
+ ["colors","🎨","Colors"],
+ ["patterns","🧩","Patterns"],
+ ["count","🍎","Counting"],
+ ["time","⏱️","Time"],
+ ["space","📐","Spatial"]
+];
+
+SUBJECTS.forEach(s=>{
+  const d=document.createElement("div");
+  d.className="card";
+  d.innerHTML=`<span>${s[1]}</span><br>${s[2]}`;
+  d.onclick=()=>start(s[0],s[2]);
+  subjects.appendChild(d);
+});
+
+/* ===== GAME ENGINE ===== */
+let currentSubject="";
+let subjectName="";
+let level=1;
+
+function start(sub,name){
+  currentSubject=sub;
+  subjectName=name;
+  level = child.progress[sub] || 1;
+  subjects.style.display="none";
+  activity.style.display="block";
+  next();
 }
 
-/* ===== NAV ===== */
-function back(){
-  document.getElementById("activity").classList.add("hidden");
-  document.getElementById("menu").classList.remove("hidden");
-}
+function next(){
+  options.innerHTML="";
+  title.innerText=`${subjectName} • Level ${level}`;
+  let q="", answers=[], correct;
 
-/* ===== ACTIVITIES ===== */
-function openActivity(type){
-  document.getElementById("menu").classList.add("hidden");
-  const a=document.getElementById("activity");
-  a.classList.remove("hidden");
+  const age = child.age;
 
-  /* DRAW */
-  if(type==="draw"){
-    speak("Draw anything you like");
-    a.innerHTML=`
-      <h2>✏️ Free Draw</h2>
-      <canvas id="c" width="300" height="300"></canvas><br>
-      <button onclick="reward()">⭐ Save</button>
-      <button onclick="back()">⬅ Back</button>
-    `;
-    drawCanvas();
+  if(currentSubject==="letters"){
+    const letters="ABCDEFG";
+    correct = letters[level%letters.length];
+    q = correct;
+    answers = shuffle(letters.slice(0,age+3).split(""));
   }
 
-  /* TRACE */
-  if(type==="trace"){
-    const letter="A";
-    speak("Trace the letter A");
-    a.innerHTML=`
-      <h2>🔤 Trace ${letter}</h2>
-      <canvas id="c" width="300" height="300"></canvas><br>
-      <button onclick="reward()">⭐ Done</button>
-      <button onclick="back()">⬅ Back</button>
-    `;
-    drawCanvas(true);
+  if(currentSubject==="numbers"){
+    correct = level;
+    q = correct;
+    answers = shuffle(range(1,age+3));
   }
 
-  /* COUNT */
-  if(type==="count"){
-    const n=Math.floor(Math.random()*5)+1;
-    speak(`Count ${n} stars`);
-    a.innerHTML=`
-      <h2>🔢 Count the stars</h2>
-      <div>${"⭐".repeat(n)}</div>
-      <button onclick="reward()">I Counted!</button>
-      <button onclick="back()">⬅ Back</button>
-    `;
+  if(currentSubject==="math"){
+    let a = level, b = age>5?2:1;
+    correct = a+b;
+    q = `${a} + ${b}`;
+    answers = shuffle([correct,correct+1,correct-1]);
   }
 
-  /* COLOR */
-  if(type==="color"){
-    speak("Color the circle");
-    a.innerHTML=`
-      <h2>🎨 Coloring</h2>
-      <canvas id="c" width="300" height="300"></canvas><br>
-      <button onclick="reward()">⭐ Done</button>
-      <button onclick="back()">⬅ Back</button>
-    `;
-    drawCanvas();
+  if(currentSubject==="shapes"){
+    const s=["🔺","⬛","⚪","⭐","⬜"];
+    correct = s[level%s.length];
+    q = correct;
+    answers = shuffle(s.slice(0,age+2));
+  }
+
+  if(currentSubject==="colors"){
+    const c=["red","blue","yellow","green","purple"];
+    correct = c[level%c.length];
+    q = "🎨";
+    answers = shuffle(c.slice(0,age+2));
+  }
+
+  if(currentSubject==="patterns"){
+    q="🔴🟡🔴 ?";
+    correct="🔴";
+    answers=["🔴","🟡"];
+  }
+
+  if(currentSubject==="count"){
+    correct=level;
+    q="🍎".repeat(level);
+    answers=shuffle(range(1,age+3));
+  }
+
+  if(currentSubject==="time"){
+    q="⏰ Morning?";
+    correct="☀️";
+    answers=["☀️","🌙"];
+  }
+
+  if(currentSubject==="space"){
+    q="⬆️➡️⬇️ ?";
+    correct="⬅️";
+    answers=["⬅️","➡️"];
+  }
+
+  question.innerText=q;
+
+  answers.forEach(a=>{
+    const b=document.createElement("button");
+    b.innerText=a;
+    b.onclick=()=>check(a,b,correct);
+    options.appendChild(b);
+  });
+}
+
+function check(ans,btn,correct){
+  if(ans==correct){
+    btn.classList.add("correct");
+    child.stars++;
+    stars.innerText=child.stars;
+    if(child.stars%5===0) alert("🎉 Level Up!");
+    level++;
+    child.progress[currentSubject]=level;
+    save();
+    setTimeout(next,600);
+  }else{
+    btn.classList.add("wrong");
   }
 }
 
-/* ===== CANVAS ===== */
-function drawCanvas(trace=false){
-  const c=document.getElementById("c");
-  const ctx=c.getContext("2d");
-  ctx.lineWidth=8;
-  ctx.lineCap="round";
-  if(trace){
-    ctx.font="180px Arial";
-    ctx.strokeStyle="#ddd";
-    ctx.strokeText("A",60,200);
-  }
-  let d=false;
-  c.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)};
-  c.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}};
-  c.onpointerup=()=>d=false;
+function save(){
+  localStorage.setItem("klq_child",JSON.stringify(child));
 }
+
+function goBack(){
+  activity.style.display="none";
+  subjects.style.display="grid";
+}
+
+/* ===== HELPERS ===== */
+function range(a,b){return Array.from({length:b-a+1},(_,i)=>i+a);}
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5);}
 </script>
 
 </body>
