@@ -1,61 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Parent Dashboard | Kid Learn Quest</title>
+<title>Parent Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 body{
-  font-family:system-ui, Arial;
-  background:#eef2ff;
   margin:0;
+  font-family:system-ui;
+  background:#111827;
+  color:#fff;
   padding:20px;
 }
 .card{
-  background:white;
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:16px;
-  box-shadow:0 8px 20px #0002;
-}
-.bar{
-  height:16px;
-  background:#ddd;
-  border-radius:10px;
-  overflow:hidden;
-}
-.bar span{
-  display:block;
-  height:100%;
-  background:#4f46e5;
+  background:#1f2933;
+  padding:16px;
+  border-radius:16px;
+  margin-bottom:12px;
 }
 </style>
 </head>
-
 <body>
 
-<h1>👨‍👩‍👧 Parent Dashboard</h1>
+<h1>📊 Parent Dashboard</h1>
 
-<div id="content"></div>
+<div class="card">⭐ Stars Earned: <span id="stars"></span></div>
+<div class="card">📚 Levels Completed</div>
+<div class="card">🕒 Time Spent</div>
 
-<button onclick="location.href='index.html'">⬅ Back</button>
+<p><a href="index.html">⬅ Home</a></p>
 
 <script>
-const kids=JSON.parse(localStorage.getItem("klq_kids")||"[]");
-const wrap=document.getElementById("content");
-
-kids.forEach(k=>{
-  const progress=Math.min((k.stars||0)*10,100);
-  wrap.innerHTML+=`
-    <div class="card">
-      <h2>${k.name} (Age ${k.age})</h2>
-      <p>⭐ Stars: ${k.stars||0}</p>
-      <div class="bar"><span style="width:${progress}%"></span></div>
-      <p>Progress: ${progress}%</p>
-    </div>
-  `;
-});
+const child=JSON.parse(localStorage.getItem("klq_child"));
+document.getElementById("stars").innerText=child?.stars||0;
 </script>
 
 </body>
