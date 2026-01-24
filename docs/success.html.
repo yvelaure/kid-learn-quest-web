@@ -40,21 +40,37 @@
         .btn {
             background: #05c46b;
             color: white;
-            padding: 15px 30px;
+            padding: 12px 25px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
             display: inline-block;
-            margin-top: 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .print-btn { background: #0984e3; }
+        
+        /* This makes the print-out look like a real receipt */
+        @media print {
+            body { background: white; color: black; }
+            .container { border: none; box-shadow: none; backdrop-filter: none; }
+            .btn, .print-btn { display: none; }
+            .key-box { border: 2px solid black; color: black; }
+            h1 { color: black; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>✨ MISSION SUCCESS!</h1>
-        <p>Thank you for supporting the Quest! Your Titan License Key is:</p>
+        <p>Your Pro License is now active.</p>
         <div class="key-box">GOLD2026</div>
-        <p style="font-size: 0.8rem; opacity: 0.8;">Copy this key and enter it in the Shop section of the game.</p>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Keep this key safe! You will need it to unlock your Titan features.</p>
+        
+        <button class="btn print-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
+        <br>
         <a href="index.html" class="btn">RETURN TO GAME</a>
     </div>
 </body>
