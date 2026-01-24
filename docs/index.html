@@ -3,342 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kid Quest: Sovereign God-Tier</title>
+    <title>Sovereign Quest: Omega</title>
     <style>
-        :root { 
-            --gold: #ffa801; --green: #05c46b; --red: #ff3f34; 
-            --blue: #0984e3; --purple: #a29bfe; --dark: #1e272e; 
-        }
-        
+        :root { --gold: #ffa801; --green: #05c46b; --red: #ff3f34; --blue: #0984e3; --purple: #a29bfe; --dark: #1e272e; }
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 15px; min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 10px; min-height: 100vh;
             background: #000 url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
             background-size: cover; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
         }
-
-        /* Particle Background */
-        #bg-stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .p { position: absolute; background: rgba(255,255,255,0.4); border-radius: 50%; animation: drift linear infinite; }
-        @keyframes drift { from { transform: translateY(110vh); } to { transform: translateY(-10vh); } }
-
-        /* UI Panels */
-        header, .panel, .card { 
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; 
+        header, .panel, .card, .map-node, .inventory-slot { 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; 
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); 
         }
-
-        header { width: 95%; max-width: 500px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .panel { width: 95%; max-width: 500px; padding: 25px; text-align: center; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 15px; }
-        .card { padding: 20px 10px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .card:active { transform: scale(0.95); }
-
-        /* Exam Interface */
-        .timer-container { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        #timer-bar { width: 100%; height: 100%; background: var(--red); transition: width 0.1s linear; }
-        .test-input { font-size: 1.8rem; width: 90%; padding: 12px; text-align: center; border-radius: 15px; border: none; margin: 15px 0; outline: none; background: white; color: black; }
-        
-        .btn { background: var(--green); color: white; border: none; padding: 14px 28px; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 5px; text-decoration: none; display: inline-block; transition: 0.3s; }
-        .btn:hover { filter: brightness(1.2); }
-        .power-btn { background: var(--purple); font-size: 0.8rem; padding: 10px; border-radius: 12px; cursor: pointer; border: 1px solid white; flex: 1; color: white; }
-        .locked { filter: grayscale(1); opacity: 0.4; pointer-events: none; }
+        header { width: 95%; max-width: 500px; padding: 15px; margin-bottom: 10px; text-align: center; }
+        .panel { width: 95%; max-width: 500px; padding: 20px; text-align: center; box-sizing: border-box; }
+        .btn { background: var(--green); color: white; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 5px; transition: 0.2s; }
+        .btn:active { transform: scale(0.95); }
         .hidden { display: none !important; }
-        .streak { color: #ff9f43; font-weight: bold; }
-        .pro-locked { filter: grayscale(1); opacity: 0.5; position: relative; cursor: not-allowed; }
+
+        /* WORLD MAP */
+        #world-map { 
+            position: relative; width: 100%; height: 300px; 
+            background: url('https://images.unsplash.com/photo-1506318137071-a8e063b49c01?auto=format&fit=crop&w=800&q=60') center;
+            background-size: cover; border-radius: 20px; border: 2px solid var(--gold); margin-top: 10px;
+        }
+        .map-node { position: absolute; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; }
+        .node-label { position: absolute; bottom: -18px; font-size: 0.6rem; background: black; padding: 2px 5px; border-radius: 5px; white-space: nowrap; }
+
+        /* PET & BARS */
+        .pet-area { margin: 10px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 15px; }
+        .pet-icon { font-size: 3rem; animation: bounce 2s infinite; display: block; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 5px 0; }
+        #hunger-bar { height: 100%; background: var(--green); border-radius: 10px; transition: width 0.5s; width: 100%; }
+
+        /* CHAT BOX */
+        #chat-box { background: rgba(0,0,0,0.5); height: 150px; overflow-y: auto; margin: 10px 0; padding: 10px; text-align: left; border-radius: 10px; font-size: 0.8rem; }
+        .msg { margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+        /* GRID SYSTEM */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .card { padding: 15px 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
-
     <div id="bg-stars"></div>
 
     <section id="setup-view" class="panel">
-        <h1 style="margin:0; font-size: 2.2rem;">✨ SOVEREIGN QUEST</h1>
-        <p style="font-size: 0.9rem; opacity: 0.8;">The Ultimate Learning Adventure</p>
+        <h1 style="color:var(--gold); margin:0;">SOVEREIGN</h1>
         <div id="player-list" style="margin: 20px 0;"></div>
-        <button class="btn" onclick="addPlayer()">+ Create Hero</button>
-        <button class="btn" style="background:var(--blue)" onclick="showLeaderboard()">🏆 Leaderboard</button>
-        <button class="btn" style="background:var(--dark)" onclick="openTeacherMode()">⚙️ Teacher Mode</button>
+        <button class="btn" onclick="playSound('click'); addPlayer();">CREATE HERO</button>
+        <button class="btn" style="background:var(--blue)" onclick="showLeaderboard()">RANKINGS</button>
+        <button class="btn" style="background:var(--dark); font-size:0.6rem;" onclick="toggleAdmin()">ADMIN KEY</button>
     </section>
 
     <main id="game-ui" class="hidden" style="width:100%; display:flex; flex-direction:column; align-items:center;">
         <header>
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <span id="user-display" style="font-weight:bold; font-size: 1.2rem;">Hero</span>
-                <span id="pro-tag" style="color:var(--gold); font-weight:bold; display:none;">👑 PRO</span>
-                <span id="streak-display" class="streak">🔥 1</span>
+            <div style="display:flex; justify-content: space-between; align-items:center;">
+                <span id="header-avatar" style="font-size:1.5rem;">👤</span>
+                <span id="user-display" style="font-weight:bold;">Hero</span>
+                <span style="color:var(--gold)">⭐ <span id="star-count">0</span></span>
             </div>
-            <div style="font-size: 1.6rem; margin: 10px 0;">⭐ <span id="star-count" style="color:var(--gold);">0</span></div>
-            <div style="display: flex; justify-content: center; gap: 5px;">
-                <button class="btn" style="padding:6px 15px; font-size:0.7rem; background:var(--gold); color:black;" onclick="showView('shop')">🛒 SHOP & UPGRADE</button>
-                <button class="btn" style="padding:6px 15px; font-size:0.7rem; background:rgba(255,255,255,0.2);" onclick="location.reload()">👤 LOGOUT</button>
+            
+            <div class="pet-area">
+                <span id="active-pet" class="pet-icon">🥚</span>
+                <div style="font-size:0.7rem;">LVL <span id="pet-lvl">1</span> <span id="pet-name">Egg</span></div>
+                <div class="bar-bg"><div id="hunger-bar"></div></div>
+                <button class="btn" style="padding:4px 10px; font-size:0.6rem; background:var(--blue);" onclick="feedPet()">🍕 FEED (10 ⭐)</button>
+                <button class="btn" style="padding:4px 10px; font-size:0.6rem; background:var(--purple);" onclick="playPet()">🎾 PLAY</button>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:5px;">
+                <button class="btn" style="background:var(--gold); color:black; font-size:0.6rem; padding:5px 10px;" onclick="showView('shop')">SHOP</button>
+                <button class="btn" style="background:var(--purple); font-size:0.6rem; padding:5px 10px;" onclick="showView('chat')">CHAT</button>
+                <button class="btn" style="background:var(--green); font-size:0.6rem; padding:5px 10px;" onclick="showView('achievements')">TROPHIES</button>
+                <button class="btn" style="background:var(--blue); font-size:0.6rem; padding:5px 10px;" onclick="showView('inventory')">BAG</button>
             </div>
         </header>
 
         <section id="menu-view" class="panel">
-            <h3 id="level-label" style="color:var(--gold); margin:0;">Level 1: Scholar</h3>
-            <div class="grid" id="menu-grid"></div>
-            
-            <div id="titan-container" class="pro-locked" style="margin-top:20px;">
-                <button class="card" style="background:var(--red); border:none; width:100%; font-size: 1.2rem;" onclick="startTitan()">⚡ TITAN MASTERY EXAM</button>
-                <p style="font-size: 0.7rem; color: var(--gold); margin-top: 5px;">Requires Pro License Key</p>
+            <h4 style="margin:0;">WORLD MAP</h4>
+            <div id="world-map">
+                <div class="map-node" style="top:15%; left:15%;" onclick="startTrivia('space')">🌌<span class="node-label">SPACE</span></div>
+                <div class="map-node" style="top:65%; left:20%;" onclick="startTrivia('history')">📜<span class="node-label">HISTORY</span></div>
+                <div class="map-node" style="top:40%; left:45%;" onclick="startTrivia('math')">📐<span class="node-label">MATH</span></div>
+                <div class="map-node" style="top:20%; left:75%;" onclick="startTrivia('coding')">💻<span class="node-label">CODING</span></div>
+                <div class="map-node" style="top:70%; left:70%;" onclick="startTrivia('animals')">🦁<span class="node-label">WILDLIFE</span></div>
             </div>
+            <button class="btn" style="width:100%; margin-top:15px; background:var(--red);" onclick="showView('minigames')">🎲 PLAY MINIGAMES</button>
         </section>
 
-        <section id="test-view" class="hidden panel">
-            <div style="display:flex; justify-content: space-between; font-weight:bold;">
-                <span id="q-num">1/10</span>
-                <span id="timer-text" style="color:var(--gold)">10s</span>
+        <section id="chat-view" class="hidden panel">
+            <button class="btn" onclick="showView('menu')">⬅ BACK</button>
+            <div id="chat-box"></div>
+            <div style="display:flex; gap:5px;">
+                <input type="text" id="chat-input" style="flex:1; padding:10px; border-radius:20px; border:none;" placeholder="Message...">
+                <button class="btn" style="margin:0;" onclick="sendMsg()">SEND</button>
             </div>
-            <div class="timer-container"><div id="timer-bar"></div></div>
-            <div id="q-text" style="font-size:1.6rem; min-height:80px; display:flex; align-items:center; justify-content:center;">...</div>
-            <div style="display:flex; gap:10px; width:100%;">
-                <button id="pwr-freeze" class="power-btn" onclick="useFreeze()">❄️ Freeze (<span id="count-freeze">0</span>)</button>
-                <button id="pwr-hint" class="power-btn" onclick="useHint()">💡 Hint (<span id="count-hint">0</span>)</button>
-            </div>
-            <input type="text" id="test-input" class="test-input" autocomplete="off" placeholder="Type Answer...">
-            <button class="btn" style="width:100%;" onclick="submitAnswer()">SUBMIT ANSWER</button>
         </section>
 
         <section id="shop-view" class="hidden panel">
-            <button class="btn" onclick="showView('menu')" style="background:rgba(255,255,255,0.2)">⬅ Back</button>
-            
-            <div id="upgrade-panel" style="background: rgba(255,168,1,0.15); padding: 20px; border-radius: 20px; border: 1px solid var(--gold); margin: 15px 0;">
-                <h3 style="margin:0; color:var(--gold);">👑 UPGRADE TO PRO</h3>
-                <p style="font-size: 0.8rem; margin: 10px 0;">Unlock Titan Mode, Creator Mode, and Support Us!</p>
-                <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00" target="_blank" class="btn" style="background:#6772e5; font-size: 0.8rem; width: 85%;">💳 Pay with Stripe</a>
-                <a href="https://www.paypal.com/ncp/payment/35G2LPBC9HJY4" target="_blank" class="btn" style="background:#0070ba; font-size: 0.8rem; width: 85%;">🔹 Pay with PayPal</a>
-                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-                <button class="btn" style="background:var(--purple); font-size: 0.8rem;" onclick="activateLicense()">Enter License Key</button>
-            </div>
-
+            <button class="btn" onclick="showView('menu')">⬅ BACK</button>
+            <h3 style="color:var(--gold); margin:10px 0;">PETS & AVATARS</h3>
             <div class="grid">
-                <div class="card" onclick="buyPwr('freeze', 20)">❄️ Freeze Ray<br>(20 Stars)</div>
-                <div class="card" onclick="buyPwr('hint', 15)">💡 Hint Bolt<br>(15 Stars)</div>
-                <div class="card" onclick="buyItem('🛸', 50)">🛸 UFO<br>(50 Stars)</div>
-                <div class="card" onclick="buyItem('🚀', 50)">🚀 Rocket<br>(50 Stars)</div>
+                <div class="card" onclick="buyItem('🐉', 'Dragon', 100, 'pet')">🐉 DRAGON (100)</div>
+                <div class="card" onclick="buyItem('🐱', 'CyberCat', 75, 'pet')">🐱 CAT (75)</div>
+                <div class="card" onclick="buyItem('🤖', 'Robot', 40, 'avatar')">🤖 ROBOT (40)</div>
+                <div class="card" onclick="buyItem('👨‍🚀', 'Hero', 40, 'avatar')">👨‍🚀 HERO (40)</div>
             </div>
-            <div id="inv-display" style="font-size:3rem; margin-top:15px;"></div>
+            <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                <h4 style="margin:0;">👑 GO PRO</h4>
+                <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00" target="_blank" class="btn" style="font-size:0.7rem;">STRIPE</a>
+            </div>
         </section>
 
-        <section id="custom-view" class="hidden panel">
-            <button class="btn" onclick="showView('setup')">⬅ Exit</button>
-            <h3>Quest Creator</h3>
-            <input type="text" id="custom-q" placeholder="Enter Question" style="width:90%; padding:10px; margin:5px; border-radius:10px; border:none;"><br>
-            <input type="text" id="custom-a" placeholder="Enter Answer" style="width:90%; padding:10px; margin:5px; border-radius:10px; border:none;"><br>
-            <button class="btn" onclick="saveCustomQ()">Add to Master Bank</button>
-            <div id="custom-list-preview" style="font-size: 0.7rem; margin-top: 10px; opacity: 0.7;"></div>
+        <section id="achievements-view" class="hidden panel">
+            <button class="btn" onclick="showView('menu')">⬅ BACK</button>
+            <h3 style="color:var(--gold)">TROPHIES</h3>
+            <div id="trophy-list" class="grid"></div>
         </section>
 
-        <section id="status-view" class="hidden panel">
-            <h1 id="status-title">RESULT</h1>
-            <p id="status-msg" style="font-size: 1.2rem;"></p>
-            <button class="btn" onclick="showView('menu')">Continue</button>
+        <section id="inventory-view" class="hidden panel">
+            <button class="btn" onclick="showView('menu')">⬅ BACK</button>
+            <h3 style="color:var(--gold)">YOUR BAG</h3>
+            <div id="inv-list" class="grid"></div>
+        </section>
+
+        <section id="minigames-view" class="hidden panel">
+            <button class="btn" onclick="showView('menu')">⬅ BACK</button>
+            <div class="card" style="width:100%; height:auto; margin:10px 0;" onclick="playGame()">🤔 GUESS THE NUMBER</div>
+            <p style="font-size:0.7rem;">Win stars by guessing right!</p>
+        </section>
+
+        <section id="leaderboard-view" class="hidden panel">
+            <button class="btn" onclick="showView('setup')">⬅ BACK</button>
+            <h3 style="color:var(--gold)">WORLD RANKINGS</h3>
+            <div id="rank-list" style="text-align:left;"></div>
         </section>
     </main>
 
     <script>
-        // --- DATA & CONFIG ---
-        let players = JSON.parse(localStorage.getItem('SQ_Players_V5')) || [];
-        let customBank = JSON.parse(localStorage.getItem('SQ_Custom_V5')) || [];
-        let isPro = localStorage.getItem('SQ_Pro_Unlocked') === 'true';
-        let cur = null, step = 0, timerVal = 100, ticker = null, activeQs = [], frozen = false;
+        let players = JSON.parse(localStorage.getItem('SQ_Omega_Data')) || [];
+        let messages = JSON.parse(localStorage.getItem('SQ_Omega_Msgs')) || [{user: "System", text: "Welcome to Sovereign!"}];
+        let cur = null;
+        let isAdmin = false;
 
-        const VALID_KEYS = ["GOLD2026", "HERO99", "QUESTPRO"];
-        const baseBank = [
-            {q: "Solve for x: 8x = 64", a: "8"}, {q: "Symbol for Iron?", a: "fe"},
-            {q: "Square root of 144?", a: "12"}, {q: "Who wrote the Odyssey?", a: "homer"},
-            {q: "Capital of Italy?", a: "rome"}, {q: "What is 20% of 200?", a: "40"},
-            {q: "Solve: x + 15 = 40", a: "25"}, {q: "Planet closest to Sun?", a: "mercury"}
-        ];
-
-        // --- PARTICLE ENGINE ---
-        const bg = document.getElementById('bg-stars');
-        for(let i=0; i<40; i++) {
-            let s = document.createElement('div'); s.className = 'p';
-            let size = Math.random() * 3 + 1 + 'px';
-            s.style.width = size; s.style.height = size;
-            s.style.left = Math.random() * 100 + 'vw';
-            s.style.animationDuration = Math.random() * 4 + 4 + 's';
-            s.style.animationDelay = Math.random() * 5 + 's';
-            bg.appendChild(s);
+        // --- AUDIO ENGINE ---
+        function playSound(type) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.connect(g); g.connect(ctx.destination);
+            if(type === 'click') { osc.frequency.setValueAtTime(400, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1); osc.start(); osc.stop(ctx.currentTime + 0.1); }
+            if(type === 'win') { osc.frequency.setValueAtTime(600, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.2); g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3); osc.start(); osc.stop(ctx.currentTime + 0.3); }
         }
 
-        // --- SOUND SYSTEM ---
-        const sfx = (f, d) => {
-            let ctx = new (window.AudioContext || window.webkitAudioContext)();
-            let o = ctx.createOscillator(); let g = ctx.createGain();
-            o.frequency.value = f; g.gain.value = 0.1; o.connect(g); g.connect(ctx.destination);
-            o.start(); o.stop(ctx.currentTime + d);
-        };
+        // --- ADMIN ---
+        function toggleAdmin() { if(prompt("Pass:") === "1234") { isAdmin = true; alert("Admin Active."); } }
 
         // --- CORE LOGIC ---
         function addPlayer() {
-            let n = prompt("Hero Name:"); let a = prompt("Age:");
-            if(n && a) { 
-                players.push({name:n, age:parseInt(a), stars:0, bag:[], level:1, streak:1, last:"", pwr:{f:0, h:0}}); 
-                save(); renderPlayers(); 
-            }
+            let n = prompt("Hero Name:");
+            if(n) { players.push({name:n, stars:50, petIcon:null, petName:"Egg", petLvl:1, hunger:100, avatar:'👤', bag:[], trophies:[]}); save(); renderList(); }
         }
 
-        function renderPlayers() {
+        function renderList() {
             const l = document.getElementById('player-list'); l.innerHTML = "";
             players.forEach((p, i) => {
-                let d = document.createElement('div'); d.className="card"; d.style.flexDirection="row"; d.style.justifyContent="space-between"; d.style.margin="8px 0";
-                d.innerHTML = `<span>${p.name} (Lvl ${p.level})</span><span>⭐ ${p.stars}</span>`;
-                d.onclick = () => login(i); l.appendChild(d);
+                let d = document.createElement('div'); d.className="card"; d.style.height="40px"; d.style.margin="8px 0";
+                d.innerHTML = `${p.avatar} ${p.name} • ⭐ ${p.stars}`;
+                d.onclick = () => { playSound('click'); login(i); }; l.appendChild(d);
             });
         }
 
         function login(i) {
-            cur = i; let p = players[cur];
-            let today = new Date().toDateString();
-            if(p.last !== today) {
-                p.streak = (p.last === new Date(Date.now() - 86400000).toDateString()) ? p.streak + 1 : 1;
-                p.last = today; save();
-            }
-            showView('game-ui');
-            document.getElementById('user-display').innerText = p.name;
-            document.getElementById('streak-display').innerText = `🔥 ${p.streak}`;
-            if(isPro) {
-                document.getElementById('pro-tag').style.display = "inline";
-                document.getElementById('titan-container').classList.remove('pro-locked');
-                document.getElementById('upgrade-panel').innerHTML = "<h3 style='color:var(--green)'>✓ PRO UNLOCKED</h3>";
-            }
+            cur = i; showView('game-ui');
             updateUI();
-            let grid = document.getElementById('menu-grid'); grid.innerHTML = "";
-            if(p.age >= 10) { addBtn(grid, "📐 Algebra"); addBtn(grid, "🧪 Chemistry"); }
-            else { addBtn(grid, "🐶 Zoo"); addBtn(grid, "🎨 ABCs"); }
-            speak("Welcome back, Hero " + p.name);
+            setInterval(() => { if(players[cur].petIcon) { players[cur].hunger = Math.max(0, players[cur].hunger - 1); updateUI(); } }, 5000);
         }
 
-        function addBtn(p, t) {
-            let d = document.createElement('div'); d.className="card"; d.innerText=t;
-            d.onclick=() => speak("Complete the Mastery Exam to prove your Level!"); p.appendChild(d);
-        }
-
-        function startTitan() {
-            if(!isPro) { alert("🔒 Purchase a Pro License to unlock Titan Mode!"); showView('shop'); }
-            else { step = 0; activeQs = [...baseBank, ...customBank].sort(() => 0.5 - Math.random()).slice(0, 10); showView('test'); ask(); }
-        }
-
-        function ask() {
-            timerVal = 100; frozen = false;
-            document.getElementById('q-num').innerText = `${step + 1} / 10`;
-            document.getElementById('q-text').innerText = activeQs[step].q;
-            document.getElementById('test-input').value = ""; document.getElementById('test-input').focus();
-            updateUI();
-            clearInterval(ticker);
-            let limit = players[cur].level === 1 ? 10 : 5;
-            ticker = setInterval(() => {
-                if(!frozen) {
-                    timerVal -= (100 / (limit * 10));
-                    document.getElementById('timer-bar').style.width = timerVal + "%";
-                    document.getElementById('timer-text').innerText = Math.ceil((timerVal/100)*limit) + "s";
-                    if(timerVal <= 0) endTest(false, "System Timeout!");
-                }
-            }, 100);
-        }
-
-        function submitAnswer() {
-            let val = document.getElementById('test-input').value.trim().toLowerCase();
-            if(val.includes(activeQs[step].a.toLowerCase())) {
-                sfx(600, 0.1); step++;
-                if(step >= 10) endTest(true); else ask();
-            } else { endTest(false, "Incorrect Coordinates!"); }
-        }
-
-        function endTest(win, msg) {
-            clearInterval(ticker); showView('status');
-            if(win) {
-                players[cur].stars += 50; if(players[cur].level === 1) players[cur].level = 2;
-                document.getElementById('status-title').innerText = "🏆 MASTERY ACHIEVED";
-                document.getElementById('status-msg').innerText = "Level 2 TITAN Unlocked! +50 Stars.";
-                speak("Success. You are a master.");
-            } else {
-                sfx(200, 0.3); document.getElementById('status-title').innerText = "❌ MISSION FAILED";
-                document.getElementById('status-msg').innerText = msg;
-                speak("Mission failure.");
-            }
-            save(); updateUI();
-        }
-
-        // --- SHOP & PRO FUNCTIONS ---
-        function activateLicense() {
-            let key = prompt("Enter your Pro License Key:");
-            if(VALID_KEYS.includes(key?.toUpperCase())) {
-                isPro = true; localStorage.setItem('SQ_Pro_Unlocked', 'true');
-                alert("PRO UNLOCKED! Enjoy your new features."); location.reload();
-            } else if (key) alert("Invalid Key!");
-        }
-
-        function useFreeze() {
-            if(players[cur].pwr.f > 0 && !frozen) {
-                players[cur].pwr.f--; frozen = true; sfx(400, 0.2);
-                setTimeout(() => { frozen = false; }, 5000); updateUI();
+        function startTrivia(type) {
+            playSound('click');
+            let q = { "math": ["12 + 8", "20"], "space": ["Red Planet?", "mars"], "coding": ["JS full name?", "javascript"], "animals": ["King of Jungle?", "lion"], "history": ["Built pyramids?", "egyptians"] };
+            let ans = prompt(`MISSION: ${type.toUpperCase()}\nQuestion: ${q[type][0]}`);
+            if(ans && ans.toLowerCase().includes(q[type][1])) {
+                playSound('win'); players[cur].stars += 25; 
+                if(!players[cur].trophies.includes(type)) players[cur].trophies.push(type);
+                save(); updateUI(); alert("SUCCESS! +25 Stars");
             }
         }
 
-        function useHint() {
-            if(players[cur].pwr.h > 0) {
-                players[cur].pwr.h--; sfx(800, 0.1);
-                document.getElementById('test-input').value = activeQs[step].a[0].toUpperCase() + "...";
-                updateUI();
-            }
-        }
-
-        function buyPwr(p, cost) {
+        function buyItem(icon, name, cost, type) {
             if(players[cur].stars >= cost) {
-                players[cur].stars -= cost; p === 'freeze' ? players[cur].pwr.f++ : players[cur].pwr.h++;
-                save(); updateUI(); sfx(1000, 0.1);
-            } else speak("Not enough stars!");
+                players[cur].stars -= cost;
+                if(type === 'pet') { players[cur].petIcon = icon; players[cur].petName = name; players[cur].petLvl = 1; }
+                else { players[cur].avatar = icon; }
+                players[cur].bag.push(icon);
+                save(); updateUI(); playSound('win');
+            } else { alert("Not enough stars!"); }
         }
 
-        function buyItem(item, cost) {
-            if(players[cur].stars >= cost) {
-                players[cur].stars -= cost; players[cur].bag.push(item);
-                save(); updateUI();
+        function feedPet() {
+            if(players[cur].stars >= 10) {
+                players[cur].stars -= 10;
+                players[cur].hunger = Math.min(100, players[cur].hunger + 25);
+                players[cur].petLvl++;
+                if(players[cur].petLvl === 10) { players[cur].petIcon = "🐲"; alert("EVOLUTION! Elder Dragon!"); }
+                save(); updateUI(); playSound('win');
             }
         }
 
-        function openTeacherMode() {
-            if(!isPro) { alert("🔒 Pro License Required for Teacher Mode!"); showView('shop'); return; }
-            if(prompt("Enter Admin Password:") === "1234") showView('custom');
-            else alert("Access Denied!");
+        function playPet() { players[cur].hunger = Math.min(100, players[cur].hunger + 5); save(); updateUI(); }
+
+        function sendMsg() {
+            let inp = document.getElementById('chat-input');
+            if(inp.value) {
+                messages.push({id: Date.now(), user: players[cur].name, text: inp.value});
+                if(messages.length > 20) messages.shift();
+                localStorage.setItem('SQ_Omega_Msgs', JSON.stringify(messages));
+                inp.value = ""; renderChat();
+            }
         }
 
-        function saveCustomQ() {
-            let q = document.getElementById('custom-q').value; let a = document.getElementById('custom-a').value;
-            if(q && a) { customBank.push({q, a}); localStorage.setItem('SQ_Custom_V5', JSON.stringify(customBank)); alert("Quest Saved!"); }
+        function renderChat() {
+            document.getElementById('chat-box').innerHTML = messages.map(m => `
+                <div class="msg">
+                    <b>${m.user}:</b> ${m.text}
+                    ${isAdmin ? `<span style="color:red; float:right;" onclick="delMsg(${m.id})">✖</span>` : ''}
+                </div>`).join("");
         }
+        function delMsg(id) { messages = messages.filter(m => m.id !== id); localStorage.setItem('SQ_Omega_Msgs', JSON.stringify(messages)); renderChat(); }
 
-        function showLeaderboard() {
-            let top = [...players].sort((a,b) => b.stars - a.stars).slice(0, 5);
-            alert("🏆 GLOBAL LEADERBOARD 🏆\n" + top.map((p,i) => `${i+1}. ${p.name}: ${p.stars} Stars`).join("\n"));
+        function playGame() {
+            let n = Math.floor(Math.random() * 5) + 1;
+            let g = prompt("Guess 1-5:");
+            if(parseInt(g) === n) { players[cur].stars += 20; save(); updateUI(); playSound('win'); alert("YOU GOT IT!"); }
         }
 
         function updateUI() {
-            if(cur === null) return;
-            document.getElementById('star-count').innerText = players[cur].stars;
-            document.getElementById('count-freeze').innerText = players[cur].pwr.f;
-            document.getElementById('count-hint').innerText = players[cur].pwr.h;
-            document.getElementById('pwr-freeze').classList.toggle('locked', players[cur].pwr.f === 0);
-            document.getElementById('pwr-hint').classList.toggle('locked', players[cur].pwr.h === 0);
-            document.getElementById('inv-display').innerText = players[cur].bag.join(" ");
-            document.getElementById('level-label').innerText = players[cur].level === 1 ? "Level 1: Scholar" : "Level 2: TITAN";
+            let p = players[cur];
+            document.getElementById('star-count').innerText = p.stars;
+            document.getElementById('header-avatar').innerText = p.avatar;
+            document.getElementById('active-pet').innerText = p.petIcon || "🥚";
+            document.getElementById('pet-lvl').innerText = p.petLvl;
+            document.getElementById('pet-name').innerText = p.petName;
+            document.getElementById('hunger-bar').style.width = p.hunger + "%";
+            document.getElementById('inv-list').innerHTML = p.bag.map(i => `<div class="card">${i}</div>`).join("");
+            document.getElementById('trophy-list').innerHTML = p.trophies.map(t => `<div class="card">🏆 ${t.toUpperCase()}</div>`).join("");
+        }
+
+        function showLeaderboard() {
+            let s = [...players].sort((a,b) => b.stars - a.stars);
+            document.getElementById('rank-list').innerHTML = s.map((p,i) => `<div>#${i+1} ${p.avatar} ${p.name} - ⭐ ${p.stars}</div>`).join("");
+            showView('leaderboard');
         }
 
         function showView(v) {
-            document.querySelectorAll('main > section, #setup-view, #game-ui').forEach(s => s.classList.add('hidden'));
-            if(v === 'game-ui' || v === 'setup') document.getElementById(v).classList.remove('hidden');
+            document.querySelectorAll('section, main').forEach(s => s.classList.add('hidden'));
+            if(v === 'setup') document.getElementById('setup-view').classList.remove('hidden');
             else { document.getElementById('game-ui').classList.remove('hidden'); document.getElementById(v + '-view').classList.remove('hidden'); }
+            if(v === 'chat') renderChat();
         }
 
-        function save() { localStorage.setItem('SQ_Players_V5', JSON.stringify(players)); }
-        function speak(t) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
-        document.getElementById('test-input').onkeypress = (e) => { if(e.key === 'Enter') submitAnswer(); };
-        
-        renderPlayers();
+        function save() { localStorage.setItem('SQ_Omega_Data', JSON.stringify(players)); }
+        renderList();
     </script>
 </body>
 </html>
