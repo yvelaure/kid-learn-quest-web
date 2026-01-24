@@ -3,243 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kid Learn Quest: Ultimate Edition</title>
+    <title>Kid Quest: Sovereign God-Tier</title>
     <style>
-        :root { --bg: #f0f4f8; --toddler: #fff176; --explorer: #64b5f6; --genius: #ce93d8; --story: #ffccbc; --gold: #ffd700; --green: #81c784; }
-        body { font-family: 'Comic Sans MS', cursive, sans-serif; background: var(--bg); text-align: center; margin: 0; padding: 20px; overflow-x: hidden; transition: 0.5s; }
+        :root { 
+            --gold: #ffa801; --green: #05c46b; --red: #ff3f34; 
+            --blue: #0984e3; --purple: #a29bfe; --dark: #1e272e; 
+        }
         
-        /* Animations */
-        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .pop { animation: pop 0.3s ease-out; }
-        .confetti { position: fixed; width: 10px; height: 10px; z-index: 999; pointer-events: none; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 15px; min-height: 100vh;
+            background: #000 url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+        }
 
-        /* Progress Bar */
-        .progress-container { width: 90%; max-width: 400px; background: #ddd; border-radius: 20px; margin: 10px auto; height: 20px; border: 2px solid #333; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--green); width: 0%; transition: width 0.5s; }
+        /* Particle Background */
+        #bg-stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .p { position: absolute; background: rgba(255,255,255,0.4); border-radius: 50%; animation: drift linear infinite; }
+        @keyframes drift { from { transform: translateY(110vh); } to { transform: translateY(-10vh); } }
 
-        /* Player Selection */
-        .player-select-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
-        .player-box { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: 10px; width: 250px; cursor: pointer; border-bottom: 6px solid #ccc; }
-        .player-box:active { transform: translateY(4px); border-bottom-width: 2px; }
+        /* UI Panels */
+        header, .panel, .card { 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); 
+        }
 
-        header { background: white; padding: 15px; border-radius: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .section-header { margin: 25px 0 10px; font-size: 1.2rem; color: #666; display: block; text-align: left; padding-left: 10px; border-left: 5px solid #ddd; }
+        header { width: 95%; max-width: 500px; padding: 15px; margin-bottom: 15px; text-align: center; }
+        .panel { width: 95%; max-width: 500px; padding: 25px; text-align: center; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 15px; }
+        .card { padding: 20px 10px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .card:active { transform: scale(0.95); }
+
+        /* Exam Interface */
+        .timer-container { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #timer-bar { width: 100%; height: 100%; background: var(--red); transition: width 0.1s linear; }
+        .test-input { font-size: 1.8rem; width: 90%; padding: 12px; text-align: center; border-radius: 15px; border: none; margin: 15px 0; outline: none; background: white; color: black; }
         
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 450px; margin: auto; }
-        .card { background: white; padding: 20px; border-radius: 20px; cursor: pointer; border-bottom: 6px solid #ddd; font-weight: bold; font-size: 1.1rem; }
-        .card:active { transform: translateY(4px); border-bottom-width: 2px; }
-        
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(85px, 1fr)); gap: 12px; padding: 10px; justify-content: center; }
-        .item-card { background: white; padding: 20px; border-radius: 15px; font-size: 2.2rem; border-bottom: 4px solid #ccc; cursor: pointer; }
-        
+        .btn { background: var(--green); color: white; border: none; padding: 14px 28px; border-radius: 50px; cursor: pointer; font-weight: bold; margin: 5px; text-decoration: none; display: inline-block; transition: 0.3s; }
+        .btn:hover { filter: brightness(1.2); }
+        .power-btn { background: var(--purple); font-size: 0.8rem; padding: 10px; border-radius: 12px; cursor: pointer; border: 1px solid white; flex: 1; color: white; }
+        .locked { filter: grayscale(1); opacity: 0.4; pointer-events: none; }
         .hidden { display: none !important; }
-        .back-btn { background: #333; color: white; border: none; padding: 12px 25px; border-radius: 50px; margin-bottom: 20px; cursor: pointer; font-size: 1rem; }
-        
-        #certificate { background: #fffde7; border: 10px double var(--gold); padding: 30px; border-radius: 15px; max-width: 450px; margin: auto; }
-        .story-box { background: white; padding: 20px; border-radius: 20px; font-size: 1.2rem; line-height: 1.6; max-width: 400px; margin: auto; }
+        .streak { color: #ff9f43; font-weight: bold; }
+        .pro-locked { filter: grayscale(1); opacity: 0.5; position: relative; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
-    <section id="player-select-screen" class="player-select-screen">
-        <h1>🌟 Who is playing?</h1>
-        <div class="player-box" onclick="pickPlayer(1)">👤 <span id="p1-n">Player 1</span><br>⭐ <span id="p1-s">0</span></div>
-        <div class="player-box" onclick="pickPlayer(2)">👤 <span id="p2-n">Player 2</span><br>⭐ <span id="p2-s">0</span></div>
-        <div class="player-box" onclick="pickPlayer(3)">👤 <span id="p3-n">Player 3</span><br>⭐ <span id="p3-s">0</span></div>
-        <p style="font-size: 0.8rem; color: #888;">(Long press name to edit)</p>
+    <div id="bg-stars"></div>
+
+    <section id="setup-view" class="panel">
+        <h1 style="margin:0; font-size: 2.2rem;">✨ SOVEREIGN QUEST</h1>
+        <p style="font-size: 0.9rem; opacity: 0.8;">The Ultimate Learning Adventure</p>
+        <div id="player-list" style="margin: 20px 0;"></div>
+        <button class="btn" onclick="addPlayer()">+ Create Hero</button>
+        <button class="btn" style="background:var(--blue)" onclick="showLeaderboard()">🏆 Leaderboard</button>
+        <button class="btn" style="background:var(--dark)" onclick="openTeacherMode()">⚙️ Teacher Mode</button>
     </section>
 
-    <main id="game-interface" class="hidden">
+    <main id="game-ui" class="hidden" style="width:100%; display:flex; flex-direction:column; align-items:center;">
         <header>
-            <h2 id="hello-name">Hi!</h2>
-            <div class="progress-container"><div id="prog-bar" class="progress-bar"></div></div>
-            <div style="font-weight:bold">Stars: <span id="user-stars">0</span> / 100</div>
-            <div style="margin-top:10px;">
-                <button class="back-btn" style="background:var(--gold); color:black; padding:8px 15px;" onclick="view('shop')">🛍️ Shop</button>
-                <button class="back-btn" style="background:#eee; color:black; padding:8px 15px;" onclick="location.reload()">🔄 Switch</button>
+            <div style="display:flex; justify-content: space-between; align-items: center;">
+                <span id="user-display" style="font-weight:bold; font-size: 1.2rem;">Hero</span>
+                <span id="pro-tag" style="color:var(--gold); font-weight:bold; display:none;">👑 PRO</span>
+                <span id="streak-display" class="streak">🔥 1</span>
+            </div>
+            <div style="font-size: 1.6rem; margin: 10px 0;">⭐ <span id="star-count" style="color:var(--gold);">0</span></div>
+            <div style="display: flex; justify-content: center; gap: 5px;">
+                <button class="btn" style="padding:6px 15px; font-size:0.7rem; background:var(--gold); color:black;" onclick="showView('shop')">🛒 SHOP & UPGRADE</button>
+                <button class="btn" style="padding:6px 15px; font-size:0.7rem; background:rgba(255,255,255,0.2);" onclick="location.reload()">👤 LOGOUT</button>
             </div>
         </header>
 
-        <section id="menu-view">
-            <span class="section-header">Toddler (2-5)</span>
+        <section id="menu-view" class="panel">
+            <h3 id="level-label" style="color:var(--gold); margin:0;">Level 1: Scholar</h3>
+            <div class="grid" id="menu-grid"></div>
+            
+            <div id="titan-container" class="pro-locked" style="margin-top:20px;">
+                <button class="card" style="background:var(--red); border:none; width:100%; font-size: 1.2rem;" onclick="startTitan()">⚡ TITAN MASTERY EXAM</button>
+                <p style="font-size: 0.7rem; color: var(--gold); margin-top: 5px;">Requires Pro License Key</p>
+            </div>
+        </section>
+
+        <section id="test-view" class="hidden panel">
+            <div style="display:flex; justify-content: space-between; font-weight:bold;">
+                <span id="q-num">1/10</span>
+                <span id="timer-text" style="color:var(--gold)">10s</span>
+            </div>
+            <div class="timer-container"><div id="timer-bar"></div></div>
+            <div id="q-text" style="font-size:1.6rem; min-height:80px; display:flex; align-items:center; justify-content:center;">...</div>
+            <div style="display:flex; gap:10px; width:100%;">
+                <button id="pwr-freeze" class="power-btn" onclick="useFreeze()">❄️ Freeze (<span id="count-freeze">0</span>)</button>
+                <button id="pwr-hint" class="power-btn" onclick="useHint()">💡 Hint (<span id="count-hint">0</span>)</button>
+            </div>
+            <input type="text" id="test-input" class="test-input" autocomplete="off" placeholder="Type Answer...">
+            <button class="btn" style="width:100%;" onclick="submitAnswer()">SUBMIT ANSWER</button>
+        </section>
+
+        <section id="shop-view" class="hidden panel">
+            <button class="btn" onclick="showView('menu')" style="background:rgba(255,255,255,0.2)">⬅ Back</button>
+            
+            <div id="upgrade-panel" style="background: rgba(255,168,1,0.15); padding: 20px; border-radius: 20px; border: 1px solid var(--gold); margin: 15px 0;">
+                <h3 style="margin:0; color:var(--gold);">👑 UPGRADE TO PRO</h3>
+                <p style="font-size: 0.8rem; margin: 10px 0;">Unlock Titan Mode, Creator Mode, and Support Us!</p>
+                <a href="https://buy.stripe.com/aFa8wIaPwbdF54cc4kcZa00" target="_blank" class="btn" style="background:#6772e5; font-size: 0.8rem; width: 85%;">💳 Pay with Stripe</a>
+                <a href="https://www.paypal.com/ncp/payment/35G2LPBC9HJY4" target="_blank" class="btn" style="background:#0070ba; font-size: 0.8rem; width: 85%;">🔹 Pay with PayPal</a>
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+                <button class="btn" style="background:var(--purple); font-size: 0.8rem;" onclick="activateLicense()">Enter License Key</button>
+            </div>
+
             <div class="grid">
-                <div class="card" style="background:var(--toddler);" onclick="view('abc', 'Let\'s learn letters!')">🔤 ABCs</div>
-                <div class="card" style="background:var(--toddler);" onclick="view('zoo', 'Hear the animals!')">🦁 Zoo</div>
+                <div class="card" onclick="buyPwr('freeze', 20)">❄️ Freeze Ray<br>(20 Stars)</div>
+                <div class="card" onclick="buyPwr('hint', 15)">💡 Hint Bolt<br>(15 Stars)</div>
+                <div class="card" onclick="buyItem('🛸', 50)">🛸 UFO<br>(50 Stars)</div>
+                <div class="card" onclick="buyItem('🚀', 50)">🚀 Rocket<br>(50 Stars)</div>
             </div>
-            <span class="section-header">Explorer (6-9)</span>
-            <div class="grid">
-                <div class="card" style="background:var(--explorer);" onclick="view('math', 'Math time!')">➕ Math</div>
-                <div class="card" style="background:var(--story);" onclick="view('read', 'Story time!')">📚 Story</div>
-            </div>
-            <span class="section-header">Genius (10-12)</span>
-            <div class="grid">
-                <div class="card" style="background:var(--genius);" onclick="view('sci', 'Science Lab!')">🧪 Science</div>
-                <div class="card" style="background:var(--explorer);" onclick="view('space', 'To the stars!')">🚀 Space</div>
-            </div>
-            <div id="prize-notif" class="hidden" style="margin-top:20px;">
-                <button class="card pop" style="background:var(--gold); width:90%;" onclick="view('cert')">🏆 OPEN YOUR PRIZE! 🏆</button>
-            </div>
+            <div id="inv-display" style="font-size:3rem; margin-top:15px;"></div>
         </section>
 
-        <section id="abc-view" class="hidden"><button class="back-btn" onclick="view('menu')">⬅️ Back</button><div class="game-grid" id="abc-cont"></div></section>
-        <section id="zoo-view" class="hidden"><button class="back-btn" onclick="view('menu')">⬅️ Back</button><div class="game-grid" id="zoo-cont"></div></section>
-        
-        <section id="math-view" class="hidden">
-            <button class="back-btn" onclick="view('menu')">⬅️ Back</button>
-            <h1 id="mq" style="font-size:3.5rem;"></h1>
-            <input type="number" id="ma" style="font-size:2rem; width:120px; border-radius:15px; border:3px solid #ccc; text-align:center;">
-            <br><br><button class="back-btn" style="background:var(--green)" onclick="checkM()">Check Answer</button>
+        <section id="custom-view" class="hidden panel">
+            <button class="btn" onclick="showView('setup')">⬅ Exit</button>
+            <h3>Quest Creator</h3>
+            <input type="text" id="custom-q" placeholder="Enter Question" style="width:90%; padding:10px; margin:5px; border-radius:10px; border:none;"><br>
+            <input type="text" id="custom-a" placeholder="Enter Answer" style="width:90%; padding:10px; margin:5px; border-radius:10px; border:none;"><br>
+            <button class="btn" onclick="saveCustomQ()">Add to Master Bank</button>
+            <div id="custom-list-preview" style="font-size: 0.7rem; margin-top: 10px; opacity: 0.7;"></div>
         </section>
 
-        <section id="read-view" class="hidden">
-            <button class="back-btn" onclick="view('menu')">⬅️ Back</button>
-            <div class="story-box">
-                <p id="st-text">Loading...</p>
-                <button class="back-btn" style="background:var(--explorer)" onclick="readAloud()">🔊 Read to Me</button>
-            </div>
-        </section>
-
-        <section id="sci-view" class="hidden"><button class="back-btn" onclick="view('menu')">⬅️ Back</button><div class="game-grid" id="sci-cont"></div></section>
-        <section id="space-view" class="hidden"><button class="back-btn" onclick="view('menu')">⬅️ Back</button><div class="game-grid" id="space-cont"></div></section>
-
-        <section id="shop-view" class="hidden">
-            <button class="back-btn" onclick="view('menu')">⬅️ Back</button>
-            <h2>Star Shop</h2>
-            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px;">
-                <div class="card" style="width:100px; font-size:0.8rem;" onclick="buy('🦖', 5)">🦖 Dino (5⭐)</div>
-                <div class="card" style="width:100px; font-size:0.8rem;" onclick="buy('🦄', 5)">🦄 Pony (5⭐)</div>
-                <div class="card" style="width:100px; font-size:0.8rem;" onclick="buy('🚀', 5)">🚀 Rocket (5⭐)</div>
-            </div>
-            <h3>My Sticker Collection</h3>
-            <div id="stickers-owned" style="font-size:3rem;"></div>
-        </section>
-
-        <section id="cert-view" class="hidden">
-            <button class="back-btn" onclick="view('menu')">⬅️ Back</button>
-            <div id="certificate">
-                <h1 style="color: #b8860b;">OFFICIAL PRIZE</h1>
-                <p>Awarded to</p>
-                <h2 id="cert-user-name" style="font-size:2.5rem; color:#1e88e5;">NAME</h2>
-                <p>For being an amazing</p>
-                <h3>SUPER LEARNER</h3>
-                <div style="font-size:4rem;">🌟👑🌟</div>
-                <button class="back-btn" onclick="window.print()">🖨️ Print My Prize</button>
-            </div>
+        <section id="status-view" class="hidden panel">
+            <h1 id="status-title">RESULT</h1>
+            <p id="status-msg" style="font-size: 1.2rem;"></p>
+            <button class="btn" onclick="showView('menu')">Continue</button>
         </section>
     </main>
 
     <script>
-        let players = JSON.parse(localStorage.getItem('QuestData')) || {
-            1: {name: "Player 1", stars: 0, stickers: []},
-            2: {name: "Player 2", stars: 0, stickers: []},
-            3: {name: "Player 3", stars: 0, stickers: []}
+        // --- DATA & CONFIG ---
+        let players = JSON.parse(localStorage.getItem('SQ_Players_V5')) || [];
+        let customBank = JSON.parse(localStorage.getItem('SQ_Custom_V5')) || [];
+        let isPro = localStorage.getItem('SQ_Pro_Unlocked') === 'true';
+        let cur = null, step = 0, timerVal = 100, ticker = null, activeQs = [], frozen = false;
+
+        const VALID_KEYS = ["GOLD2026", "HERO99", "QUESTPRO"];
+        const baseBank = [
+            {q: "Solve for x: 8x = 64", a: "8"}, {q: "Symbol for Iron?", a: "fe"},
+            {q: "Square root of 144?", a: "12"}, {q: "Who wrote the Odyssey?", a: "homer"},
+            {q: "Capital of Italy?", a: "rome"}, {q: "What is 20% of 200?", a: "40"},
+            {q: "Solve: x + 15 = 40", a: "25"}, {q: "Planet closest to Sun?", a: "mercury"}
+        ];
+
+        // --- PARTICLE ENGINE ---
+        const bg = document.getElementById('bg-stars');
+        for(let i=0; i<40; i++) {
+            let s = document.createElement('div'); s.className = 'p';
+            let size = Math.random() * 3 + 1 + 'px';
+            s.style.width = size; s.style.height = size;
+            s.style.left = Math.random() * 100 + 'vw';
+            s.style.animationDuration = Math.random() * 4 + 4 + 's';
+            s.style.animationDelay = Math.random() * 5 + 's';
+            bg.appendChild(s);
+        }
+
+        // --- SOUND SYSTEM ---
+        const sfx = (f, d) => {
+            let ctx = new (window.AudioContext || window.webkitAudioContext)();
+            let o = ctx.createOscillator(); let g = ctx.createGain();
+            o.frequency.value = f; g.gain.value = 0.1; o.connect(g); g.connect(ctx.destination);
+            o.start(); o.stop(ctx.currentTime + d);
         };
-        let activeID = 1;
 
-        function updateLanding() {
-            for(let i=1; i<=3; i++) {
-                document.getElementById(`p${i}-n`).innerText = players[i].name;
-                document.getElementById(`p${i}-s`).innerText = players[i].stars;
-            }
-        }
-        updateLanding();
-
-        function pickPlayer(id) {
-            activeID = id;
-            document.getElementById('player-select-screen').classList.add('hidden');
-            document.getElementById('game-interface').classList.remove('hidden');
-            document.getElementById('hello-name').innerText = "Hi, " + players[activeID].name + "!";
-            sync();
-            speak("Welcome back, " + players[activeID].name);
-        }
-
-        function sync() {
-            let p = players[activeID];
-            document.getElementById('user-stars').innerText = p.stars;
-            document.getElementById('prog-bar').style.width = Math.min(p.stars, 100) + "%";
-            if(p.stars >= 100) document.getElementById('prize-notif').classList.remove('hidden');
-            localStorage.setItem('QuestData', JSON.stringify(players));
-        }
-
-        function speak(txt, slow = false) {
-            window.speechSynthesis.cancel();
-            const m = new SpeechSynthesisUtterance(txt);
-            m.rate = slow ? 0.75 : 0.9;
-            window.speechSynthesis.speak(m);
-        }
-
-        function celebrate() {
-            players[activeID].stars++;
-            sync();
-            for(let i=0; i<20; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.background = `hsl(${Math.random()*360}, 100%, 50%)`;
-                document.body.appendChild(c);
-                c.animate([{transform:'translateY(0)', opacity:1},{transform:'translateY(100vh)', opacity:0}], 2000);
-                setTimeout(()=>c.remove(), 2000);
+        // --- CORE LOGIC ---
+        function addPlayer() {
+            let n = prompt("Hero Name:"); let a = prompt("Age:");
+            if(n && a) { 
+                players.push({name:n, age:parseInt(a), stars:0, bag:[], level:1, streak:1, last:"", pwr:{f:0, h:0}}); 
+                save(); renderPlayers(); 
             }
         }
 
-        function view(v, msg) {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(v + '-view').classList.remove('hidden');
-            if(msg) speak(msg);
-            if(v === 'abc') fill('abc-cont', "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""), 'toddler');
-            if(v === 'zoo') fill('zoo-cont', ['🐶','🐱','🦁','🐮','🐷','🐵'], 'toddler', true);
-            if(v === 'math') nextMath();
-            if(v === 'read') { document.getElementById('st-text').innerText = "The Happy Sun: Every morning, the sun wakes up and smiles at the world. It makes the grass green and the flowers grow. Thank you, Mr. Sun!"; }
-            if(v === 'sci') fill('sci-cont', ['🧪','🔬','🧬','⚗️','🔭'], 'genius');
-            if(v === 'space') fill('space-cont', ['🌍','🪐','🚀','☀️','🌙'], 'explorer');
-            if(v === 'shop') loadShop();
-            if(v === 'cert') document.getElementById('cert-user-name').innerText = players[activeID].name;
-        }
-
-        function fill(id, items, age, zoo = false) {
-            const cont = document.getElementById(id);
-            if(cont.innerHTML !== "") return;
-            items.forEach(i => {
-                const d = document.createElement('div'); d.className = 'item-card';
-                d.style.background = `var(--${age})`; d.innerText = i;
-                d.onclick = () => { d.classList.add('pop'); setTimeout(()=>d.classList.remove('pop'), 300); speak(i, age==='toddler'); celebrate(); };
-                cont.appendChild(d);
+        function renderPlayers() {
+            const l = document.getElementById('player-list'); l.innerHTML = "";
+            players.forEach((p, i) => {
+                let d = document.createElement('div'); d.className="card"; d.style.flexDirection="row"; d.style.justifyContent="space-between"; d.style.margin="8px 0";
+                d.innerHTML = `<span>${p.name} (Lvl ${p.level})</span><span>⭐ ${p.stars}</span>`;
+                d.onclick = () => login(i); l.appendChild(d);
             });
         }
 
-        let ca = 0;
-        function nextMath() {
-            let n1 = Math.floor(Math.random()*12); let n2 = Math.floor(Math.random()*12);
-            ca = n1 + n2; document.getElementById('mq').innerText = `${n1} + ${n2}`;
-            document.getElementById('ma').value = "";
-        }
-        function checkM() {
-            if(parseInt(document.getElementById('ma').value) === ca) { speak("Correct!"); celebrate(); nextMath(); }
-            else { speak("Try again!"); }
-        }
-
-        function readAloud() { speak(document.getElementById('st-text').innerText); celebrate(); }
-
-        function buy(emoji, price) {
-            if(players[activeID].stars >= price) {
-                players[activeID].stars -= price;
-                players[activeID].stickers.push(emoji);
-                sync(); loadShop(); speak("Awesome sticker!");
-            } else { speak("Collect more stars!"); }
-        }
-
-        function loadShop() {
-            document.getElementById('stickers-owned').innerText = players[activeID].stickers.join(" ");
+        function login(i) {
+            cur = i; let p = players[cur];
+            let today = new Date().toDateString();
+            if(p.last !== today) {
+                p.streak = (p.last === new Date(Date.now() - 86400000).toDateString()) ? p.streak + 1 : 1;
+                p.last = today; save();
+            }
+            showView('game-ui');
+            document.getElementById('user-display').innerText = p.name;
+            document.getElementById('streak-display').innerText = `🔥 ${p.streak}`;
+            if(isPro) {
+                document.getElementById('pro-tag').style.display = "inline";
+                document.getElementById('titan-container').classList.remove('pro-locked');
+                document.getElementById('upgrade-panel').innerHTML = "<h3 style='color:var(--green)'>✓ PRO UNLOCKED</h3>";
+            }
+            updateUI();
+            let grid = document.getElementById('menu-grid'); grid.innerHTML = "";
+            if(p.age >= 10) { addBtn(grid, "📐 Algebra"); addBtn(grid, "🧪 Chemistry"); }
+            else { addBtn(grid, "🐶 Zoo"); addBtn(grid, "🎨 ABCs"); }
+            speak("Welcome back, Hero " + p.name);
         }
 
-        // Edit Name Feature
-        document.querySelectorAll('.player-box').forEach((b, i) => {
-            b.oncontextmenu = (e) => {
-                e.preventDefault();
-                let n = prompt("Enter Child's Name:");
-                if(n) { players[i+1].name = n; updateLanding(); sync(); }
-            };
-        });
+        function addBtn(p, t) {
+            let d = document.createElement('div'); d.className="card"; d.innerText=t;
+            d.onclick=() => speak("Complete the Mastery Exam to prove your Level!"); p.appendChild(d);
+        }
+
+        function startTitan() {
+            if(!isPro) { alert("🔒 Purchase a Pro License to unlock Titan Mode!"); showView('shop'); }
+            else { step = 0; activeQs = [...baseBank, ...customBank].sort(() => 0.5 - Math.random()).slice(0, 10); showView('test'); ask(); }
+        }
+
+        function ask() {
+            timerVal = 100; frozen = false;
+            document.getElementById('q-num').innerText = `${step + 1} / 10`;
+            document.getElementById('q-text').innerText = activeQs[step].q;
+            document.getElementById('test-input').value = ""; document.getElementById('test-input').focus();
+            updateUI();
+            clearInterval(ticker);
+            let limit = players[cur].level === 1 ? 10 : 5;
+            ticker = setInterval(() => {
+                if(!frozen) {
+                    timerVal -= (100 / (limit * 10));
+                    document.getElementById('timer-bar').style.width = timerVal + "%";
+                    document.getElementById('timer-text').innerText = Math.ceil((timerVal/100)*limit) + "s";
+                    if(timerVal <= 0) endTest(false, "System Timeout!");
+                }
+            }, 100);
+        }
+
+        function submitAnswer() {
+            let val = document.getElementById('test-input').value.trim().toLowerCase();
+            if(val.includes(activeQs[step].a.toLowerCase())) {
+                sfx(600, 0.1); step++;
+                if(step >= 10) endTest(true); else ask();
+            } else { endTest(false, "Incorrect Coordinates!"); }
+        }
+
+        function endTest(win, msg) {
+            clearInterval(ticker); showView('status');
+            if(win) {
+                players[cur].stars += 50; if(players[cur].level === 1) players[cur].level = 2;
+                document.getElementById('status-title').innerText = "🏆 MASTERY ACHIEVED";
+                document.getElementById('status-msg').innerText = "Level 2 TITAN Unlocked! +50 Stars.";
+                speak("Success. You are a master.");
+            } else {
+                sfx(200, 0.3); document.getElementById('status-title').innerText = "❌ MISSION FAILED";
+                document.getElementById('status-msg').innerText = msg;
+                speak("Mission failure.");
+            }
+            save(); updateUI();
+        }
+
+        // --- SHOP & PRO FUNCTIONS ---
+        function activateLicense() {
+            let key = prompt("Enter your Pro License Key:");
+            if(VALID_KEYS.includes(key?.toUpperCase())) {
+                isPro = true; localStorage.setItem('SQ_Pro_Unlocked', 'true');
+                alert("PRO UNLOCKED! Enjoy your new features."); location.reload();
+            } else if (key) alert("Invalid Key!");
+        }
+
+        function useFreeze() {
+            if(players[cur].pwr.f > 0 && !frozen) {
+                players[cur].pwr.f--; frozen = true; sfx(400, 0.2);
+                setTimeout(() => { frozen = false; }, 5000); updateUI();
+            }
+        }
+
+        function useHint() {
+            if(players[cur].pwr.h > 0) {
+                players[cur].pwr.h--; sfx(800, 0.1);
+                document.getElementById('test-input').value = activeQs[step].a[0].toUpperCase() + "...";
+                updateUI();
+            }
+        }
+
+        function buyPwr(p, cost) {
+            if(players[cur].stars >= cost) {
+                players[cur].stars -= cost; p === 'freeze' ? players[cur].pwr.f++ : players[cur].pwr.h++;
+                save(); updateUI(); sfx(1000, 0.1);
+            } else speak("Not enough stars!");
+        }
+
+        function buyItem(item, cost) {
+            if(players[cur].stars >= cost) {
+                players[cur].stars -= cost; players[cur].bag.push(item);
+                save(); updateUI();
+            }
+        }
+
+        function openTeacherMode() {
+            if(!isPro) { alert("🔒 Pro License Required for Teacher Mode!"); showView('shop'); return; }
+            if(prompt("Enter Admin Password:") === "1234") showView('custom');
+            else alert("Access Denied!");
+        }
+
+        function saveCustomQ() {
+            let q = document.getElementById('custom-q').value; let a = document.getElementById('custom-a').value;
+            if(q && a) { customBank.push({q, a}); localStorage.setItem('SQ_Custom_V5', JSON.stringify(customBank)); alert("Quest Saved!"); }
+        }
+
+        function showLeaderboard() {
+            let top = [...players].sort((a,b) => b.stars - a.stars).slice(0, 5);
+            alert("🏆 GLOBAL LEADERBOARD 🏆\n" + top.map((p,i) => `${i+1}. ${p.name}: ${p.stars} Stars`).join("\n"));
+        }
+
+        function updateUI() {
+            if(cur === null) return;
+            document.getElementById('star-count').innerText = players[cur].stars;
+            document.getElementById('count-freeze').innerText = players[cur].pwr.f;
+            document.getElementById('count-hint').innerText = players[cur].pwr.h;
+            document.getElementById('pwr-freeze').classList.toggle('locked', players[cur].pwr.f === 0);
+            document.getElementById('pwr-hint').classList.toggle('locked', players[cur].pwr.h === 0);
+            document.getElementById('inv-display').innerText = players[cur].bag.join(" ");
+            document.getElementById('level-label').innerText = players[cur].level === 1 ? "Level 1: Scholar" : "Level 2: TITAN";
+        }
+
+        function showView(v) {
+            document.querySelectorAll('main > section, #setup-view, #game-ui').forEach(s => s.classList.add('hidden'));
+            if(v === 'game-ui' || v === 'setup') document.getElementById(v).classList.remove('hidden');
+            else { document.getElementById('game-ui').classList.remove('hidden'); document.getElementById(v + '-view').classList.remove('hidden'); }
+        }
+
+        function save() { localStorage.setItem('SQ_Players_V5', JSON.stringify(players)); }
+        function speak(t) { window.speechSynthesis.cancel(); window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
+        document.getElementById('test-input').onkeypress = (e) => { if(e.key === 'Enter') submitAnswer(); };
+        
+        renderPlayers();
     </script>
 </body>
 </html>
