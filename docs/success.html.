@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Successful! - Sovereign Quest</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #000 url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 2px solid #ffa801;
+            box-shadow: 0 0 50px rgba(255, 168, 1, 0.3);
+            max-width: 400px;
+        }
+        h1 { color: #ffa801; margin-top: 0; }
+        .key-box {
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 20px 0;
+            border: 1px dashed white;
+        }
+        .btn {
+            background: #05c46b;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ MISSION SUCCESS!</h1>
+        <p>Thank you for supporting the Quest! Your Titan License Key is:</p>
+        <div class="key-box">GOLD2026</div>
+        <p style="font-size: 0.8rem; opacity: 0.8;">Copy this key and enter it in the Shop section of the game.</p>
+        <a href="index.html" class="btn">RETURN TO GAME</a>
+    </div>
+</body>
+</html>
