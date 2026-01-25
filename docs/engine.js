@@ -102,3 +102,23 @@ function checkEvolution() {
 
 // Call checkEvolution() inside your processWin() function!
 
+// TEACHER ADMIN COMMAND
+window.addEventListener('keydown', (e) => {
+    // Press 'Shift + A' to open the Admin Panel
+    if (e.shiftKey && e.key === 'A') {
+        let code = prompt("ENTER TEACHER ACCESS CODE:");
+        if (code === "1234") { // You can change this code
+            let action = prompt("Type 'RESET' to wipe data or 'GIFT' for 10,000 stars:");
+            if (action === "RESET") {
+                localStorage.clear();
+                location.reload();
+            } else if (action === "GIFT") {
+                Player.stars += 10000;
+                localStorage.setItem('sovereign_save', JSON.stringify(Player));
+                updateHUD();
+                alert("Stars injected into system!");
+            }
+        }
+    }
+});
+
