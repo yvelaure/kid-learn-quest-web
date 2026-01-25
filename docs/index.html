@@ -3,199 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Hub | Ultra</title>
-    <style>
-        :root { 
-            --p-blue: #3b82f6; --p-gold: #fbbf24; --p-green: #22c55e;
-            --p-bg: #f0f4f8; --p-card: rgba(255, 255, 255, 0.9); --p-text: #1e293b;
-        }
-        body.night { 
-            --p-bg: #0f172a; --p-card: rgba(30, 41, 59, 0.9); --p-text: #f1f5f9; 
-        }
-
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--p-bg); color: var(--p-text); margin: 0; overflow-x: hidden; transition: 0.5s; }
-
-        /* --- BACKGROUND ANIMATION --- */
-        .bg-glow {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1), transparent);
-            z-index: -1; animation: pulse 8s infinite alternate;
-        }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.5); } }
-
-        /* --- HUB HEADER --- */
-        .hub-header {
-            padding: 20px; display: flex; justify-content: space-between; align-items: center;
-            background: var(--p-card); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-        }
-        .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .user-avatar { width: 40px; height: 40px; background: var(--p-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; }
-        .star-box { background: #fffbeb; border: 2px solid #fde68a; padding: 10px 18px; border-radius: 50px; font-weight: 900; color: #92400e; display: flex; gap: 8px; }
-
-        /* --- HERO DRAGON ZONE --- */
-        .hero-zone {
-            margin: 20px; padding: 40px 20px; border-radius: 40px;
-            background: var(--p-card); box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            text-align: center; position: relative;
-        }
-        .dragon-display { font-size: 8rem; position: relative; z-index: 5; cursor: pointer; transition: 0.3s; display: inline-block; }
-        .dragon-display:active { transform: scale(0.9); }
-        .dragon-acc { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 10; }
-        
-        .level-badge {
-            background: var(--p-blue); color: white; padding: 5px 15px; border-radius: 10px;
-            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: inline-block;
-        }
-
-        /* --- MISSION CONTROL GRID --- */
-        .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .mission-card {
-            background: var(--p-card); border-radius: 30px; padding: 25px 15px;
-            text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
-        }
-        .mission-card:active { border-color: var(--p-blue); transform: translateY(-5px); }
-        .m-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
-        .m-label { font-weight: 900; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
-        .m-sub { font-size: 0.7rem; opacity: 0.6; display: block; margin-top: 5px; }
-
-        /* --- BATTLE PORTAL --- */
-        .battle-portal {
-            margin: 15px; padding: 20px; border-radius: 30px;
-            background: linear-gradient(135deg, #1e293b, #0f172a); color: white;
-            display: flex; justify-content: space-between; align-items: center; overflow: hidden; position: relative;
-        }
-        .battle-portal::after { content: '⚔️'; position: absolute; right: -10px; font-size: 5rem; opacity: 0.1; }
-
-        /* --- LEVEL PICKER --- */
-        .lvl-nav { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
-        .lvl-btn { padding: 12px 20px; border-radius: 15px; border: none; font-weight: 800; background: var(--p-card); color: var(--p-text); cursor: pointer; }
-        .lvl-btn.active { background: var(--p-blue); color: white; }
-
-        /* --- MODAL ENGINE --- */
-        .modal { position: fixed; inset: 0; background: var(--p-bg); z-index: 5000; display: none; flex-direction: column; padding: 40px 25px; }
-        .q-text { font-size: 2.5rem; font-weight: 900; margin: 40px 0; line-height: 1.1; }
-        .opt-btn { background: var(--p-card); border: 2px solid rgba(0,0,0,0.05); padding: 20px; border-radius: 20px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 800; width: 100%; cursor: pointer; }
-        .opt-btn:active { background: var(--p-blue); color: white; }
-    </style>
+    <title>Sovereign Nexus | Omni-Hub</title>
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
-<body id="hub-body">
+<body>
 
-    <div class="bg-glow"></div>
+    <div class="game-container">
+        
+        <header class="hub-header">
+            <div class="user-profile">
+                <div style="font-weight: 900; color: var(--accent-blue);">SOVEREIGN OPS</div>
+            </div>
+            <div class="star-box">⭐ <span id="stars">0</span></div>
+        </header>
 
-    <header class="hub-header">
-        <div class="user-profile" onclick="openReport()">
-            <div class="user-avatar" id="avatar-initial">H</div>
-            <div style="font-weight: 900;" id="display-name">HERO</div>
+        <section class="hero-card">
+            <div class="dragon-aura"></div>
+            <div class="dragon-sprite" id="dragon">🥚</div>
+            <div class="rank-ribbon" id="rank-display">NOVICE EXPLORER</div>
+            
+            <div class="xp-shell">
+                <div class="xp-bar" id="xp-fill"></div>
+            </div>
+
+            <div style="display:flex; justify-content:center; gap:8px; margin-top:15px;">
+                <button class="lvl-btn" onclick="changeGrade('preschool')">PRE-K</button>
+                <button class="lvl-btn" onclick="changeGrade('middleSchool')">MIDDLE</button>
+                <button class="lvl-btn" onclick="changeGrade('highSchool')">HIGH</button>
+            </div>
+        </section>
+
+        <div class="battle-portal">
+            <div>
+                <div style="font-weight: 900; color: white;">DAILY BATTLE</div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.7);">Defend the Stars!</div>
+            </div>
+            <button class="battle-btn" onclick="startBattle(0)">FIGHT</button>
         </div>
-        <div class="star-box">⭐ <span id="star-val">250</span></div>
-    </header>
 
-    <div class="hero-zone">
-        <div class="level-badge" id="rank-badge">NOVICE LEARNER</div>
-        <div class="dragon-display" onclick="dragonSpeak()">
-            <div id="acc-slot" class="dragon-acc"></div>
-            <div id="dragon-emoji">🥚</div>
+        <div class="activity-map" id="mission-grid">
+            </div>
+
+    </div>
+
+    <div id="q-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h1 id="q-title" style="color: var(--accent-blue);">MISSION</h1>
+            <div id="q-body" style="font-size: 1.8rem; font-weight: 900; margin: 40px 0; min-height: 100px;"></div>
+            <div id="opt-grid" class="options-container">
+                </div>
+            <button onclick="document.getElementById('q-modal').style.display='none'" class="exit-btn">ABORT MISSION</button>
         </div>
-        <div id="status-text" style="font-weight: 900; margin-top: 15px; letter-spacing: 2px;">EGG STAGE</div>
-        <div style="background: #e2e8f0; height: 10px; border-radius: 10px; width: 80%; margin: 20px auto; overflow: hidden;">
-            <div id="xp-bar" style="background: var(--p-green); height: 100%; width: 5%; transition: 1s;"></div>
-        </div>
     </div>
 
-    <div class="lvl-nav">
-        <button class="lvl-btn active" onclick="changeLvl(1, this)">LEVEL 1</button>
-        <button class="lvl-btn" onclick="changeLvl(2, this)">LEVEL 2</button>
-        <button class="lvl-btn" onclick="changeLvl(3, this)">LEVEL 3</button>
-    </div>
-
-    <div class="battle-portal" onclick="alert('Defend the Kingdom! Math Battle loading...')">
-        <div>
-            <div style="font-weight: 900; font-size: 1.2rem;">DAILY BATTLE</div>
-            <div style="font-size: 0.8rem; opacity: 0.8;">Protect the stars from monsters!</div>
-        </div>
-        <button style="background: var(--p-gold); border: none; padding: 10px 20px; border-radius: 50px; font-weight: 900;">FIGHT</button>
-    </div>
-
-    <div class="mission-grid">
-        <div class="mission-card" onclick="startQuest('Math')"><span class="m-icon">🔢</span><b class="m-label">Math</b><span class="m-sub">Numbers & Logic</span></div>
-        <div class="mission-card" onclick="startQuest('Words')"><span class="m-icon">📖</span><b class="m-label">Reading</b><span class="m-sub">Grammar & Stories</span></div>
-        <div class="mission-card" onclick="startQuest('Science')"><span class="m-icon">🧪</span><b class="m-label">Science</b><span class="m-sub">The Universe</span></div>
-        <div class="mission-card" onclick="openShop()"><span class="m-icon">🛍️</span><b class="m-label">Closet</b><span class="m-sub">Dragon Hats</span></div>
-        <div class="mission-card" onclick="openStory()"><span class="m-icon">📜</span><b class="m-label">Library</b><span class="m-sub">Narrated Stories</span></div>
-        <div class="mission-card" onclick="toggleMode()"><span class="m-icon">🌙</span><b class="m-label">Theme</b><span class="m-sub">Light/Dark</span></div>
-    </div>
-
-    <div id="quest-modal" class="modal">
-        <div id="q-title" style="font-weight: 900; color: var(--p-blue);">MISSION</div>
-        <div class="q-text" id="q-body">1 + 1 = ?</div>
-        <div id="opt-box"></div>
-        <button onclick="closeModals()" style="margin-top:auto; background:none; border:none; color:#94a3b8; font-weight:700;">BACK TO HUB</button>
-    </div>
+    <script src="world_data.js"></script>
+    
+    <script src="engine.js"></script>
 
     <script>
-        let stars = 250; let currentLvl = 1; let name = "Hero";
-        const synth = window.speechSynthesis;
+        function buildGrid() {
+            const grid = document.getElementById('mission-grid');
+            const mode = Player.mode; // Uses data from engine.js
+            const tasks = GameDatabase[mode].quests;
+            
+            grid.innerHTML = ""; // Clear existing
+            
+            tasks.forEach((quest, index) => {
+                const tile = document.createElement('div');
+                tile.className = "activity-node";
+                tile.onclick = () => startBattle(index);
+                
+                // Assigning icons based on index for variety
+                const icons = ['🔢', '📖', '🧪', '🧬', '⚙️'];
+                const icon = icons[index] || '🌟';
 
-        const quests = {
-            Math: {
-                1: [{q:"1+1?", a:"2", o:["1","2","3"]}],
-                2: [{q:"10x5?", a:"50", o:["40","50","60"]}],
-                3: [{q:"144/12?", a:"12", o:["10","12","14"]}]
-            },
-            Words: {
-                1: [{q:"Cat starts with...", a:"C", o:["C","B"]}],
-                2: [{q:"Opposite of Hot?", a:"Cold", o:["Ice","Cold"]}],
-                3: [{q:"Identify Verb", a:"Run", o:["Run","Sky"]}]
-            },
-            Science: {
-                1: [{q:"Sun is a...", a:"Star", o:["Planet","Star"]}],
-                2: [{q:"Ice is...", a:"Solid", o:["Solid","Gas"]}],
-                3: [{q:"Earth is...", a:"Round", o:["Flat","Round"]}]
-            }
-        };
-
-        function dragonSpeak() { 
-            let u = new SpeechSynthesisUtterance("I am ready for level " + currentLvl); 
-            u.pitch = 1.4; synth.speak(u); 
-        }
-
-        function changeLvl(n, btn) {
-            currentLvl = n;
-            document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        function startQuest(type) {
-            const data = quests[type][currentLvl][0];
-            document.getElementById('q-title').innerText = `${type.toUpperCase()} - LEVEL ${currentLvl}`;
-            document.getElementById('q-body').innerText = data.q;
-            const box = document.getElementById('opt-box'); box.innerHTML = "";
-            data.o.forEach(o => {
-                const b = document.createElement('button'); b.className = "opt-btn"; b.innerText = o;
-                b.onclick = () => { if(o === data.a) { stars += 500; update(); alert("Correct!"); closeModals(); } };
-                box.appendChild(b);
+                tile.innerHTML = `
+                    <span class="node-icon">${icon}</span>
+                    <span class="node-label">${quest.title}</span>
+                `;
+                grid.appendChild(tile);
             });
-            document.getElementById('quest-modal').style.display = 'flex';
         }
 
-        function update() {
-            document.getElementById('star-val').innerText = stars;
-            document.getElementById('xp-bar').style.width = Math.min((stars/5000)*100, 100) + "%";
-            let img = document.getElementById('dragon-emoji');
-            let stat = document.getElementById('status-text');
-            if(stars < 1000) { img.innerText = "🥚"; stat.innerText = "EGG STAGE"; }
-            else if(stars < 3000) { img.innerText = "🐣"; stat.innerText = "JUNIOR DRAGON"; }
-            else { img.innerText = "🐲"; stat.innerText = "MASTER SOVEREIGN"; }
-        }
-
-        function toggleMode() { document.body.classList.toggle('night'); }
-        function openShop() { let p = prompt("Enter PIN for Admin Stars:"); if(p === "1234") { stars += 10000; update(); } }
-        function closeModals() { document.getElementById('quest-modal').style.display = 'none'; }
-        
-        update();
+        // Run this when the page finishes loading
+        window.addEventListener('load', buildGrid);
     </script>
+
 </body>
 </html>
