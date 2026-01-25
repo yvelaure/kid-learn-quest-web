@@ -3,245 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Universe | Ultimate</title>
+    <title>Sovereign Academy | Full Curriculum</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --p-blue: #3498db; --p-green: #2ecc71; --p-gold: #f1c40f; --p-bg: #f8faff; --p-purp: #9b59b6; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Rounded Mplus 1c', sans-serif; }
-        body { background: var(--p-bg); margin: 0; padding-bottom: 90px; overflow-x: hidden; transition: 0.5s; }
+        :root { --p-blue: #3b82f6; --p-gold: #f59e0b; --p-green: #22c55e; --p-bg: #f8fafc; --p-card: #ffffff; --p-text: #1e293b; }
+        body.night-mode { --p-bg: #0f172a; --p-card: #1e293b; --p-text: #f1f5f9; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--p-bg); margin: 0; color: var(--p-text); transition: 0.5s; overflow-x: hidden; padding-bottom: 50px; }
 
-        /* Header & Stats */
-        header { background: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.3rem; cursor: pointer; user-select: none; }
-        .pill-group { display: flex; gap: 8px; }
-        .pill { background: #f0f2f5; padding: 6px 15px; border-radius: 50px; font-weight: 900; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; border: 2px solid #eee; }
-
-        /* Global Chat */
-        .chat-bar { background: #2c3e50; color: white; padding: 8px; font-size: 0.75rem; overflow: hidden; white-space: nowrap; border-bottom: 3px solid var(--p-gold); }
-        .chat-track { display: inline-block; animation: scroll 20s linear infinite; }
+        /* Top Ticker */
+        .ticker-wrap { background: #1e293b; color: #fbbf24; padding: 10px; font-size: 0.8rem; font-weight: 800; overflow: hidden; white-space: nowrap; }
+        .ticker { display: inline-block; animation: scroll 20s linear infinite; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* Monster Hub */
-        #photo-area { background: white; margin: 15px; padding: 30px; border-radius: 35px; text-align: center; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .aura { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 180px; height: 180px; border-radius: 50%; filter: blur(40px); opacity: 0.3; transition: 0.8s; z-index: 1; }
-        .monster-box { position: relative; z-index: 10; display: inline-block; cursor: pointer; transition: 0.3s; }
-        .monster-box:active { transform: scale(1.2); }
-        .m-emoji { font-size: 6rem; position: relative; }
-        .m-acc { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 2.8rem; z-index: 15; }
-        
-        .speech { background: #f8f9fa; border: 2px solid #eee; border-radius: 20px; padding: 12px; width: 85%; margin: 0 auto 15px; font-weight: 800; font-size: 0.9rem; color: #444; }
+        /* Header */
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--p-card); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.5rem; }
+        .stars-pill { background: #fbbf24; color: #1e293b; padding: 8px 18px; border-radius: 50px; font-weight: 800; border: none; }
 
-        /* Progress & Rewards */
-        .stat-card { background: white; margin: 0 15px 15px; padding: 20px; border-radius: 25px; text-align: center; }
-        .bar-bg { background: #eee; height: 12px; border-radius: 10px; margin: 10px 0; overflow: hidden; }
-        .bar-fill { background: var(--p-green); width: 10%; height: 100%; transition: 1s; }
+        /* Monster Card */
+        .monster-card { background: var(--p-card); margin: 15px; padding: 30px; border-radius: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
+        .m-emoji { font-size: 6rem; cursor: pointer; display: inline-block; transition: 0.3s; }
+        .m-name { font-weight: 900; font-size: 1.6rem; margin: 10px 0; }
+        .bar-bg { background: #e2e8f0; height: 12px; border-radius: 10px; margin: 10px auto; width: 80%; overflow: hidden; }
+        .bar-fill { background: var(--p-green); height: 100%; width: 0%; transition: 1s; }
 
-        /* World Grid */
+        /* SUBJECT GRID */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 15px; }
-        .box { background: white; padding: 25px; border-radius: 30px; text-align: center; border-bottom: 6px solid #e0e0e0; cursor: pointer; transition: 0.2s; }
-        .box:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .subject-box { background: var(--p-card); padding: 25px; border-radius: 30px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 2px solid transparent; }
+        .subject-box:active { transform: scale(0.95); border-color: var(--p-blue); }
+        .subject-box i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .subject-box b { font-size: 0.9rem; letter-spacing: 0.5px; }
+        .subject-box span { display: block; font-size: 0.7rem; color: #94a3b8; margin-top: 5px; }
 
-        /* Navigation */
-        nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px; border-top: 2px solid #eee; z-index: 2000; }
-        .nav-btn { font-size: 0.75rem; font-weight: 900; color: #bbb; text-align: center; cursor: pointer; }
-        .nav-btn.active { color: var(--p-blue); }
+        /* TEST MODAL */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--p-bg); z-index: 2000; display: none; flex-direction: column; padding: 30px; text-align: center; }
+        .test-header { font-size: 1.2rem; font-weight: 900; margin-bottom: 20px; color: var(--p-blue); }
+        .question-text { font-size: 1.8rem; font-weight: 800; margin: 30px 0; }
+        .option-btn { background: var(--p-card); border: 2px solid #e2e8f0; padding: 20px; border-radius: 20px; margin-bottom: 10px; font-size: 1.2rem; font-weight: 700; cursor: pointer; color: var(--p-text); width: 100%; }
+        .option-btn:active { background: var(--p-blue); color: white; }
 
-        /* Modals */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 5000; display: none; flex-direction: column; padding: 25px; text-align: center; overflow-y: auto; }
-        .btn-main { background: var(--p-blue); color: white; border: none; padding: 20px; border-radius: 22px; font-weight: 900; font-size: 1.1rem; width: 100%; margin-top: 10px; cursor: pointer; box-shadow: 0 6px 0 #2980b9; }
-        .btn-main:active { transform: translateY(3px); box-shadow: 0 3px 0 #2980b9; }
-
-        #admin-panel { background: #111; color: #0f0; font-family: monospace; text-align: left; }
+        .btn-footer { background: #1e293b; color: white; padding: 20px; border-radius: 20px; border: none; font-weight: 800; margin-top: auto; cursor: pointer; }
     </style>
 </head>
-<body>
+<body id="b">
+
+    <div class="ticker-wrap"><div class="ticker" id="t-msg">Sovereign Academy: New Math Semester Started! • User_Alpha just earned the "Scientist" Badge • Keep training your Dragon!</div></div>
 
     <header>
-        <div class="logo" id="admin-trigger">SOVEREIGN 🌌</div>
-        <div class="pill-group">
-            <div class="pill">🔥 <span id="streak-val">1</span></div>
-            <div class="pill">⭐ <span id="star-val">250</span></div>
-        </div>
+        <div class="logo">SOVEREIGN</div>
+        <button class="stars-pill">⭐ <span id="s-count">250</span></button>
     </header>
 
-    <div class="chat-bar">
-        <div class="chat-track" id="chat-feed">Sovereign_Kid: Level 5 Clear! • New Wizard Hat in Shop! • User99: "My Dragon is huge!" • Daily Bonus: Active!</div>
+    <div class="monster-card" id="capture">
+        <div id="acc" style="font-size: 2.5rem; position: absolute; margin-left: 60px;"></div>
+        <div class="m-emoji" onclick="pet()" id="m-img">🥚</div>
+        <div class="m-name" id="m-name">EGG STAGE</div>
+        <div class="bar-bg"><div class="bar-fill" id="m-fill"></div></div>
+        <div style="font-size: 0.7rem; font-weight: 800; color: var(--p-blue);">DRAGON POWER: <span id="p-val">250</span></div>
     </div>
 
-    <div id="scr-hub" class="screen">
-        <div id="photo-area">
-            <div class="aura" id="m-aura" style="background: var(--p-blue);"></div>
-            <div class="speech" id="m-talk">Hi! I'm your Sovereign pet! Tap me!</div>
-            <div class="monster-box" onclick="petMonster()">
-                <div id="active-acc" class="m-acc"></div>
-                <div id="m-icon" class="m-emoji">🥚</div>
-            </div>
-            <h2 id="m-name" style="margin: 10px 0 0;">EGG STAGE</h2>
-        </div>
+    <h3 style="margin: 20px;">CHOOSE A SUBJECT</h3>
 
-        <div class="stat-card">
-            <div class="bar-bg"><div class="bar-fill" id="m-fill"></div></div>
-            <p style="font-size: 0.8rem; font-weight: 900; color: #aaa; margin: 0;">POWER: <span id="pwr-val">250</span></p>
-            <button class="btn-main" id="claim-btn" onclick="claimDaily()" style="background: var(--p-purp); box-shadow: 0 6px 0 #8e44ad;">🎁 DAILY LOGIN REWARD</button>
-        </div>
+    <div class="grid">
+        <div class="subject-box" onclick="startTest('math')"><i>🔢</i><b>MATH</b><span>10 Questions</span></div>
+        <div class="subject-box" onclick="startTest('reading')"><i>📚</i><b>READING</b><span>Vocabulary</span></div>
+        <div class="subject-box" onclick="startTest('science')"><i>🧪</i><b>SCIENCE</b><span>The World</span></div>
+        <div class="subject-box" onclick="startTest('logic')"><i>🧩</i><b>LOGIC</b><span>Brain Training</span></div>
+        <div class="subject-box" onclick="openShop()"><i>🛒</i><b>SHOP</b><span>Wardrobe</span></div>
+        <div class="subject-box" onclick="openParent()"><i>⚙️</i><b>PARENT</b><span>Admin</span></div>
+    </div>
 
+    <div id="test-modal" class="modal">
+        <div class="test-header" id="test-title">SUBJECT TEST</div>
+        <div id="progress-dots" style="color:var(--p-gold); letter-spacing: 5px;"></div>
+        <div class="question-text" id="q-text">Loading Question...</div>
+        <div id="options-box"></div>
+        <button class="btn-footer" onclick="closeTest()">QUIT TEST</button>
+    </div>
+
+    <div id="shop-modal" class="modal">
+        <h1>WARDROBE</h1>
         <div class="grid">
-            <div class="box" onclick="openQuest('Toddler')">🧸<br><b>TODDLER</b></div>
-            <div class="box" onclick="openQuest('Academy')">🎒<br><b>ACADEMY</b></div>
+            <div class="subject-box" onclick="buy('👑')">👑<br>Crown</div>
+            <div class="subject-box" onclick="buy('🕶️')">🕶️<br>Shades</div>
+            <div class="subject-box" onclick="buy('🧙')">🧙<br>Magic</div>
         </div>
+        <button class="btn-footer" onclick="closeShop()">BACK</button>
     </div>
 
-    <div id="scr-shop" class="screen" style="display:none; padding: 20px;">
-        <h2>SOVEREIGN CLOSET</h2>
-        <div class="grid" id="wardrobe-list"></div>
-        <button class="btn-main" onclick="takePhoto()" style="margin-top: 30px; background: #333; box-shadow: 0 6px 0 #000;">📷 TAKE PHOTO</button>
+    <div id="parent-modal" class="modal" style="background:#111; color:#0f0;">
+        <h1>PARENT ADMIN</h1>
+        <button class="option-btn" onclick="addStars(5000)">+5,000 STARS (GIFT)</button>
+        <button class="option-btn" onclick="toggleNight()">TOGGLE NIGHT MODE</button>
+        <button class="btn-footer" onclick="closeParent()">CLOSE</button>
     </div>
-
-    <div id="game-modal" class="modal">
-        <h1 id="q-text" style="margin-top: 50px;"></h1>
-        <div id="opt-container" class="grid" style="margin-top: 20px;"></div>
-        <input type="text" id="q-input" style="display:none; width:100%; padding:20px; font-size:1.5rem; text-align:center; border-radius:15px; border:3px solid #eee; margin: 20px 0;">
-        <button id="q-sub" class="btn-main" style="display:none;" onclick="checkAns()">SUBMIT LOGIC</button>
-        <button class="btn-main" style="background:#eee; color:#666; box-shadow:none;" onclick="closeAll()">EXIT</button>
-    </div>
-
-    <div id="success-modal" class="modal" style="background: var(--p-green); color: white;">
-        <div style="font-size: 7rem; margin-top: 80px;">🏆</div>
-        <h1>VERIFIED!</h1>
-        <p>+150 Sovereign Stars Earned!</p>
-        <button class="btn-main" style="background: white; color: var(--p-green); box-shadow: none;" onclick="closeAll()">CONTINUE</button>
-    </div>
-
-    <div id="admin-panel" class="modal">
-        <h2>[ ACCESS GRANTED ]</h2>
-        <button class="btn-main" onclick="addStars(1000)">>> ADD 1000 STARS</button>
-        <button class="btn-main" onclick="stars=0; updateUI();">>> RESET DATA</button>
-        <button class="btn-main" onclick="closeAll()">>> EXIT CONSOLE</button>
-    </div>
-
-    <div id="photo-modal" class="modal">
-        <h2>PHOTO SAVED!</h2>
-        <div id="photo-result"></div>
-        <button class="btn-main" onclick="downloadImg()">💾 DOWNLOAD TO GALLERY</button>
-        <button class="btn-main" style="background:none; border:2px solid white;" onclick="closeAll()">CLOSE</button>
-    </div>
-
-    <nav>
-        <div class="nav-btn active" id="n-hub" onclick="showScr('hub')">🏠<br>HUB</div>
-        <div class="nav-btn" id="n-shop" onclick="showScr('shop')">👕<br>CLOSET</div>
-        <div class="nav-btn" onclick="alert('Certificates Unlocked at 1000 Stars!')">📜<br>RANKS</div>
-    </nav>
 
     <script>
-        let stars = 250; let streak = 1; let currentAns = "";
-        let ownedItems = []; let activeAcc = "";
-        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let stars = 250;
+        let currentTest = [];
+        let qIndex = 0;
+        let score = 0;
 
-        const items = [
-            { id: '🕶️', name: 'Shades', price: 100 },
-            { id: '👑', name: 'Crown', price: 500 },
-            { id: '🧙', name: 'Wizard', price: 1000 }
-        ];
+        const subjects = {
+            math: [
+                {q: "What is 15 + 15?", a: "30", o: ["25", "30", "40"]},
+                {q: "What is 10 x 3?", a: "30", o: ["13", "30", "100"]},
+                {q: "Half of 20 is...", a: "10", o: ["5", "10", "15"]},
+                {q: "What is 100 - 50?", a: "50", o: ["50", "40", "60"]}
+            ],
+            reading: [
+                {q: "Which is a FRUIT?", a: "Apple", o: ["Apple", "Carrot", "Bread"]},
+                {q: "Opposite of BIG?", a: "Small", o: ["Huge", "Fast", "Small"]},
+                {q: "A dog says...", a: "Woof", o: ["Meow", "Woof", "Moo"]}
+            ],
+            science: [
+                {q: "The sun is a...", a: "Star", o: ["Planet", "Star", "Moon"]},
+                {q: "Ice turns into...", a: "Water", o: ["Water", "Rock", "Steam"]},
+                {q: "We breathe...", a: "Oxygen", o: ["Water", "Oxygen", "Food"]}
+            ]
+        };
 
-        // PARENT DASHBOARD TRIGGER (3 SECOND HOLD)
-        let timer;
-        const trigger = document.getElementById('admin-trigger');
-        trigger.onmousedown = () => timer = setTimeout(() => document.getElementById('admin-panel').style.display='flex', 3000);
-        trigger.onmouseup = () => clearTimeout(timer);
-
-        function speak(t) {
-            const u = new SpeechSynthesisUtterance(t); u.pitch = 1.5;
+        function pet() {
+            const u = new SpeechSynthesisUtterance("Let's pass the test together!");
             window.speechSynthesis.speak(u);
-            document.getElementById('m-talk').innerText = t;
         }
 
-        function showScr(s) {
-            document.getElementById('scr-hub').style.display = s === 'hub' ? 'block' : 'none';
-            document.getElementById('scr-shop').style.display = s === 'shop' ? 'block' : 'none';
-            document.getElementById('n-hub').classList.toggle('active', s === 'hub');
-            document.getElementById('n-shop').classList.toggle('active', s === 'shop');
-            if(s === 'shop') renderShop();
+        function startTest(s) {
+            currentTest = subjects[s] || subjects.math;
+            qIndex = 0;
+            score = 0;
+            document.getElementById('test-title').innerText = s.toUpperCase() + " CHALLENGE";
+            document.getElementById('test-modal').style.display = 'flex';
+            showQuestion();
         }
 
-        function petMonster() {
-            document.getElementById('m-aura').style.background = '#e91e63';
-            speak("That tickles! I love learning with you!");
-            setTimeout(() => document.getElementById('m-aura').style.background = '#3498db', 2000);
-        }
-
-        function renderShop() {
-            const list = document.getElementById('wardrobe-list');
-            list.innerHTML = items.map(i => `
-                <div class="box">
-                    <div style="font-size:2.5rem">${i.id}</div>
-                    <b>${i.name}</b><br>
-                    ${ownedItems.includes(i.id) ? 
-                        `<button class="btn-main" style="padding:10px; font-size:0.8rem" onclick="equip('${i.id}')">${activeAcc === i.id ? 'REMOVE' : 'WEAR'}</button>` : 
-                        `<button class="btn-main" style="padding:10px; font-size:0.8rem" onclick="buy('${i.id}', ${i.price})">${i.price} ⭐</button>`}
-                </div>
-            `).join('');
-        }
-
-        function buy(id, p) {
-            if(stars >= p) { stars -= p; ownedItems.push(id); speak("New clothes! I look great!"); updateUI(); renderShop(); }
-            else speak("We need more stars for that!");
-        }
-
-        function equip(id) { activeAcc = (activeAcc === id) ? "" : id; document.getElementById('active-acc').innerText = activeAcc; renderShop(); }
-
-        function openQuest(w) {
-            const q = (w === 'Toddler') ? {q:'Find the BLUE Square', a:'🟦', opts:['🟥','🟦','🟩']} : {q:'12 + 12 = ?', a:'24'};
-            document.getElementById('game-modal').style.display = 'flex';
-            document.getElementById('q-text').innerText = q.q;
-            speak(q.q);
-            currentAns = q.a.toLowerCase();
-            if(q.opts) {
-                document.getElementById('opt-container').style.display = 'grid'; document.getElementById('q-input').style.display = 'none'; document.getElementById('q-sub').style.display = 'none';
-                document.getElementById('opt-container').innerHTML = q.opts.map(o => `<div class="box" style="font-size:2rem" onclick="checkAns('${o}')">${o}</div>`).join('');
-            } else {
-                document.getElementById('opt-container').style.display = 'none'; document.getElementById('q-input').style.display = 'block'; document.getElementById('q-sub').style.display = 'block';
-                document.getElementById('q-input').value = "";
+        function showQuestion() {
+            if(qIndex >= currentTest.length) {
+                finishTest();
+                return;
             }
-        }
-
-        function checkAns(v) {
-            let u = (v || document.getElementById('q-input').value).toLowerCase().trim();
-            if(u === currentAns) { stars += 150; updateUI(); document.getElementById('success-modal').style.display='flex'; speak("Correct! You are a genius!"); }
-            else speak("Not quite! Try again!");
-        }
-
-        function claimDaily() { stars += 100; streak++; updateUI(); speak("Thanks for the snack! Daily bonus added!"); document.getElementById('claim-btn').disabled = true; }
-
-        function updateUI() {
-            document.getElementById('star-val').innerText = stars;
-            document.getElementById('pwr-val').innerText = stars;
-            document.getElementById('streak-val').innerText = streak;
-            document.getElementById('m-fill').style.width = Math.min((stars/2000)*100, 100) + "%";
-            let m = document.getElementById('m-icon'); let n = document.getElementById('m-name');
-            if(stars < 500) { m.innerText = "🥚"; n.innerText = "EGG STAGE"; }
-            else if(stars < 1500) { m.innerText = "🐣"; n.innerText = "JUNIOR STAGE"; }
-            else { m.innerText = "🐲"; n.innerText = "MASTER DRAGON"; }
-        }
-
-        function takePhoto() {
-            html2canvas(document.getElementById('photo-area')).then(canvas => {
-                document.getElementById('photo-result').innerHTML = `<img src="${canvas.toDataURL()}" style="width:100%; border:5px solid white; border-radius:15px;">`;
-                document.getElementById('photo-modal').style.display = 'flex';
+            let data = currentTest[qIndex];
+            document.getElementById('q-text').innerText = data.q;
+            document.getElementById('progress-dots').innerText = "•".repeat(qIndex + 1);
+            let box = document.getElementById('options-box');
+            box.innerHTML = "";
+            data.o.forEach(opt => {
+                let b = document.createElement('button');
+                b.className = "option-btn";
+                b.innerText = opt;
+                b.onclick = () => checkAns(opt);
+                box.appendChild(b);
             });
         }
 
-        function downloadImg() {
-            const link = document.createElement('a'); link.download = 'sovereign-pet.png';
-            link.href = document.querySelector('#photo-result img').src; link.click();
+        function checkAns(val) {
+            if(val === currentTest[qIndex].a) score++;
+            qIndex++;
+            showQuestion();
         }
 
-        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-        function addStars(a) { stars += a; updateUI(); }
+        function finishTest() {
+            let total = score * 200;
+            stars += total;
+            updateUI();
+            alert("TEST COMPLETE!\nScore: " + score + "/" + currentTest.length + "\nStars Earned: " + total);
+            closeTest();
+        }
 
-        setInterval(() => {
-            const f = ["Sovereign_Alpha just evolved!", "Logic_Queen hit 500 stars!", "New Quest: Math Land!", "Pet your monster for luck!"];
-            document.getElementById('chat-feed').innerText = f[Math.floor(Math.random()*f.length)] + " • " + document.getElementById('chat-feed').innerText.substring(0,100);
-        }, 8000);
+        function updateUI() {
+            document.getElementById('s-count').innerText = stars;
+            document.getElementById('p-val').innerText = stars;
+            document.getElementById('m-fill').style.width = Math.min((stars/3000)*100, 100) + "%";
+            let pet = document.getElementById('m-img');
+            let name = document.getElementById('m-name');
+            if(stars < 1000) { pet.innerText = "🥚"; name.innerText = "EGG"; }
+            else if(stars < 2500) { pet.innerText = "🐣"; name.innerText = "JUNIOR"; }
+            else { pet.innerText = "🐲"; name.innerText = "MASTER DRAGON"; }
+        }
+
+        function buy(i) {
+            if(stars >= 200) { stars -= 200; document.getElementById('acc').innerText = i; updateUI(); closeShop(); }
+            else alert("Need more stars!");
+        }
+
+        function toggleNight() { document.getElementById('b').classList.toggle('night-mode'); }
+        function addStars(n) { stars += n; updateUI(); }
+        function openShop() { document.getElementById('shop-modal').style.display = 'flex'; }
+        function closeShop() { document.getElementById('shop-modal').style.display = 'none'; }
+        function openParent() { document.getElementById('parent-modal').style.display = 'flex'; }
+        function closeParent() { document.getElementById('parent-modal').style.display = 'none'; }
+        function closeTest() { document.getElementById('test-modal').style.display = 'none'; }
 
         updateUI();
     </script>
