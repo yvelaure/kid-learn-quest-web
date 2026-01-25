@@ -35,6 +35,24 @@ function updateHUD() {
     else if (Player.stars >= 5000) { dragon.innerText = "🦎"; rank.innerText = "CYBER DRAKE"; }
     else { dragon.innerText = "🥚"; rank.innerText = "FOREST HATCHLING"; }
 
+    function buyItem(name, cost) {
+    if (Player.stars >= cost) {
+        Player.stars -= cost;
+        saveGame();
+        speak("Purchased " + name + "!");
+        alert("Success! You bought: " + name);
+        
+        // Bonus: If they buy the Evolution Stone, grow the dragon instantly
+        if (name === 'Evolution Stone') {
+            document.getElementById('dragon').innerText = "🐲";
+            speak("Your dragon has reached its ultimate form!");
+        }
+    } else {
+        speak("You need more stars for that.");
+        alert("Not enough stars!");
+    }
+}
+
     // Zone Badge
     const labels = { preschool: "PRE-K", middleSchool: "MIDDLE", highSchool: "HIGH" };
     if(zoneBadge) zoneBadge.innerText = labels[Player.mode];
