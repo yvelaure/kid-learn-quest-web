@@ -143,3 +143,43 @@ window.addEventListener('keydown', (e) => {
     }
 });
 
+// Add a badge list to your Player object
+Player.badges = Player.badges || [];
+
+function unlockBadge(badgeName, icon) {
+    if (!Player.badges.includes(badgeName)) {
+        Player.badges.push(badgeName);
+        speak("New Trophy Unlocked: " + badgeName);
+        saveGame();
+        renderBadges();
+    }
+}
+
+function renderBadges() {
+    const grid = document.getElementById('badge-grid');
+    grid.innerHTML = "";
+    
+    // List of possible badges
+    const trophyList = [
+        {name: "Math Whiz", icon: "📐"},
+        {name: "Word Smith", icon: "✍️"},
+        {name: "Rocket Scientist", icon: "🚀"}
+    ];
+
+    trophyList.forEach(t => {
+        const isUnlocked = Player.badges.includes(t.name);
+        grid.innerHTML += `
+            <div class="badge-item ${isUnlocked ? 'unlocked' : ''}">
+                <span class="badge-icon">${t.icon}</span>
+                <span style="font-size:0.6rem;">${t.name}</span>
+            </div>
+        `;
+    });
+}
+
+function toggleCollection() {
+    const el = document.getElementById('badge-collection');
+    el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+    if(el.style.display === 'block') renderBadges();
+}
+
