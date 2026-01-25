@@ -3,146 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Quest: Omega</title>
+    <title>Sovereign Quest Omega</title>
     <style>
-        :root { --gold: #ffa801; --green: #05c46b; --red: #ff3f34; --blue: #0984e3; --purple: #a29bfe; --dark: #111; }
+        :root { --gold: #ffa801; --green: #05c46b; --blue: #0984e3; --red: #ff3f34; --purp: #a29bfe; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 10px; min-height: 100vh;
-            background: #050505; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+            font-family: sans-serif; background: #000; color: white; margin: 0; padding: 10px; 
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden;
         }
-        #starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
-        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d) infinite; }
-        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); } }
-        header, .panel, .map-node, .game-overlay, #cert-modal { 
-            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); 
+        
+        /* Background Stars */
+        #stars-bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+        .s { position: absolute; background: white; border-radius: 50%; opacity: 0.5; }
+
+        /* Panels */
+        .card { 
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); 
+            border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); 
+            width: 100%; max-width: 400px; padding: 20px; margin-bottom: 15px; text-align: center;
         }
+
+        /* The Map */
+        #map { 
+            width: 100%; height: 350px; position: relative; 
+            background: rgba(0,0,0,0.4); border: 2px solid var(--gold); border-radius: 20px; overflow: hidden;
+        }
+        .node { position: absolute; cursor: pointer; text-align: center; transition: 0.3s; animation: bob 3s infinite ease-in-out; }
+        @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .node span { font-size: 2.5rem; display: block; filter: drop-shadow(0 0 10px white); }
+        .label { font-size: 0.6rem; background: var(--gold); color: black; padding: 2px 6px; border-radius: 5px; font-weight: bold; }
+
+        /* Buttons */
         .btn { 
             background: var(--green); color: white; border: none; padding: 12px 20px; 
-            border-radius: 16px; cursor: pointer; font-weight: 800; margin: 5px; 
-            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase; font-size: 0.8rem;
+            border-radius: 12px; font-weight: bold; cursor: pointer; margin: 5px;
         }
-        #world-map-container { 
-            width: 100%; height: 380px; position: relative; margin: 15px 0; overflow: hidden;
-            border-radius: 24px; border: 2px solid rgba(255,168,1,0.2); background: rgba(0,0,0,0.2);
+        .btn:active { transform: scale(0.95); }
+
+        /* Mission Popup */
+        #pop { 
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(0,0,0,0.9); display: none; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 100; 
         }
-        .map-node { 
-            position: absolute; width: 65px; height: 65px; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; cursor: pointer; animation: float var(--d) ease-in-out infinite; 
-        }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        .node-label { font-size: 0.55rem; font-weight: 900; margin-top: 5px; background: var(--dark); padding: 3px 8px; border-radius: 8px; border: 1px solid var(--gold); }
-        #active-pet { font-size: 4rem; display: block; filter: drop-shadow(0 0 15px var(--gold)); }
-        .game-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); }
-        .trivia-btn { width: 90%; padding: 15px; margin: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; color: white; cursor: pointer; }
-        .hidden { display: none !important; }
+        .pop-card { background: #111; border: 2px solid var(--gold); padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: none; font-size: 1rem; text-align: center; }
     </style>
 </head>
 <body>
-    <div id="starfield"></div>
-    <section id="setup-view" class="panel">
-        <h1 style="color:var(--gold); margin:0;">SOVEREIGN</h1>
-        <p style="margin:0; letter-spacing:3px;">QUEST OMEGA</p>
-        <div id="player-list" style="margin: 20px 0;"></div>
-        <button class="btn" onclick="addPlayer()">NEW HERO</button>
-    </section>
 
-    <main id="game-ui" class="hidden" style="width:100%; max-width:500px;">
-        <header style="padding: 15px; text-align: center;">
-            <div style="display:flex; justify-content: space-between; align-items:center;">
-                <span id="header-avatar" style="font-size:1.5rem;">👤</span>
-                <span style="color:var(--gold); font-weight:900;">⭐ <span id="star-count">0</span></span>
-            </div>
-            <span id="active-pet">🥚</span>
-            <h3 style="margin:5px 0;"><span id="pet-name">Egg</span></h3>
-            <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0;">
-                <div id="hunger-bar" style="height:100%; background:var(--green); width:100%; border-radius:10px;"></div>
-            </div>
-            <button class="btn" style="background:var(--blue); font-size:0.6rem;" onclick="feedPet()">🍕 FEED (10)</button>
-        </header>
+    <div id="stars-bg"></div>
 
-        <section id="menu-view" class="panel">
-            <div id="world-map-container">
-                <div class="map-node" style="top:5%; left:15%; --d:4s" onclick="openTrivia('Space')"><span>🌌</span><div class="node-label">Space</div></div>
-                <div class="map-node" style="top:5%; left:70%; --d:3s" onclick="openTrivia('Coding')"><span>💻</span><div class="node-label">Coding</div></div>
-                <div class="map-node" style="top:35%; left:42%; --d:5s" onclick="openTrivia('Math')"><span>📐</span><div class="node-label">Math</div></div>
-                <div class="map-node" style="top:65%; left:15%; --d:3.5s" onclick="openTrivia('History')"><span>📜</span><div class="node-label">History</div></div>
-                <div class="map-node" style="top:65%; left:70%; --d:4.5s" onclick="openTrivia('Wildlife')"><span>🦁</span><div class="node-label">Wildlife</div></div>
-                <div class="map-node" style="top:35%; left:5%; --d:3.2s" onclick="openTrivia('Finance')"><span>💰</span><div class="node-label">Finance</div></div>
-                <div class="map-node" style="top:35%; left:75%; --d:3.8s" onclick="openTrivia('Robotics')"><span>🤖</span><div class="node-label">Robots</div></div>
-            </div>
-            <button class="btn" style="width:100%; background:var(--red);" onclick="openMinigame()">🎲 MINIGAMES</button>
-        </section>
+    <div class="card">
+        <h1 style="color:var(--gold); margin:0; font-size: 1.2rem;">SOVEREIGN QUEST OMEGA</h1>
+        <div id="pet" style="font-size: 4rem; margin: 10px 0;">🥚</div>
+        <div style="font-size: 1.2rem; font-weight: bold; color: var(--gold);">⭐ <span id="star-val">50</span></div>
+        <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.7;">LEVEL <span id="lvl-val">1</span> HERO</p>
+        <button class="btn" style="background:var(--blue)" onclick="feed()">FEED PET (10 ⭐)</button>
+    </div>
 
-        <div id="trivia-screen" class="hidden game-overlay">
-            <h2 id="trivia-title" style="color:var(--gold);">MISSION</h2>
-            <p id="question-text" style="font-size:1.2rem; padding:20px; text-align:center;">?</p>
-            <div id="answer-zone" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-            <button class="btn" style="background:none; border:1px solid white;" onclick="closeOverlays()">EXIT</button>
+    <div class="card" style="padding: 10px;">
+        <div id="map">
+            <div class="node" style="top:10%; left:15%" onclick="openM('Space', 'How many suns are in our solar system?', '1')"><span>🌌</span><div class="label">SPACE</div></div>
+            <div class="node" style="top:15%; left:65%" onclick="openM('Coding', 'What color is the sky? (Wait.. coding test: What is 5 + 5?)', '10')"><span>💻</span><div class="label">CODING</div></div>
+            <div class="node" style="top:45%; left:40%" onclick="openM('Math', 'What is 100 - 50?', '50')"><span>📐</span><div class="label">MATH</div></div>
+            <div class="node" style="top:70%; left:15%" onclick="openM('History', 'Who found America? (Short last name)', 'columbus')"><span>📜</span><div class="label">HISTORY</div></div>
+            <div class="node" style="top:72%; left:72%" onclick="openM('Wildlife', 'What animal says Meow?', 'cat')"><span>🦁</span><div class="label">WILDLIFE</div></div>
         </div>
-    </main>
+    </div>
+
+    <div id="pop">
+        <div class="pop-card">
+            <h2 id="m-sub" style="color:var(--gold); margin:0;">MISSION</h2>
+            <p id="m-que" style="margin: 20px 0; font-size: 1.1rem;"></p>
+            <input type="text" id="m-ans" placeholder="Answer here...">
+            <button class="btn" style="width:100%" onclick="check()">CHECK ANSWER</button>
+            <button class="btn" style="background:none; border: 1px solid white; width:100%; margin-top:10px; font-size:0.7rem;" onclick="closeM()">CLOSE</button>
+        </div>
+    </div>
 
     <script>
-        const sf = document.getElementById('starfield');
-        for(let i=0; i<60; i++) {
-            let s = document.createElement('div'); s.className='star';
-            let size = Math.random()*3;
-            s.style.width=size+'px'; s.style.height=size+'px';
-            s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
-            s.style.setProperty('--d', (Math.random()*4+2)+'s');
-            sf.appendChild(s);
+        // Setup Stars
+        const bg = document.getElementById('stars-bg');
+        for(let i=0; i<50; i++) {
+            let s = document.createElement('div'); s.className = 's';
+            let size = Math.random()*3 + 'px';
+            s.style.width = size; s.style.height = size;
+            s.style.top = Math.random()*100+'%'; s.style.left = Math.random()*100+'%';
+            bg.appendChild(s);
         }
 
-        let players = JSON.parse(localStorage.getItem('SQ_V3')) || [];
-        let cur = null;
+        let stars = 50;
+        let lvl = 1;
+        let activeAns = "";
 
-        const triviaData = {
-            "Math": { easy:{q:"15+15?", a:["25","30","35"], c:1}, hard:{q:"(12x4)+22?", a:["60","70","80"], c:1}},
-            "Space": { easy:{q:"Center of Solar System?", a:["Moon","Sun","Earth"], c:1}, hard:{q:"Planet with most moons?", a:["Saturn","Jupiter","Mars"], c:0}},
-            "Coding": { easy:{q:"CSS ID Symbol?", a:[".","#","*"], c:1}, hard:{q:"Line break tag?", a:["<lb>","<br>","<break>"], c:1}},
-            "History": { easy:{q:"Who found gravity?", a:["Newton","Tesla","Einstein"], c:0}, hard:{q:"Moon landing year?", a:["1965","1969","1972"], c:1}},
-            "Wildlife": { easy:{q:"Flying mammal?", a:["Ostrich","Bat","Penguin"], c:1}, hard:{q:"Lion group name?", a:["Pack","Herd","Pride"], c:2}},
-            "Finance": { easy:{q:"10+5 stars?", a:["10","15","20"], c:1}, hard:{q:"80 costs 50% off?", a:["20","40","60"], c:1}},
-            "Robotics": { easy:{q:"Robot brain?", a:["Battery","Chip","Wire"], c:1}, hard:{q:"AI stands for?", a:["Auto Input","Artificial Intel","Active Info"], c:1}}
-        };
+        function openM(sub, q, a) {
+            document.getElementById('m-sub').innerText = sub;
+            document.getElementById('m-que').innerText = q;
+            activeAns = a.toLowerCase();
+            document.getElementById('m-ans').value = "";
+            document.getElementById('pop').style.display = 'flex';
+        }
 
-        function addPlayer() { 
-            let n = prompt("Hero Name:"); 
-            if(n) { players.push({name:n, stars:50, petIcon:'🥚', petName:"Egg", petLvl:1, hunger:100, trophies:[]}); save(); renderList(); } 
+        function check() {
+            let input = document.getElementById('m-ans').value.toLowerCase().trim();
+            if(input === activeAns) {
+                stars += 50;
+                alert("🌟 EXCELLENT! +50 STARS");
+                closeM();
+                update();
+            } else {
+                alert("Try again, explorer!");
+            }
         }
-        function renderList() { 
-            const l = document.getElementById('player-list'); l.innerHTML = ""; 
-            players.forEach((p, i) => { 
-                let d = document.createElement('div'); d.className="btn"; d.style.display="block";
-                d.innerHTML = `👤 ${p.name} • ⭐ ${p.stars}`; d.onclick = () => login(i); l.appendChild(d); 
-            }); 
+
+        function closeM() { document.getElementById('pop').style.display = 'none'; }
+
+        function feed() {
+            if(stars >= 10) {
+                stars -= 10; lvl++;
+                if(lvl >= 10) document.getElementById('pet').innerText = '🐲';
+                else if(lvl >= 6) document.getElementById('pet').innerText = '🦖';
+                else if(lvl >= 3) document.getElementById('pet').innerText = '🐥';
+                update();
+            } else {
+                alert("Need 10 stars to feed!");
+            }
         }
-        function login(i) { cur = i; showView('game-ui'); updateUI(); }
-        function openTrivia(s) {
-            const isHard = players[cur].petLvl >= 5; const data = isHard ? triviaData[s].hard : triviaData[s].easy;
-            document.getElementById('trivia-screen').classList.remove('hidden');
-            document.getElementById('trivia-title').innerText = s.toUpperCase();
-            document.getElementById('question-text').innerText = data.q;
-            const zone = document.getElementById('answer-zone'); zone.innerHTML = "";
-            data.a.forEach((ans, idx) => {
-                let b = document.createElement('button'); b.className = "trivia-btn"; b.innerText = ans;
-                b.onclick = () => { if(idx === data.c) { players[cur].stars += (isHard?100:50); alert("WINNER!"); closeOverlays(); } else alert("Try again!"); save(); updateUI(); };
-                zone.appendChild(b);
-            });
+
+        function update() {
+            document.getElementById('star-val').innerText = stars;
+            document.getElementById('lvl-val').innerText = lvl;
         }
-        function feedPet() { if(players[cur].stars >= 10) { players[cur].stars-=10; players[cur].petLvl++; if(players[cur].petLvl===10) players[cur].petIcon="🐲"; save(); updateUI(); } }
-        function updateUI() { 
-            let p = players[cur]; document.getElementById('star-count').innerText=p.stars; 
-            document.getElementById('active-pet').innerText=p.petIcon; document.getElementById('pet-lvl').innerText=p.petLvl; 
-            document.getElementById('hunger-bar').style.width=p.hunger+"%"; 
-        }
-        function showView(v) { document.getElementById('setup-view').classList.add('hidden'); document.getElementById(v).classList.remove('hidden'); }
-        function closeOverlays() { document.querySelectorAll('.game-overlay').forEach(o => o.classList.add('hidden')); }
-        function save() { localStorage.setItem('SQ_V3', JSON.stringify(players)); }
-        renderList();
     </script>
 </body>
 </html>
