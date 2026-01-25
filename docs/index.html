@@ -3,99 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Nexus | The Infinite Final Edition</title>
+    <title>Sovereign Nexus | Identity Edition</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { 
             --p-blue: #3b82f6; --p-gold: #fbbf24; --p-green: #22c55e;
-            --p-bg: #f8fafc; --p-card: #ffffff; --p-text: #1e293b; --p-accent: #6366f1;
+            --p-bg: #f8fafc; --p-card: #ffffff; --p-text: #1e293b;
         }
-        
         body.night-mode { 
             --p-bg: #0f172a; --p-card: #1e293b; --p-text: #f1f5f9; 
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--p-bg); margin: 0; color: var(--p-text); transition: background 0.5s, color 0.5s; padding-bottom: 50px; overflow-x: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        body { background: var(--p-bg); margin: 0; color: var(--p-text); transition: 0.5s; padding-bottom: 50px; }
 
-        /* --- GLOBAL CHAT SYSTEM --- */
-        .ticker-wrap { background: #1e293b; color: var(--p-gold); padding: 12px; font-size: 0.85rem; font-weight: 800; overflow: hidden; white-space: nowrap; border-bottom: 4px solid var(--p-gold); }
-        .ticker { display: inline-block; animation: scrollTicker 30s linear infinite; }
-        @keyframes scrollTicker { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        /* LOGIN SCREEN */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(135deg, var(--p-blue), #6366f1);
+            z-index: 9999; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: white; padding: 20px;
+        }
+        .login-input {
+            padding: 20px; width: 100%; max-width: 300px; border-radius: 20px;
+            border: none; font-size: 1.2rem; text-align: center; margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
 
-        /* --- PREMIUM HEADER --- */
+        /* HEADER */
         header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--p-card); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
-        .logo-box { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-        .logo-text { font-weight: 900; font-size: 1.5rem; color: var(--p-blue); letter-spacing: -1px; }
-        .star-pill { background: #fffbeb; border: 2px solid #fde68a; padding: 8px 15px; border-radius: 50px; display: flex; align-items: center; gap: 5px; font-weight: 900; color: #92400e; }
-        .daily-btn { background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: 900; font-size: 0.7rem; cursor: pointer; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .logo { font-weight: 900; font-size: 1.4rem; color: var(--p-blue); cursor: pointer; }
+        .star-pill { background: #fffbeb; border: 2px solid #fde68a; padding: 8px 15px; border-radius: 50px; font-weight: 900; color: #92400e; }
 
-        /* --- THE EVOLUTION ZONE --- */
-        .evolution-container { background: var(--p-card); margin: 20px; padding: 40px 20px; border-radius: 45px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05); position: relative; overflow: hidden; }
-        .aura { position: absolute; width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; filter: blur(60px); opacity: 0.1; background: var(--p-blue); transition: 1s; }
-        .pet-display { position: relative; z-index: 10; cursor: pointer; display: inline-block; transition: 0.3s; }
-        .pet-emoji { font-size: 7.5rem; display: block; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
-        .pet-acc { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; pointer-events: none; }
-        .pet-name { font-weight: 900; font-size: 1.8rem; margin: 20px 0 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .pet-rank { font-size: 0.8rem; font-weight: 800; color: var(--p-blue); opacity: 0.8; margin-bottom: 20px; display: block; }
-        
-        .progress-shell { background: #e2e8f0; height: 14px; border-radius: 10px; width: 85%; margin: 10px auto; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
-        .progress-bar { background: linear-gradient(90deg, var(--p-green), #4ade80); height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        /* DRAGON AREA */
+        .dragon-box { background: var(--p-card); margin: 20px; padding: 40px 20px; border-radius: 45px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.05); position: relative; }
+        .pet-emoji { font-size: 7rem; cursor: pointer; }
+        .pet-acc { position: absolute; top: 35px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; pointer-events: none; }
+        .p-bar-bg { background: #e2e8f0; height: 12px; border-radius: 10px; width: 80%; margin: 15px auto; overflow: hidden; }
+        .p-bar-fill { background: var(--p-green); height: 100%; width: 0%; transition: 1s; }
 
-        /* --- GRADE NAV --- */
-        .grade-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
-        .grade-tab { padding: 12px 20px; border-radius: 18px; background: #e2e8f0; color: #64748b; font-weight: 800; border: none; cursor: pointer; font-size: 0.8rem; transition: 0.3s; }
-        .grade-tab.active { background: var(--p-blue); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        /* NAVIGATION */
+        .grade-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .grade-tab { padding: 12px 18px; border-radius: 15px; background: #e2e8f0; color: #64748b; font-weight: 800; border: none; cursor: pointer; font-size: 0.8rem; }
+        .grade-tab.active { background: var(--p-blue); color: white; }
 
-        /* --- THE WORLD MAP --- */
+        /* WORLD MAP */
         .world-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-        .island-card { background: var(--p-card); padding: 25px 15px; border-radius: 35px; text-align: center; border: 2px solid transparent; box-shadow: 0 8px 20px rgba(0,0,0,0.02); cursor: pointer; transition: 0.2s; position: relative; }
-        .island-card:active { transform: scale(0.95); border-color: var(--p-blue); }
-        .island-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
-        .island-card b { display: block; font-size: 0.9rem; text-transform: uppercase; font-weight: 900; }
-        .island-card span { font-size: 0.65rem; color: #94a3b8; font-weight: 700; }
+        .island { background: var(--p-card); padding: 25px 10px; border-radius: 35px; text-align: center; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.02); }
+        .island-icon { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+        .island b { font-size: 0.85rem; text-transform: uppercase; }
 
-        /* --- MODAL SYSTEM --- */
+        /* MODALS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--p-bg); z-index: 5000; display: none; flex-direction: column; padding: 30px; text-align: center; overflow-y: auto; }
-        .modal-header { font-weight: 900; color: var(--p-blue); font-size: 1.2rem; margin-bottom: 20px; }
-        .question-text { font-size: 2.2rem; font-weight: 900; margin: 40px 0; line-height: 1.2; }
-        .option-btn { background: var(--p-card); border: 2px solid #e2e8f0; padding: 20px; border-radius: 25px; margin-bottom: 15px; font-size: 1.3rem; font-weight: 800; cursor: pointer; width: 100%; transition: 0.2s; box-shadow: 0 4px 0 #e2e8f0; }
-        .option-btn:active { transform: translateY(3px); box-shadow: none; background: var(--p-blue); color: white; }
-        .close-btn { background: #1e293b; color: white; border: none; padding: 20px; border-radius: 25px; font-weight: 900; margin-top: auto; width: 100%; }
-
-        /* --- REPORT TABLE --- */
-        .report-table { width: 100%; border-collapse: collapse; background: var(--p-card); border-radius: 20px; overflow: hidden; margin-top: 20px; }
-        .report-table th, .report-table td { padding: 20px; text-align: left; border-bottom: 1px solid #f1f5f9; }
-        .report-table th { background: #f8fafc; font-weight: 900; }
-        body.night-mode .report-table th { background: #1e293b; }
+        .opt-btn { background: var(--p-card); border: 2px solid #e2e8f0; padding: 18px; border-radius: 20px; margin-bottom: 12px; font-size: 1.2rem; font-weight: 800; width: 100%; cursor: pointer; }
+        .opt-btn:active { background: var(--p-blue); color: white; }
+        .exit-btn { background: #1e293b; color: white; border: none; padding: 18px; border-radius: 20px; font-weight: 900; margin-top: auto; width: 100%; }
     </style>
 </head>
-<body id="master-view">
+<body id="master-body">
 
-    <div class="ticker-wrap">
-        <div class="ticker">
-            NEWS: User_Sovereign just unlocked "Space Explorer" Badge! • Daily Challenge: Solve 5 Math problems for +1000 Stars! • Bedtime Story "The Galactic Dragon" is now live in the Library! •
-        </div>
+    <div id="login-screen">
+        <h1 style="font-size: 2.5rem; margin: 0;">SOVEREIGN</h1>
+        <p style="font-weight: 600; opacity: 0.9;">Type your name to begin!</p>
+        <input type="text" id="user-name-input" class="login-input" placeholder="Hero Name...">
+        <button class="opt-btn" style="background: var(--p-gold); border: none; width: auto; padding: 15px 40px;" onclick="startGame()">START ADVENTURE</button>
     </div>
 
     <header>
-        <div class="logo-box" onclick="openParentReport()">
-            <span class="logo-text">SOVEREIGN</span>
-        </div>
-        <button class="daily-btn" id="daily-gift" onclick="claimDaily()">🎁 GIFT</button>
-        <div class="star-pill">⭐ <span id="star-count">250</span></div>
+        <div class="logo" onclick="openReport()">SOVEREIGN</div>
+        <button style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:50px; font-weight:900; font-size: 0.7rem;" onclick="addStars(1000)">🎁 GIFT</button>
+        <div class="star-pill">⭐ <span id="s-val">250</span></div>
     </header>
 
-    <div class="evolution-container" id="snap-zone">
-        <div class="aura" id="aura-fx"></div>
-        <div class="pet-display" onclick="petTalk()">
-            <div id="acc-slot" class="pet-acc"></div>
-            <div id="pet-img" class="pet-emoji">🥚</div>
-        </div>
-        <div class="pet-name" id="pet-name">EGG STAGE</div>
-        <span class="pet-rank" id="rank-text">RANK: NEWBIE HERO</span>
-        <div class="progress-shell"><div class="progress-bar" id="p-bar"></div></div>
+    <div class="dragon-box" id="capture-area">
+        <div id="acc-box" class="pet-acc"></div>
+        <div class="pet-emoji" id="p-img" onclick="dragonTalk()">🥚</div>
+        <div id="welcome-msg" style="font-weight:900; font-size:1.4rem; margin-top:10px; color: var(--p-blue);">WELCOME!</div>
+        <div id="p-name" style="font-weight:700; font-size:1rem; opacity: 0.7; margin-bottom: 10px;">EGG STAGE</div>
+        <div class="p-bar-bg"><div class="p-bar-fill" id="p-fill"></div></div>
     </div>
 
     <div class="grade-nav">
@@ -105,203 +90,133 @@
     </div>
 
     <div class="world-grid">
-        <div class="island-card" onclick="startLesson('Math')">
-            <span class="island-icon">🔢</span>
-            <b>Math Island</b>
-            <span>Numbers & Logic</span>
-        </div>
-        <div class="island-card" onclick="startLesson('Reading')">
-            <span class="island-icon">📖</span>
-            <b>Reading</b>
-            <span>Letters & Stories</span>
-        </div>
-        <div class="island-card" onclick="openLibrary()">
-            <span class="island-icon">📜</span>
-            <b>Library</b>
-            <span>Narrated Stories</span>
-        </div>
-        <div class="island-card" onclick="openModal('shop-modal')">
-            <span class="island-icon">🛍️</span>
-            <b>Closet</b>
-            <span>Shop Items</span>
-        </div>
-        <div class="island-card" onclick="snapPhoto()">
-            <span class="island-icon">📸</span>
-            <b>Photo</b>
-            <span>Save Picture</span>
-        </div>
-        <div class="island-card" onclick="toggleNightMode()">
-            <span class="island-icon">🌙</span>
-            <b>Night</b>
-            <span>Sleepy Mode</span>
-        </div>
+        <div class="island" onclick="launch('Math')"><span class="island-icon">🔢</span><b>Math</b></div>
+        <div class="island" onclick="launch('Reading')"><span class="island-icon">📖</span><b>Reading</b></div>
+        <div class="island" onclick="launch('Science')"><span class="island-icon">🧪</span><b>Science</b></div>
+        <div class="island" onclick="openLibrary()"><span class="island-icon">📜</span><b>Library</b></div>
+        <div class="island" onclick="openShop()"><span class="island-icon">🛍️</span><b>Closet</b></div>
+        <div class="island" onclick="toggleNight()"><span class="island-icon">🌙</span><b>Night</b></div>
     </div>
 
-    <div id="lesson-modal" class="modal">
-        <div class="modal-header" id="lesson-title">CHALLENGE</div>
-        <div class="question-text" id="q-text">Ready?</div>
-        <div id="option-grid"></div>
-        <button class="close-btn" onclick="closeAll()">I'M DONE</button>
+    <div id="quest-modal" class="modal">
+        <h2 id="q-head">CHALLENGE</h2>
+        <div id="q-text" style="font-size: 2rem; font-weight: 900; margin: 30px 0;">?</div>
+        <div id="opt-grid"></div>
+        <button class="exit-btn" onclick="closeAll()">EXIT</button>
     </div>
 
-    <div id="library-modal" class="modal">
-        <h1 id="lib-title">The Magic Dragon</h1>
-        <div style="font-size: 6rem; margin: 20px 0;">🐲</div>
-        <div id="lib-body" style="font-size: 1.5rem; line-height: 1.6; font-weight: 600; margin-bottom: 30px;">Loading story...</div>
-        <button class="option-btn" style="background:var(--p-gold); border:none;" onclick="readStory()">🔊 LISTEN TO STORY</button>
-        <button class="close-btn" onclick="stopStory()">EXIT LIBRARY</button>
+    <div id="lib-modal" class="modal">
+        <h1 id="lib-title">Story</h1>
+        <div id="story-content" style="font-size: 1.3rem; line-height: 1.6; margin: 20px 0;"></div>
+        <button class="opt-btn" style="background:var(--p-gold); border:none;" onclick="readStory()">🔊 READ ALOUD</button>
+        <button class="exit-btn" onclick="window.speechSynthesis.cancel(); closeAll()">CLOSE</button>
     </div>
 
     <div id="report-modal" class="modal">
-        <h1>PARENT DASHBOARD</h1>
-        <div style="text-align: left; margin-bottom: 20px;">
-            <p><b>Parent PIN:</b> Hidden</p>
-            <p>Monitor your child's progress here.</p>
+        <h1>PARENT REPORT</h1>
+        <div style="font-size: 1.2rem; margin: 20px 0;">
+            <b>Student:</b> <span id="r-name">---</span><br>
+            <b>Lessons Completed:</b> <span id="r-score">0</span>
         </div>
-        <table class="report-table">
-            <thead><tr><th>Subject</th><th>Questions Solved</th></tr></thead>
-            <tbody>
-                <tr><td>Math Academy</td><td id="rep-math">0</td></tr>
-                <tr><td>Reading Zone</td><td id="rep-read">0</td></tr>
-            </tbody>
-        </table>
-        <button class="option-btn" onclick="addStarsAdmin()" style="margin-top: 30px; background:var(--p-green); color:white;">🎁 ADD 10,000 STARS (ADMIN)</button>
-        <button class="close-btn" onclick="closeAll()">EXIT DASHBOARD</button>
+        <button class="opt-btn" style="background:var(--p-green); color:white;" onclick="addStars(10000)">+10,000 STARS (ADMIN)</button>
+        <button class="exit-btn" onclick="closeAll()">CLOSE</button>
     </div>
 
     <div id="shop-modal" class="modal">
-        <h1>THE CLOSET</h1>
+        <h1>CLOSET</h1>
         <div class="world-grid">
-            <div class="island-card" onclick="buyItem('👑', 200)">👑<br>200 ⭐</div>
-            <div class="island-card" onclick="buyItem('🕶️', 200)">🕶️<br>200 ⭐</div>
-            <div class="island-card" onclick="buyItem('🧙', 500)">🧙<br>500 ⭐</div>
+            <div class="island" onclick="buy('👑', 200)">👑<br>200</div>
+            <div class="island" onclick="buy('🕶️', 200)">🕶️<br>200</div>
+            <div class="island" onclick="buy('🧙', 500)">🧙<br>500</div>
         </div>
-        <button class="close-btn" onclick="closeAll()">BACK</button>
+        <button class="exit-btn" onclick="closeAll()">BACK</button>
     </div>
 
     <script>
-        // --- DATA & STATE ---
-        let stars = 250;
-        let gradeLevel = 1;
-        let lessonCount = { Math: 0, Reading: 0 };
-        let activeLesson = [];
+        let stars = 250; let grade = 1; let lessonsDone = 0; let userName = "Hero";
         let synth = window.speechSynthesis;
 
-        const curriculumBank = {
+        const content = {
             Math: {
-                1: [{q:"1 + 1 = ?", a:"2", o:["1","2","3"]}, {q:"5 - 2 = ?", a:"3", o:["2","3","4"]}],
-                2: [{q:"10 x 5 = ?", a:"50", o:["40","50","60"]}, {q:"25 + 25 = ?", a:"50", o:["45","50","55"]}],
-                3: [{q:"144 ÷ 12 = ?", a:"12", o:["10","12","14"]}, {q:"Square root of 9?", a:"3", o:["3","6","9"]}]
+                1: [{q:"1+1?", a:"2", o:["1","2","3"]}, {q:"5-2?", a:"3", o:["2","3","4"]}],
+                2: [{q:"5x5?", a:"25", o:["20","25","30"]}, {q:"10x2?", a:"20", o:["20","25"]}],
+                3: [{q:"100/4?", a:"25", o:["20","25","30"]}, {q:"12x12?", a:"144", o:["144","164"]}]
             },
             Reading: {
-                1: [{q:"Sound of 'B'?", a:"Ball", o:["Apple","Ball","Cat"]}],
-                2: [{q:"Opposite of 'Fast'?", a:"Slow", o:["Quick","Slow","Hot"]}],
-                3: [{q:"Which is a Noun?", a:"Dog", o:["Run","Dog","Blue"]}]
+                1: [{q:"A is for...", a:"Apple", o:["Apple","Cat"]}],
+                2: [{q:"Opposite of Hot?", a:"Cold", o:["Cold","Fire"]}],
+                3: [{q:"Identify Noun", a:"Ball", o:["Run","Ball"]}],
+            },
+            Science: {
+                1: [{q:"Is the Sun hot?", a:"Yes", o:["Yes","No"]}],
+                2: [{q:"Ice is...", a:"Solid", o:["Solid","Gas"]}],
+                3: [{q:"Do plants need water?", a:"Yes", o:["Yes","No"]}]
             }
         };
 
-        const storyBank = [
-            {t: "The Star Dragon", c: "Deep in the Sovereign Universe, a dragon named Sparkle learned that every time he solved a math problem, a new star appeared in the sky. He studied hard until the whole galaxy was glowing with his smart work!"},
-            {t: "The Hero's Quest", c: "A brave hero traveled through three levels of school. On the third level, they found a golden crown that made them the smartest person in the world. They shared their books with everyone they met."}
-        ];
-
-        // --- CORE FUNCTIONS ---
-        function petTalk() {
-            const msgs = ["You are doing great!", "Let's find more stars!", "I love learning!", "Check out my evolution!"];
-            let u = new SpeechSynthesisUtterance(msgs[Math.floor(Math.random()*msgs.length)]);
-            u.pitch = 1.6; synth.speak(u);
+        function startGame() {
+            let name = document.getElementById('user-name-input').value;
+            if(name.trim() !== "") {
+                userName = name;
+                document.getElementById('welcome-msg').innerText = "HELLO, " + userName.toUpperCase() + "!";
+                document.getElementById('login-screen').style.display = 'none';
+                dragonTalk("Welcome to your adventure!");
+            } else { alert("Please enter a name!"); }
         }
 
-        function setGrade(n, el) {
-            gradeLevel = n;
+        function dragonTalk(customText) { 
+            let t = customText || "You are doing great, " + userName;
+            synth.speak(new SpeechSynthesisUtterance(t)); 
+        }
+        
+        function setGrade(n, el) { 
+            grade = n; 
             document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            updateUI();
+            dragonTalk("Switching to Level " + n);
         }
 
-        function claimDaily() {
-            stars += 1000; updateUI(); 
-            document.getElementById('daily-gift').style.display = 'none';
-            alert("Sovereign Gift: +1,000 STARS!");
-        }
-
-        function startLesson(subj) {
-            activeLesson = curriculumBank[subj][gradeLevel];
-            document.getElementById('lesson-title').innerText = subj.toUpperCase() + " CHALLENGE";
-            openModal('lesson-modal');
-            renderQuestion(0, subj);
-        }
-
-        function renderQuestion(idx, subj) {
-            if(idx >= activeLesson.length) {
-                stars += 500; lessonCount[subj]++;
-                updateUI(); alert("MISSION COMPLETE! +500 STARS"); closeAll(); return;
+        function launch(s) {
+            let bank = content[s][grade];
+            let idx = 0;
+            openModal('quest-modal');
+            function show() {
+                if(idx >= bank.length) { addStars(500); lessonsDone++; closeAll(); alert("Great job " + userName + "!"); return; }
+                document.getElementById('q-text').innerText = bank[idx].q;
+                let grid = document.getElementById('opt-grid'); grid.innerHTML = "";
+                bank[idx].o.forEach(opt => {
+                    let b = document.createElement('button'); b.className = "opt-btn"; b.innerText = opt;
+                    b.onclick = () => { if(opt === bank[idx].a) { idx++; show(); } };
+                    grid.appendChild(b);
+                });
             }
-            let data = activeLesson[idx];
-            document.getElementById('q-text').innerText = data.q;
-            let grid = document.getElementById('option-grid');
-            grid.innerHTML = "";
-            data.o.forEach(opt => {
-                let btn = document.createElement('button');
-                btn.className = "option-btn";
-                btn.innerText = opt;
-                btn.onclick = () => { if(opt === data.a) renderQuestion(idx+1, subj); else alert("Try again!"); };
-                grid.appendChild(btn);
-            });
+            show();
         }
 
         function openLibrary() {
-            let s = storyBank[Math.floor(Math.random()*storyBank.length)];
-            document.getElementById('lib-title').innerText = s.t;
-            document.getElementById('lib-body').innerText = s.c;
-            openModal('library-modal');
+            document.getElementById('lib-title').innerText = "The Story of " + userName;
+            document.getElementById('story-content').innerText = userName + " is a brave explorer who solved many puzzles and helped the Dragon grow into a King.";
+            openModal('lib-modal');
         }
-
-        function readStory() { synth.speak(new SpeechSynthesisUtterance(document.getElementById('lib-body').innerText)); }
-        function stopStory() { synth.cancel(); closeAll(); }
-
-        function openParentReport() {
-            document.getElementById('rep-math').innerText = lessonCount.Math;
-            document.getElementById('rep-read').innerText = lessonCount.Reading;
-            openModal('report-modal');
-        }
-
+        function readStory() { synth.speak(new SpeechSynthesisUtterance(document.getElementById('story-content').innerText)); }
+        
         function updateUI() {
-            document.getElementById('star-count').innerText = stars;
-            let progress = Math.min((stars/5000)*100, 100);
-            document.getElementById('p-bar').style.width = progress + "%";
-            
-            let img = document.getElementById('pet-img');
-            let name = document.getElementById('pet-name');
-            let rank = document.getElementById('rank-text');
-            let aura = document.getElementById('aura-fx');
-
-            if(stars < 1000) { 
-                img.innerText = "🥚"; name.innerText = "EGG STAGE"; rank.innerText = "RANK: NEWBIE"; aura.style.background = "var(--p-blue)";
-            } else if(stars < 3000) {
-                img.innerText = "🐣"; name.innerText = "JUNIOR STAGE"; rank.innerText = "RANK: LEARNER"; aura.style.background = "var(--p-green)";
-            } else {
-                img.innerText = "🐲"; name.innerText = "MASTER DRAGON"; rank.innerText = "RANK: SOVEREIGN ELITE"; aura.style.background = "var(--p-gold)";
-            }
+            document.getElementById('s-val').innerText = stars;
+            document.getElementById('p-fill').style.width = Math.min((stars/5000)*100, 100) + "%";
+            let img = document.getElementById('p-img');
+            let label = document.getElementById('p-name');
+            if(stars < 1000) { img.innerText = "🥚"; label.innerText = "EGG STAGE"; }
+            else if(stars < 3000) { img.innerText = "🐣"; label.innerText = "JUNIOR DRAGON"; }
+            else { img.innerText = "🐲"; label.innerText = "MASTER DRAGON"; }
         }
 
-        function buyItem(icon, price) {
-            if(stars >= price) { stars -= price; document.getElementById('acc-slot').innerText = icon; updateUI(); closeAll(); }
-            else alert("Keep learning! You need more stars.");
-        }
-
-        function snapPhoto() {
-            html2canvas(document.getElementById('snap-zone')).then(canvas => {
-                let link = document.createElement('a'); link.download = 'sovereign-dragon.png';
-                link.href = canvas.toDataURL(); link.click();
-            });
-        }
-
-        function toggleNightMode() { document.getElementById('master-view').classList.toggle('night-mode'); }
-        function addStarsAdmin() { stars += 10000; updateUI(); alert("Admin: +10,000 Stars Added!"); }
+        function addStars(n) { stars += n; updateUI(); }
+        function buy(i, p) { if(stars >= p) { stars -= p; document.getElementById('acc-box').innerText = i; updateUI(); closeAll(); } }
+        function openReport() { document.getElementById('r-name').innerText = userName; document.getElementById('r-score').innerText = lessonsDone; openModal('report-modal'); }
+        function toggleNight() { document.getElementById('master-body').classList.toggle('night-mode'); }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
+        
         updateUI();
     </script>
 </body>
