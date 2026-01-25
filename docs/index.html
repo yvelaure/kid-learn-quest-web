@@ -3,197 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Academy | Full Curriculum</title>
+    <title>Sovereign Academy | Ultimate</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root { --p-blue: #3b82f6; --p-gold: #f59e0b; --p-green: #22c55e; --p-bg: #f8fafc; --p-card: #ffffff; --p-text: #1e293b; }
         body.night-mode { --p-bg: #0f172a; --p-card: #1e293b; --p-text: #f1f5f9; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--p-bg); margin: 0; color: var(--p-text); transition: 0.5s; overflow-x: hidden; padding-bottom: 50px; }
+        body { background: var(--p-bg); margin: 0; color: var(--p-text); transition: 0.5s; padding-bottom: 80px; }
 
-        /* Top Ticker */
+        /* Global Chat */
         .ticker-wrap { background: #1e293b; color: #fbbf24; padding: 10px; font-size: 0.8rem; font-weight: 800; overflow: hidden; white-space: nowrap; }
-        .ticker { display: inline-block; animation: scroll 20s linear infinite; }
+        .ticker { display: inline-block; animation: scroll 25s linear infinite; }
         @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* Header */
-        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--p-card); box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.5rem; }
-        .stars-pill { background: #fbbf24; color: #1e293b; padding: 8px 18px; border-radius: 50px; font-weight: 800; border: none; }
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--p-card); border-bottom: 1px solid #eee; }
+        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.4rem; }
+        
+        /* Reward Pill */
+        .reward-btn { background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 50px; font-weight: 800; font-size: 0.7rem; cursor: pointer; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* Monster Card */
-        .monster-card { background: var(--p-card); margin: 15px; padding: 30px; border-radius: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; }
+        /* Main Dragon Card */
+        .monster-card { background: var(--p-card); margin: 15px; padding: 30px; border-radius: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; border: 1px solid #f1f5f9; }
         .m-emoji { font-size: 6rem; cursor: pointer; display: inline-block; transition: 0.3s; }
-        .m-name { font-weight: 900; font-size: 1.6rem; margin: 10px 0; }
-        .bar-bg { background: #e2e8f0; height: 12px; border-radius: 10px; margin: 10px auto; width: 80%; overflow: hidden; }
-        .bar-fill { background: var(--p-green); height: 100%; width: 0%; transition: 1s; }
+        .m-name { font-weight: 900; font-size: 1.6rem; margin: 10px 0 5px; color: #334155; }
+        .bar-bg { background: #e2e8f0; height: 12px; border-radius: 10px; margin: 15px auto; width: 80%; overflow: hidden; }
+        .bar-fill { background: var(--p-green); height: 100%; width: 20%; transition: 1s; }
 
-        /* SUBJECT GRID */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 15px; }
-        .subject-box { background: var(--p-card); padding: 25px; border-radius: 30px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 2px solid transparent; }
-        .subject-box:active { transform: scale(0.95); border-color: var(--p-blue); }
-        .subject-box i { font-size: 2.5rem; display: block; margin-bottom: 10px; }
-        .subject-box b { font-size: 0.9rem; letter-spacing: 0.5px; }
-        .subject-box span { display: block; font-size: 0.7rem; color: #94a3b8; margin-top: 5px; }
+        /* Grade Selector */
+        .grade-bar { display: flex; justify-content: center; gap: 10px; margin: 15px 0; }
+        .grade-tab { padding: 8px 15px; border-radius: 12px; font-weight: 800; font-size: 0.7rem; background: #f1f5f9; cursor: pointer; color: #64748b; border: 2px solid transparent; }
+        .grade-tab.active { background: white; border-color: var(--p-blue); color: var(--p-blue); }
 
-        /* TEST MODAL */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--p-bg); z-index: 2000; display: none; flex-direction: column; padding: 30px; text-align: center; }
-        .test-header { font-size: 1.2rem; font-weight: 900; margin-bottom: 20px; color: var(--p-blue); }
-        .question-text { font-size: 1.8rem; font-weight: 800; margin: 30px 0; }
-        .option-btn { background: var(--p-card); border: 2px solid #e2e8f0; padding: 20px; border-radius: 20px; margin-bottom: 10px; font-size: 1.2rem; font-weight: 700; cursor: pointer; color: var(--p-text); width: 100%; }
-        .option-btn:active { background: var(--p-blue); color: white; }
+        /* Mega Activity Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 15px; }
+        .act-box { background: var(--p-card); padding: 20px; border-radius: 25px; text-align: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1.5px solid #f1f5f9; }
+        .act-box:active { transform: scale(0.95); }
+        .act-box b { display: block; font-size: 0.8rem; margin-top: 5px; }
+        .act-icon { font-size: 2rem; display: block; }
 
-        .btn-footer { background: #1e293b; color: white; padding: 20px; border-radius: 20px; border: none; font-weight: 800; margin-top: auto; cursor: pointer; }
+        /* Modal System */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--p-bg); z-index: 2000; display: none; flex-direction: column; padding: 25px; text-align: center; overflow-y: auto; }
+        .q-text { font-size: 1.8rem; font-weight: 900; margin: 40px 0; color: var(--p-blue); }
+        .opt { background: var(--p-card); border: 2px solid #e2e8f0; padding: 18px; border-radius: 20px; margin-bottom: 12px; font-size: 1.1rem; font-weight: 700; width: 100%; cursor: pointer; }
+        .btn-black { background: #1e293b; color: white; padding: 20px; border-radius: 20px; border: none; font-weight: 800; margin-top: auto; }
     </style>
 </head>
-<body id="b">
+<body id="body-main">
 
-    <div class="ticker-wrap"><div class="ticker" id="t-msg">Sovereign Academy: New Math Semester Started! • User_Alpha just earned the "Scientist" Badge • Keep training your Dragon!</div></div>
-
-    <header>
-        <div class="logo">SOVEREIGN</div>
-        <button class="stars-pill">⭐ <span id="s-count">250</span></button>
-    </header>
-
-    <div class="monster-card" id="capture">
-        <div id="acc" style="font-size: 2.5rem; position: absolute; margin-left: 60px;"></div>
-        <div class="m-emoji" onclick="pet()" id="m-img">🥚</div>
-        <div class="m-name" id="m-name">EGG STAGE</div>
-        <div class="bar-bg"><div class="bar-fill" id="m-fill"></div></div>
-        <div style="font-size: 0.7rem; font-weight: 800; color: var(--p-blue);">DRAGON POWER: <span id="p-val">250</span></div>
+    <div class="ticker-wrap">
+        <div class="ticker">🚀 GLOBAL: User_Master just unlocked the Dragon Crown! • Event: Double Stars in Math Academy! • Today's Grade focus: Level 2 Logic • </div>
     </div>
 
-    <h3 style="margin: 20px;">CHOOSE A SUBJECT</h3>
+    <header>
+        <div class="logo" onclick="openParent()">SOVEREIGN</div>
+        <button class="reward-btn" id="daily-btn" onclick="claimDaily()">🎁 DAILY REWARD</button>
+        <div style="font-weight: 900;">⭐ <span id="s-count">250</span></div>
+    </header>
+
+    <div class="monster-card" id="capture-zone">
+        <div id="acc-slot" style="font-size: 2.5rem; position: absolute; margin-left: 55px;"></div>
+        <div class="m-emoji" onclick="speakPet()" id="pet-img">🐲</div>
+        <div class="m-name" id="pet-name">MASTER DRAGON</div>
+        <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 800; margin-bottom: 10px;">GRADE: <span id="grade-display">LEVEL 1</span></div>
+        <div class="bar-bg"><div class="bar-fill" id="p-fill"></div></div>
+    </div>
+
+    <div class="grade-bar">
+        <div class="grade-tab active" onclick="setGrade(1, this)">LEVEL 1</div>
+        <div class="grade-tab" onclick="setGrade(2, this)">LEVEL 2</div>
+        <div class="grade-tab" onclick="setGrade(3, this)">LEVEL 3</div>
+    </div>
 
     <div class="grid">
-        <div class="subject-box" onclick="startTest('math')"><i>🔢</i><b>MATH</b><span>10 Questions</span></div>
-        <div class="subject-box" onclick="startTest('reading')"><i>📚</i><b>READING</b><span>Vocabulary</span></div>
-        <div class="subject-box" onclick="startTest('science')"><i>🧪</i><b>SCIENCE</b><span>The World</span></div>
-        <div class="subject-box" onclick="startTest('logic')"><i>🧩</i><b>LOGIC</b><span>Brain Training</span></div>
-        <div class="subject-box" onclick="openShop()"><i>🛒</i><b>SHOP</b><span>Wardrobe</span></div>
-        <div class="subject-box" onclick="openParent()"><i>⚙️</i><b>PARENT</b><span>Admin</span></div>
+        <div class="act-box" onclick="startTest('math')"><span class="act-icon">🔢</span><b>MATH</b></div>
+        <div class="act-box" onclick="startTest('reading')"><span class="act-icon">📖</span><b>READING</b></div>
+        <div class="act-box" onclick="startTest('science')"><span class="act-icon">🧪</span><b>SCIENCE</b></div>
+        <div class="act-box" onclick="startTest('logic')"><span class="act-icon">🧩</span><b>LOGIC</b></div>
+        <div class="act-box" onclick="openShop()"><span class="act-icon">🛍️</span><b>SHOP</b></div>
+        <div class="act-box" onclick="snapPhoto()"><span class="act-icon">📸</span><b>PHOTO</b></div>
     </div>
 
     <div id="test-modal" class="modal">
-        <div class="test-header" id="test-title">SUBJECT TEST</div>
-        <div id="progress-dots" style="color:var(--p-gold); letter-spacing: 5px;"></div>
-        <div class="question-text" id="q-text">Loading Question...</div>
-        <div id="options-box"></div>
-        <button class="btn-footer" onclick="closeTest()">QUIT TEST</button>
+        <h2 id="test-title">CHALLENGE</h2>
+        <div id="q-dots" style="letter-spacing:5px; color:var(--p-gold)"></div>
+        <div class="q-text" id="q-txt">Question?</div>
+        <div id="options-area"></div>
+        <button class="btn-black" onclick="closeAll()">QUIT</button>
     </div>
 
     <div id="shop-modal" class="modal">
         <h1>WARDROBE</h1>
         <div class="grid">
-            <div class="subject-box" onclick="buy('👑')">👑<br>Crown</div>
-            <div class="subject-box" onclick="buy('🕶️')">🕶️<br>Shades</div>
-            <div class="subject-box" onclick="buy('🧙')">🧙<br>Magic</div>
+            <div class="act-box" onclick="buy('👑')">👑<br><b>Crown</b></div>
+            <div class="act-box" onclick="buy('🕶️')">🕶️<br><b>Shades</b></div>
+            <div class="act-box" onclick="buy('🧙')">🧙<br><b>Wizard</b></div>
         </div>
-        <button class="btn-footer" onclick="closeShop()">BACK</button>
-    </div>
-
-    <div id="parent-modal" class="modal" style="background:#111; color:#0f0;">
-        <h1>PARENT ADMIN</h1>
-        <button class="option-btn" onclick="addStars(5000)">+5,000 STARS (GIFT)</button>
-        <button class="option-btn" onclick="toggleNight()">TOGGLE NIGHT MODE</button>
-        <button class="btn-footer" onclick="closeParent()">CLOSE</button>
+        <button class="btn-black" onclick="closeAll()">CLOSE</button>
     </div>
 
     <script>
         let stars = 250;
-        let currentTest = [];
-        let qIndex = 0;
-        let score = 0;
+        let currentGrade = 1;
+        let qIdx = 0;
+        let activeTest = [];
 
-        const subjects = {
-            math: [
-                {q: "What is 15 + 15?", a: "30", o: ["25", "30", "40"]},
-                {q: "What is 10 x 3?", a: "30", o: ["13", "30", "100"]},
-                {q: "Half of 20 is...", a: "10", o: ["5", "10", "15"]},
-                {q: "What is 100 - 50?", a: "50", o: ["50", "40", "60"]}
-            ],
-            reading: [
-                {q: "Which is a FRUIT?", a: "Apple", o: ["Apple", "Carrot", "Bread"]},
-                {q: "Opposite of BIG?", a: "Small", o: ["Huge", "Fast", "Small"]},
-                {q: "A dog says...", a: "Woof", o: ["Meow", "Woof", "Moo"]}
-            ],
-            science: [
-                {q: "The sun is a...", a: "Star", o: ["Planet", "Star", "Moon"]},
-                {q: "Ice turns into...", a: "Water", o: ["Water", "Rock", "Steam"]},
-                {q: "We breathe...", a: "Oxygen", o: ["Water", "Oxygen", "Food"]}
-            ]
+        const bank = {
+            math: {
+                1: [{q:"1 + 1?", a:"2", o:["1","2","3"]}, {q:"5 - 2?", a:"3", o:["2","3","4"]}],
+                2: [{q:"12 + 12?", a:"24", o:["20","24","26"]}, {q:"10 x 5?", a:"50", o:["40","50","60"]}],
+                3: [{q:"100 / 4?", a:"25", o:["20","25","30"]}, {q:"12 x 12?", a:"144", o:["124","144","164"]}]
+            },
+            reading: {
+                1: [{q:"A says...", a:"Apple", o:["Apple","Ball","Cat"]}],
+                2: [{q:"Opposite of Hot?", a:"Cold", o:["Cold","Warm","Fire"]}],
+                3: [{q:"Identify: 'Sovereign'", a:"King", o:["King","Small","Blue"]}]
+            }
         };
 
-        function pet() {
-            const u = new SpeechSynthesisUtterance("Let's pass the test together!");
+        function setGrade(n, el) {
+            currentGrade = n;
+            document.querySelectorAll('.grade-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('grade-display').innerText = "LEVEL " + n;
+            speak("Level " + n + " activated");
+        }
+
+        function claimDaily() {
+            stars += 500;
+            updateUI();
+            document.getElementById('daily-btn').style.display = 'none';
+            speak("Daily reward collected! Five hundred stars added!");
+        }
+
+        function speak(t) {
+            const u = new SpeechSynthesisUtterance(t); u.pitch = 1.6;
             window.speechSynthesis.speak(u);
         }
 
+        function speakPet() {
+            speak("I am your Master Dragon. Let's finish our Level " + currentGrade + " lessons!");
+        }
+
         function startTest(s) {
-            currentTest = subjects[s] || subjects.math;
-            qIndex = 0;
-            score = 0;
-            document.getElementById('test-title').innerText = s.toUpperCase() + " CHALLENGE";
+            activeTest = (bank[s] && bank[s][currentGrade]) ? bank[s][currentGrade] : bank.math[1];
+            qIdx = 0;
             document.getElementById('test-modal').style.display = 'flex';
-            showQuestion();
+            showQ();
         }
 
-        function showQuestion() {
-            if(qIndex >= currentTest.length) {
-                finishTest();
-                return;
+        function showQ() {
+            if(qIdx >= activeTest.length) {
+                alert("TEST COMPLETE! You earned stars!");
+                stars += 400; updateUI(); closeAll(); return;
             }
-            let data = currentTest[qIndex];
-            document.getElementById('q-text').innerText = data.q;
-            document.getElementById('progress-dots').innerText = "•".repeat(qIndex + 1);
-            let box = document.getElementById('options-box');
-            box.innerHTML = "";
-            data.o.forEach(opt => {
+            let d = activeTest[qIdx];
+            document.getElementById('q-txt').innerText = d.q;
+            let area = document.getElementById('options-area');
+            area.innerHTML = "";
+            d.o.forEach(o => {
                 let b = document.createElement('button');
-                b.className = "option-btn";
-                b.innerText = opt;
-                b.onclick = () => checkAns(opt);
-                box.appendChild(b);
+                b.className = "opt";
+                b.innerText = o;
+                b.onclick = () => { if(o === d.a) { qIdx++; showQ(); } else { speak("Try again!"); } };
+                area.appendChild(b);
             });
-        }
-
-        function checkAns(val) {
-            if(val === currentTest[qIndex].a) score++;
-            qIndex++;
-            showQuestion();
-        }
-
-        function finishTest() {
-            let total = score * 200;
-            stars += total;
-            updateUI();
-            alert("TEST COMPLETE!\nScore: " + score + "/" + currentTest.length + "\nStars Earned: " + total);
-            closeTest();
         }
 
         function updateUI() {
             document.getElementById('s-count').innerText = stars;
-            document.getElementById('p-val').innerText = stars;
-            document.getElementById('m-fill').style.width = Math.min((stars/3000)*100, 100) + "%";
-            let pet = document.getElementById('m-img');
-            let name = document.getElementById('m-name');
-            if(stars < 1000) { pet.innerText = "🥚"; name.innerText = "EGG"; }
-            else if(stars < 2500) { pet.innerText = "🐣"; name.innerText = "JUNIOR"; }
-            else { pet.innerText = "🐲"; name.innerText = "MASTER DRAGON"; }
+            document.getElementById('p-fill').style.width = Math.min((stars/5000)*100, 100) + "%";
         }
 
         function buy(i) {
-            if(stars >= 200) { stars -= 200; document.getElementById('acc').innerText = i; updateUI(); closeShop(); }
-            else alert("Need more stars!");
+            if(stars >= 200) { stars -= 200; document.getElementById('acc-slot').innerText = i; updateUI(); closeAll(); }
+            else { alert("Need 200 stars!"); }
         }
 
-        function toggleNight() { document.getElementById('b').classList.toggle('night-mode'); }
-        function addStars(n) { stars += n; updateUI(); }
+        function snapPhoto() {
+            html2canvas(document.getElementById('capture-zone')).then(canvas => {
+                const link = document.createElement('a'); link.download = 'dragon.png';
+                link.href = canvas.toDataURL(); link.click();
+            });
+        }
+
+        function openParent() {
+            let p = prompt("Enter Admin Code (1234):");
+            if(p === "1234") { stars += 5000; updateUI(); alert("Admin Mode: 5000 Stars added!"); }
+        }
+
         function openShop() { document.getElementById('shop-modal').style.display = 'flex'; }
-        function closeShop() { document.getElementById('shop-modal').style.display = 'none'; }
-        function openParent() { document.getElementById('parent-modal').style.display = 'flex'; }
-        function closeParent() { document.getElementById('parent-modal').style.display = 'none'; }
-        function closeTest() { document.getElementById('test-modal').style.display = 'none'; }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
 
         updateUI();
     </script>
