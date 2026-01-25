@@ -38,7 +38,7 @@ const GameDatabase = {
             { id: "h4", title: "Genetics", q: "The 'Master Molecule'?", a: "DNA", o: ["RNA", "DNA", "Protein"] },
             { id: "h5", title: "Calculus", q: "Derivative of a constant?", a: "0", o: ["0", "1", "x"] },
             { id: "h6", title: "Literature", q: "Dystopian Author?", a: "Orwell", o: ["Orwell", "Hemingway", "Dickens"] },
-            { id: "h7", title: "Economics", q: "Supply vs ______?", a: "Demand", o: ["Price", "Demand", "Gold"] },
+            { id: "h7", title: "Economics", q: "Supply vs Demand?", a: "Demand", o: ["Price", "Demand", "Gold"] },
             { id: "h8", title: "Psychology", q: "Who studied Ego?", a: "Freud", o: ["Jung", "Freud", "Pavlov"] },
             { id: "h9", title: "Astronomy", q: "End of a massive star?", a: "Supernova", o: ["Nebula", "Supernova", "Pulsar"] },
             { id: "h10", title: "Philosophy", q: "Who said 'I think, therefore I am'?", a: "Descartes", o: ["Socrates", "Descartes", "Plato"] }
