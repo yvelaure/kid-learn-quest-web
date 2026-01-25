@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Quest: Juice Edition</title>
+    <title>Sovereign Quest: Omega</title>
     <style>
         :root { --gold: #ffa801; --green: #05c46b; --red: #ff3f34; --blue: #0984e3; --purple: #a29bfe; --dark: #111; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 10px; min-height: 100vh;
             background: #050505; color: white; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
@@ -14,18 +14,17 @@
         #starfield { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
         .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--d) infinite; }
         @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); } }
-        header, .panel, .card, .map-node, .game-overlay, #cert-modal { 
+        header, .panel, .map-node, .game-overlay, #cert-modal { 
             background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(15px); 
             border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; 
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); transition: 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); 
         }
         .btn { 
-            background: var(--green); color: white; border: none; padding: 14px 24px; 
+            background: var(--green); color: white; border: none; padding: 12px 20px; 
             border-radius: 16px; cursor: pointer; font-weight: 800; margin: 5px; 
             transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; font-size: 0.8rem;
         }
-        .btn:active { transform: scale(0.9); }
         #world-map-container { 
             width: 100%; height: 380px; position: relative; margin: 15px 0; overflow: hidden;
             border-radius: 24px; border: 2px solid rgba(255,168,1,0.2); background: rgba(0,0,0,0.2);
@@ -35,94 +34,60 @@
             align-items: center; justify-content: center; cursor: pointer; animation: float var(--d) ease-in-out infinite; 
         }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
-        .map-node span { font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
         .node-label { font-size: 0.55rem; font-weight: 900; margin-top: 5px; background: var(--dark); padding: 3px 8px; border-radius: 8px; border: 1px solid var(--gold); }
-        #active-pet { font-size: 4.5rem; display: block; filter: drop-shadow(0 0 20px var(--gold)); transition: 0.5s; }
-        .shake { animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        .game-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); animation: fadeIn 0.3s; }
-        .trivia-btn { width: 90%; padding: 18px; margin: 8px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1); border-radius: 20px; color: white; cursor: pointer; font-size: 1.1rem; font-weight: bold; }
-        #catcher-zone { width: 90%; height: 320px; background: #000; border-radius: 24px; position: relative; overflow: hidden; border: 2px solid var(--gold); }
-        .target-juice { position: absolute; font-size: 2.8rem; cursor: pointer; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-        #cert-modal { padding: 40px; border: 4px solid var(--gold); text-align: center; max-width: 90%; animation: popIn 0.5s; background: linear-gradient(135deg, #2c3e50, #000); }
+        #active-pet { font-size: 4rem; display: block; filter: drop-shadow(0 0 15px var(--gold)); }
+        .game-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); }
+        .trivia-btn { width: 90%; padding: 15px; margin: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; color: white; cursor: pointer; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
     <div id="starfield"></div>
     <section id="setup-view" class="panel">
-        <h1 style="color:var(--gold); font-size: 2.8rem; margin: 0;">SOVEREIGN</h1>
-        <p style="margin:0; opacity:0.8; letter-spacing: 4px; font-weight: bold;">QUEST OMEGA</p>
-        <div id="player-list" style="margin: 30px 0;"></div>
-        <button class="btn" style="background:var(--gold); color:black;" onclick="addPlayer()">+ HATCH NEW HERO</button>
+        <h1 style="color:var(--gold); margin:0;">SOVEREIGN</h1>
+        <p style="margin:0; letter-spacing:3px;">QUEST OMEGA</p>
+        <div id="player-list" style="margin: 20px 0;"></div>
+        <button class="btn" onclick="addPlayer()">NEW HERO</button>
     </section>
 
     <main id="game-ui" class="hidden" style="width:100%; max-width:500px;">
-        <header style="padding: 15px;">
-            <div style="display:flex; justify-content: space-between; align-items: center;">
-                <span id="header-avatar" style="font-size:2rem;">👤</span>
-                <div style="background:rgba(255,168,1,0.2); padding:10px 18px; border-radius:18px; border:1px solid var(--gold);">
-                    <span style="color:var(--gold); font-weight:900; font-size:1.2rem;">⭐ <span id="star-count">0</span></span>
-                </div>
+        <header style="padding: 15px; text-align: center;">
+            <div style="display:flex; justify-content: space-between; align-items:center;">
+                <span id="header-avatar" style="font-size:1.5rem;">👤</span>
+                <span style="color:var(--gold); font-weight:900;">⭐ <span id="star-count">0</span></span>
             </div>
-            <div style="text-align:center; margin-top:10px;">
-                <span id="active-pet">🥚</span>
-                <h3 style="margin:5px 0 0 0; color:var(--gold);"><span id="pet-name">Egg</span></h3>
-                <p style="margin:0; font-size:0.7rem; opacity:0.7;">LEVEL <span id="pet-lvl">1</span> HERO</p>
-                <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0;">
-                    <div id="hunger-bar" style="height:100%; background:var(--green); width:100%; border-radius:10px; transition:0.4s;"></div>
-                </div>
-                <div style="display:flex; justify-content:center; gap:8px;">
-                    <button class="btn" style="padding:8px 12px; font-size:0.7rem; background:var(--blue);" onclick="feedPet()">🍕 FEED (10)</button>
-                    <button class="btn" style="padding:8px 12px; font-size:0.7rem; background:var(--purple);" onclick="playPet()">🎾 PLAY</button>
-                </div>
+            <span id="active-pet">🥚</span>
+            <h3 style="margin:5px 0;"><span id="pet-name">Egg</span></h3>
+            <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:10px; margin:10px 0;">
+                <div id="hunger-bar" style="height:100%; background:var(--green); width:100%; border-radius:10px;"></div>
             </div>
+            <button class="btn" style="background:var(--blue); font-size:0.6rem;" onclick="feedPet()">🍕 FEED (10)</button>
         </header>
 
         <section id="menu-view" class="panel">
             <div id="world-map-container">
-                <div class="map-node" style="top:10%; left:15%; --d:4s" onclick="openTrivia('Space')"><span>🌌</span><div class="node-label">Space</div></div>
-                <div class="map-node" style="top:15%; left:70%; --d:3s" onclick="openTrivia('Coding')"><span>💻</span><div class="node-label">Coding</div></div>
-                <div class="map-node" style="top:42%; left:42%; --d:5s" onclick="openTrivia('Math')"><span>📐</span><div class="node-label">Math</div></div>
-                <div class="map-node" style="top:70%; left:15%; --d:3.5s" onclick="openTrivia('History')"><span>📜</span><div class="node-label">History</div></div>
-                <div class="map-node" style="top:72%; left:72%; --d:4.5s" onclick="openTrivia('Wildlife')"><span>🦁</span><div class="node-label">Wildlife</div></div>
-                <div class="map-node" style="top:44%; left:10%; --d:3.2s" onclick="openTrivia('Finance')"><span>💰</span><div class="node-label">Finance</div></div>
-                <div class="map-node" style="top:44%; left:75%; --d:3.8s" onclick="openTrivia('Robotics')"><span>🤖</span><div class="node-label">Robots</div></div>
+                <div class="map-node" style="top:5%; left:15%; --d:4s" onclick="openTrivia('Space')"><span>🌌</span><div class="node-label">Space</div></div>
+                <div class="map-node" style="top:5%; left:70%; --d:3s" onclick="openTrivia('Coding')"><span>💻</span><div class="node-label">Coding</div></div>
+                <div class="map-node" style="top:35%; left:42%; --d:5s" onclick="openTrivia('Math')"><span>📐</span><div class="node-label">Math</div></div>
+                <div class="map-node" style="top:65%; left:15%; --d:3.5s" onclick="openTrivia('History')"><span>📜</span><div class="node-label">History</div></div>
+                <div class="map-node" style="top:65%; left:70%; --d:4.5s" onclick="openTrivia('Wildlife')"><span>🦁</span><div class="node-label">Wildlife</div></div>
+                <div class="map-node" style="top:35%; left:5%; --d:3.2s" onclick="openTrivia('Finance')"><span>💰</span><div class="node-label">Finance</div></div>
+                <div class="map-node" style="top:35%; left:75%; --d:3.8s" onclick="openTrivia('Robotics')"><span>🤖</span><div class="node-label">Robots</div></div>
             </div>
-            <button class="btn" style="width:100%; background:var(--red); height:65px; font-size:1.2rem; box-shadow: 0 10px 25px rgba(255,63,52,0.4);" onclick="openMinigame()">🎲 PLANET CATCHER</button>
+            <button class="btn" style="width:100%; background:var(--red);" onclick="openMinigame()">🎲 MINIGAMES</button>
         </section>
 
         <div id="trivia-screen" class="hidden game-overlay">
             <h2 id="trivia-title" style="color:var(--gold);">MISSION</h2>
-            <p id="question-text" style="font-size:1.4rem; padding:25px; text-align:center;">?</p>
+            <p id="question-text" style="font-size:1.2rem; padding:20px; text-align:center;">?</p>
             <div id="answer-zone" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
-            <button class="btn" style="background:none; border:1px solid white; margin-top:30px;" onclick="closeOverlays()">ABANDON</button>
-        </div>
-
-        <div id="minigame-screen" class="hidden game-overlay">
-            <h2>CATCH THE PLANETS!</h2>
-            <div id="catcher-zone"></div>
-            <h3 id="game-stats" style="margin:15px;">STARS: 0</h3>
-            <button id="start-btn" class="btn btn-gold" onclick="runCatcherGame()">START MISSION</button>
-            <button class="btn" onclick="closeOverlays()">EXIT</button>
-        </div>
-
-        <div id="cert-overlay" class="hidden game-overlay">
-            <div id="cert-modal">
-                <h1 style="color:var(--gold)">📜 CERTIFICATE</h1>
-                <p>ULTIMATE MASTER</p>
-                <h2 id="cert-name" style="font-size:2.2rem; margin:15px 0;">Hero</h2>
-                <p>Mastered all 7 Galactic Subjects!</p>
-                <div style="font-size:4rem;">🏆</div>
-                <button class="btn" style="background:var(--gold); color:black;" onclick="closeOverlays()">CONTINUE JOURNEY</button>
-            </div>
+            <button class="btn" style="background:none; border:1px solid white;" onclick="closeOverlays()">EXIT</button>
         </div>
     </main>
 
     <script>
         const sf = document.getElementById('starfield');
-        for(let i=0; i<85; i++) {
+        for(let i=0; i<60; i++) {
             let s = document.createElement('div'); s.className='star';
             let size = Math.random()*3;
             s.style.width=size+'px'; s.style.height=size+'px';
@@ -130,49 +95,53 @@
             s.style.setProperty('--d', (Math.random()*4+2)+'s');
             sf.appendChild(s);
         }
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(f, type="sine", d=0.1) {
-            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-            osc.type = type; osc.frequency.setValueAtTime(f, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + d);
-        }
-        let players = JSON.parse(localStorage.getItem('SQ_Juice_Final')) || [];
+
+        let players = JSON.parse(localStorage.getItem('SQ_V3')) || [];
         let cur = null;
+
         const triviaData = {
-            "Math": { easy:{q:"15 + 15?", a:["25","30","35"], c:1}, hard:{q:"(12 x 4) + 22?", a:["60","70","80"], c:1}},
+            "Math": { easy:{q:"15+15?", a:["25","30","35"], c:1}, hard:{q:"(12x4)+22?", a:["60","70","80"], c:1}},
             "Space": { easy:{q:"Center of Solar System?", a:["Moon","Sun","Earth"], c:1}, hard:{q:"Planet with most moons?", a:["Saturn","Jupiter","Mars"], c:0}},
             "Coding": { easy:{q:"CSS ID Symbol?", a:[".","#","*"], c:1}, hard:{q:"Line break tag?", a:["<lb>","<br>","<break>"], c:1}},
-            "History": { easy:{q:"Who discovered gravity?", a:["Newton","Einstein","Tesla"], c:0}, hard:{q:"Moon landing year?", a:["1965","1969","1972"], c:1}},
-            "Wildlife": { easy:{q:"Flying mammal?", a:["Ostrich","Bat","Penguin"], c:1}, hard:{q:"Group of lions?", a:["Pack","Herd","Pride"], c:2}},
-            "Finance": { easy:{q:"10 stars + 5 stars?", a:["10","15","20"], c:1}, hard:{q:"80 cost, 50% off?", a:["20","40","60"], c:1}},
-            "Robotics": { easy:{q:"Robot 'brain'?", a:["Battery","Chip","Wire"], c:1}, hard:{q:"AI stands for?", a:["Auto Input","Artificial Intelligence","Active Interface"], c:1}}
+            "History": { easy:{q:"Who found gravity?", a:["Newton","Tesla","Einstein"], c:0}, hard:{q:"Moon landing year?", a:["1965","1969","1972"], c:1}},
+            "Wildlife": { easy:{q:"Flying mammal?", a:["Ostrich","Bat","Penguin"], c:1}, hard:{q:"Lion group name?", a:["Pack","Herd","Pride"], c:2}},
+            "Finance": { easy:{q:"10+5 stars?", a:["10","15","20"], c:1}, hard:{q:"80 costs 50% off?", a:["20","40","60"], c:1}},
+            "Robotics": { easy:{q:"Robot brain?", a:["Battery","Chip","Wire"], c:1}, hard:{q:"AI stands for?", a:["Auto Input","Artificial Intel","Active Info"], c:1}}
         };
-        function addPlayer() { let n = prompt("Hero Name:"); if(n) { players.push({name:n, stars:50, petIcon:'🥚', petName:"Egg", petLvl:1, hunger:100, trophies:[]}); save(); renderList(); playSound(600); } }
-        function renderList() { const l = document.getElementById('player-list'); l.innerHTML = ""; players.forEach((p, i) => { let d = document.createElement('div'); d.className="btn"; d.style.display="block"; d.style.background="var(--blue)"; d.innerHTML = `👤 ${p.name} • ⭐ ${p.stars}`; d.onclick = () => login(i); l.appendChild(d); }); }
-        function login(i) { cur = i; showView('game-ui'); updateUI(); playSound(400); setInterval(() => { if(players[cur].hunger > 0) { players[cur].hunger--; updateUI(); } }, 6000); }
-        function openTrivia(subject) {
-            playSound(500); const isHard = players[cur].petLvl >= 5; const data = isHard ? triviaData[subject].hard : triviaData[subject].easy;
+
+        function addPlayer() { 
+            let n = prompt("Hero Name:"); 
+            if(n) { players.push({name:n, stars:50, petIcon:'🥚', petName:"Egg", petLvl:1, hunger:100, trophies:[]}); save(); renderList(); } 
+        }
+        function renderList() { 
+            const l = document.getElementById('player-list'); l.innerHTML = ""; 
+            players.forEach((p, i) => { 
+                let d = document.createElement('div'); d.className="btn"; d.style.display="block";
+                d.innerHTML = `👤 ${p.name} • ⭐ ${p.stars}`; d.onclick = () => login(i); l.appendChild(d); 
+            }); 
+        }
+        function login(i) { cur = i; showView('game-ui'); updateUI(); }
+        function openTrivia(s) {
+            const isHard = players[cur].petLvl >= 5; const data = isHard ? triviaData[s].hard : triviaData[s].easy;
             document.getElementById('trivia-screen').classList.remove('hidden');
-            document.getElementById('trivia-title').innerText = subject.toUpperCase() + (isHard ? " [HARD]" : "");
+            document.getElementById('trivia-title').innerText = s.toUpperCase();
             document.getElementById('question-text').innerText = data.q;
             const zone = document.getElementById('answer-zone'); zone.innerHTML = "";
             data.a.forEach((ans, idx) => {
                 let b = document.createElement('button'); b.className = "trivia-btn"; b.innerText = ans;
-                b.onclick = () => { if(idx === data.c) { playSound(800, 'square'); players[cur].stars += (isHard?100:50); if(!players[cur].trophies.includes(subject)) players[cur].trophies.push(subject); alert("COSMIC VICTORY!"); checkMastery(); closeOverlays(); } else { playSound(200, 'sawtooth'); alert("Try again!"); } save(); updateUI(); };
+                b.onclick = () => { if(idx === data.c) { players[cur].stars += (isHard?100:50); alert("WINNER!"); closeOverlays(); } else alert("Try again!"); save(); updateUI(); };
                 zone.appendChild(b);
             });
         }
-        function checkMastery() { if(players[cur].trophies.length === 7) { playSound(1000, 'sine', 1); document.getElementById('cert-name').innerText = players[cur].name; document.getElementById('cert-overlay').classList.remove('hidden'); } }
-        function runCatcherGame() { document.getElementById('start-btn').classList.add('hidden'); let earned = 0; const zone = document.getElementById('catcher-zone'); let loop = setInterval(() => { const t = document.createElement('div'); t.className='target-juice'; t.innerText=['🪐','🌍','☄️'][Math.floor(Math.random()*3)]; t.style.left=Math.random()*80+'%'; t.style.top=Math.random()*80+'%'; t.onclick=()=>{ playSound(900); earned+=5; players[cur].stars+=5; zone.removeChild(t); document.getElementById('game-stats').innerText=`STARS: ${earned}`; }; zone.appendChild(t); setTimeout(()=>{if(t.parentNode)zone.removeChild(t)}, 1000); }, 700); setTimeout(()=>{ clearInterval(loop); playSound(600); alert("MISSION COMPLETE!"); document.getElementById('start-btn').classList.remove('hidden'); save(); updateUI();}, 12000); }
-        function feedPet() { if(players[cur].stars >= 10) { playSound(800); players[cur].stars-=10; players[cur].hunger=Math.min(100,players[cur].hunger+25); players[cur].petLvl++; if(players[cur].petLvl===10) { players[cur].petIcon="🐲"; players[cur].petName="Elder Dragon"; playSound(1200, 'square'); } save(); updateUI(); } else { document.getElementById('active-pet').classList.add('shake'); setTimeout(()=>document.getElementById('active-pet').classList.remove('shake'),400); playSound(150); } }
-        function playPet() { playSound(600); players[cur].hunger=Math.min(100,players[cur].hunger+5); updateUI(); }
-        function updateUI() { let p = players[cur]; document.getElementById('star-count').innerText=p.stars; document.getElementById('active-pet').innerText=p.petIcon; document.getElementById('pet-lvl').innerText=p.petLvl; document.getElementById('pet-name').innerText=p.petName; document.getElementById('hunger-bar').style.width=p.hunger+"%"; }
-        function showView(v) { document.querySelectorAll('section, main').forEach(s => s.classList.add('hidden')); document.getElementById(v).classList.remove('hidden'); }
+        function feedPet() { if(players[cur].stars >= 10) { players[cur].stars-=10; players[cur].petLvl++; if(players[cur].petLvl===10) players[cur].petIcon="🐲"; save(); updateUI(); } }
+        function updateUI() { 
+            let p = players[cur]; document.getElementById('star-count').innerText=p.stars; 
+            document.getElementById('active-pet').innerText=p.petIcon; document.getElementById('pet-lvl').innerText=p.petLvl; 
+            document.getElementById('hunger-bar').style.width=p.hunger+"%"; 
+        }
+        function showView(v) { document.getElementById('setup-view').classList.add('hidden'); document.getElementById(v).classList.remove('hidden'); }
         function closeOverlays() { document.querySelectorAll('.game-overlay').forEach(o => o.classList.add('hidden')); }
-        function save() { localStorage.setItem('SQ_Juice_Final', JSON.stringify(players)); }
+        function save() { localStorage.setItem('SQ_V3', JSON.stringify(players)); }
         renderList();
     </script>
 </body>
