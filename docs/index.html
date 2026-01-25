@@ -3,137 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Quest Omega</title>
+    <title>Sovereign Quest: Total Omega</title>
     <style>
-        :root { --gold: #ffa801; --green: #05c46b; --blue: #0984e3; --red: #ff3f34; --purp: #a29bfe; }
+        :root { --gold: #ffa801; --green: #05c46b; --blue: #0984e3; --red: #ff3f34; --purp: #a29bfe; --dark: #111; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            font-family: sans-serif; background: #000; color: white; margin: 0; padding: 10px; 
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden;
-        }
+        body { font-family: system-ui, sans-serif; background: #000; color: white; margin: 0; padding: 15px; overflow-x: hidden; text-align: center; }
         
-        /* Background Stars */
-        #stars-bg { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
-        .s { position: absolute; background: white; border-radius: 50%; opacity: 0.5; }
+        .screen { display: none; animation: fadeIn 0.3s; width: 100%; max-width: 450px; margin: 0 auto; }
+        .active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Panels */
-        .card { 
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); 
-            border-radius: 25px; border: 1px solid rgba(255,255,255,0.2); 
-            width: 100%; max-width: 400px; padding: 20px; margin-bottom: 15px; text-align: center;
-        }
-
-        /* The Map */
-        #map { 
-            width: 100%; height: 350px; position: relative; 
-            background: rgba(0,0,0,0.4); border: 2px solid var(--gold); border-radius: 20px; overflow: hidden;
-        }
-        .node { position: absolute; cursor: pointer; text-align: center; transition: 0.3s; animation: bob 3s infinite ease-in-out; }
-        @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .node span { font-size: 2.5rem; display: block; filter: drop-shadow(0 0 10px white); }
-        .label { font-size: 0.6rem; background: var(--gold); color: black; padding: 2px 6px; border-radius: 5px; font-weight: bold; }
-
-        /* Buttons */
-        .btn { 
-            background: var(--green); color: white; border: none; padding: 12px 20px; 
-            border-radius: 12px; font-weight: bold; cursor: pointer; margin: 5px;
-        }
+        .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
+        .btn { background: var(--green); color: white; border: none; padding: 15px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 5px; width: 80%; transition: 0.2s; }
         .btn:active { transform: scale(0.95); }
+        .back-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 10px; font-size: 0.8rem; }
 
-        /* Mission Popup */
-        #pop { 
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(0,0,0,0.9); display: none; flex-direction: column; 
-            align-items: center; justify-content: center; z-index: 100; 
-        }
-        .pop-card { background: #111; border: 2px solid var(--gold); padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 10px; border: none; font-size: 1rem; text-align: center; }
+        /* Map Styles */
+        #map { width: 100%; height: 320px; position: relative; background: rgba(0,0,0,0.3); border: 2px solid var(--gold); border-radius: 20px; margin: 15px 0; }
+        .node { position: absolute; text-align: center; cursor: pointer; }
+        .node span { font-size: 2.2rem; display: block; }
+        .label { font-size: 0.6rem; background: var(--gold); color: black; padding: 2px 5px; border-radius: 5px; font-weight: bold; }
+
+        /* Overlays */
+        #overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
-    <div id="stars-bg"></div>
-
-    <div class="card">
-        <h1 style="color:var(--gold); margin:0; font-size: 1.2rem;">SOVEREIGN QUEST OMEGA</h1>
-        <div id="pet" style="font-size: 4rem; margin: 10px 0;">🥚</div>
-        <div style="font-size: 1.2rem; font-weight: bold; color: var(--gold);">⭐ <span id="star-val">50</span></div>
-        <p style="margin: 5px 0; font-size: 0.8rem; opacity: 0.7;">LEVEL <span id="lvl-val">1</span> HERO</p>
-        <button class="btn" style="background:var(--blue)" onclick="feed()">FEED PET (10 ⭐)</button>
-    </div>
-
-    <div class="card" style="padding: 10px;">
-        <div id="map">
-            <div class="node" style="top:10%; left:15%" onclick="openM('Space', 'How many suns are in our solar system?', '1')"><span>🌌</span><div class="label">SPACE</div></div>
-            <div class="node" style="top:15%; left:65%" onclick="openM('Coding', 'What color is the sky? (Wait.. coding test: What is 5 + 5?)', '10')"><span>💻</span><div class="label">CODING</div></div>
-            <div class="node" style="top:45%; left:40%" onclick="openM('Math', 'What is 100 - 50?', '50')"><span>📐</span><div class="label">MATH</div></div>
-            <div class="node" style="top:70%; left:15%" onclick="openM('History', 'Who found America? (Short last name)', 'columbus')"><span>📜</span><div class="label">HISTORY</div></div>
-            <div class="node" style="top:72%; left:72%" onclick="openM('Wildlife', 'What animal says Meow?', 'cat')"><span>🦁</span><div class="label">WILDLIFE</div></div>
+    <div id="screen-hub" class="screen active">
+        <h1 style="color:var(--gold)">SOVEREIGN HUB</h1>
+        <div class="card">
+            <button class="btn" onclick="showScreen('screen-age')">🚀 START ADVENTURE</button>
+            <button class="btn" style="background:var(--purp)" onclick="showScreen('screen-parent')">🔒 PARENT DASHBOARD</button>
+            <button class="btn" style="background:var(--blue)" onclick="alert('Daily Reward: +10 Stars!'); addStars(10)">🎁 DAILY REWARD</button>
+        </div>
+        <div class="card">
+            <h3>GLOBAL CHAT</h3>
+            <div style="height: 100px; background: rgba(0,0,0,0.5); border-radius: 10px; padding: 10px; font-size: 0.8rem; text-align: left; overflow-y: auto;">
+                <p><b>Hero123:</b> Just reached Level 5!</p>
+                <p><b>StarMaster:</b> The math mission is fun.</p>
+            </div>
         </div>
     </div>
 
-    <div id="pop">
-        <div class="pop-card">
-            <h2 id="m-sub" style="color:var(--gold); margin:0;">MISSION</h2>
-            <p id="m-que" style="margin: 20px 0; font-size: 1.1rem;"></p>
-            <input type="text" id="m-ans" placeholder="Answer here...">
-            <button class="btn" style="width:100%" onclick="check()">CHECK ANSWER</button>
-            <button class="btn" style="background:none; border: 1px solid white; width:100%; margin-top:10px; font-size:0.7rem;" onclick="closeM()">CLOSE</button>
+    <div id="screen-age" class="screen">
+        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ BACK</button>
+        <h2 style="margin-top: 50px;">CHOOSE YOUR GRADE</h2>
+        <button class="btn" onclick="setGrade('Pre-K')">Pre-K (Ages 3-5)</button>
+        <button class="btn" onclick="setGrade('Elementary')">Elementary (Ages 6-10)</button>
+        <button class="btn" onclick="setGrade('Pro')">Pro (Ages 11+)</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ HUB</button>
+        <div class="card" style="margin-top: 40px;">
+            <div id="pet" style="font-size: 4rem;">🥚</div>
+            <div style="color:var(--gold); font-size: 1.5rem; font-weight: bold;">⭐ <span id="star-val">50</span></div>
+            <p id="grade-display" style="margin: 5px 0; font-size: 0.8rem; opacity: 0.7;">Grade: Elementary</p>
+            <button class="btn" style="width: 50%; padding: 10px; font-size: 0.7rem;" onclick="feed()">FEED (10 ⭐)</button>
+        </div>
+
+        <div id="map">
+            <div class="node" style="top:10%; left:15%" onclick="mission('Space')"><span>🌌</span><div class="label">SPACE</div></div>
+            <div class="node" style="top:15%; left:65%" onclick="mission('Coding')"><span>💻</span><div class="label">CODING</div></div>
+            <div class="node" style="top:42%; left:40%" onclick="mission('Math')"><span>📐</span><div class="label">MATH</div></div>
+            <div class="node" style="top:70%; left:15%" onclick="mission('History')"><span>📜</span><div class="label">HISTORY</div></div>
+            <div class="node" style="top:72%; left:72%" onclick="mission('Wildlife')"><span>🦁</span><div class="label">WILDLIFE</div></div>
+        </div>
+
+        <div style="display:flex; justify-content: space-around;">
+            <button class="btn" style="width:45%; background:var(--gold); color:black;" onclick="alert('Shop: Coming Soon!')">🛒 SHOP</button>
+            <button class="btn" style="width:45%; background:var(--blue)" onclick="checkCert()">🏆 TROPHIES</button>
+        </div>
+    </div>
+
+    <div id="screen-parent" class="screen">
+        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ BACK</button>
+        <h2 style="margin-top: 50px; color: var(--purp);">PARENT DASHBOARD</h2>
+        <div class="card">
+            <p>Child Progress: <b>Master Explorer</b></p>
+            <p>Stars Earned: <span id="p-stars">50</span></p>
+            <p>Current Grade: <span id="p-grade">Not Set</span></p>
+            <button class="btn" style="background:var(--red)" onclick="stars=0; update(); alert('Stars Reset')">RESET PROGRESS</button>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <h2 id="m-title" style="color:var(--gold)">MISSION</h2>
+        <p id="m-text" style="padding: 20px; font-size: 1.2rem;"></p>
+        <input type="text" id="m-input" style="padding: 15px; border-radius: 10px; width: 80%; border: none; text-align: center; font-size: 1.2rem;">
+        <button class="btn" onclick="checkAnswer()">SUBMIT</button>
+        <button class="btn" style="background:none; border:1px solid white;" onclick="closeOverlay()">CANCEL</button>
+    </div>
+
+    <div id="cert-pop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="card" style="border: 5px solid var(--gold); padding: 40px;">
+            <h1 style="color:var(--gold)">📜 CERTIFICATE</h1>
+            <p>COMPLETION AWARD</p>
+            <h2>SOVEREIGN HERO</h2>
+            <p>Mastered all Galaxy Subjects</p>
+            <button class="btn" onclick="this.parentElement.parentElement.style.display='none'">CLOSE</button>
         </div>
     </div>
 
     <script>
-        // Setup Stars
-        const bg = document.getElementById('stars-bg');
-        for(let i=0; i<50; i++) {
-            let s = document.createElement('div'); s.className = 's';
-            let size = Math.random()*3 + 'px';
-            s.style.width = size; s.style.height = size;
-            s.style.top = Math.random()*100+'%'; s.style.left = Math.random()*100+'%';
-            bg.appendChild(s);
-        }
-
         let stars = 50;
+        let grade = "Elementary";
         let lvl = 1;
         let activeAns = "";
+        let trophies = 0;
 
-        function openM(sub, q, a) {
-            document.getElementById('m-sub').innerText = sub;
-            document.getElementById('m-que').innerText = q;
-            activeAns = a.toLowerCase();
-            document.getElementById('m-ans').value = "";
-            document.getElementById('pop').style.display = 'flex';
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        function check() {
-            let input = document.getElementById('m-ans').value.toLowerCase().trim();
-            if(input === activeAns) {
-                stars += 50;
-                alert("🌟 EXCELLENT! +50 STARS");
-                closeM();
+        function setGrade(g) {
+            grade = g;
+            document.getElementById('grade-display').innerText = "Grade: " + g;
+            document.getElementById('p-grade').innerText = g;
+            showScreen('screen-game');
+        }
+
+        function mission(sub) {
+            let q = "What is 10 + 10?";
+            activeAns = "20";
+            if(grade === "Pre-K") { q = "What animal says Woof?"; activeAns = "dog"; }
+            if(grade === "Pro") { q = "What is 12 x 12?"; activeAns = "144"; }
+            
+            document.getElementById('m-title').innerText = sub + " MISSION";
+            document.getElementById('m-text').innerText = q;
+            document.getElementById('m-input').value = "";
+            document.getElementById('overlay').style.display = 'flex';
+        }
+
+        function checkAnswer() {
+            let val = document.getElementById('m-input').value.toLowerCase().trim();
+            if(val === activeAns) {
+                stars += 50; trophies++;
+                alert("Correct! +50 Stars");
+                closeOverlay();
                 update();
-            } else {
-                alert("Try again, explorer!");
-            }
+            } else { alert("Try again!"); }
         }
 
-        function closeM() { document.getElementById('pop').style.display = 'none'; }
+        function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
 
         function feed() {
             if(stars >= 10) {
                 stars -= 10; lvl++;
-                if(lvl >= 10) document.getElementById('pet').innerText = '🐲';
-                else if(lvl >= 6) document.getElementById('pet').innerText = '🦖';
-                else if(lvl >= 3) document.getElementById('pet').innerText = '🐥';
+                if(lvl >= 5) document.getElementById('pet').innerText = '🦖';
                 update();
-            } else {
-                alert("Need 10 stars to feed!");
             }
+        }
+
+        function addStars(amt) { stars += amt; update(); }
+
+        function checkCert() {
+            if(trophies >= 3) document.getElementById('cert-pop').style.display = 'flex';
+            else alert("Complete " + (3 - trophies) + " more missions to get your Certificate!");
         }
 
         function update() {
             document.getElementById('star-val').innerText = stars;
-            document.getElementById('lvl-val').innerText = lvl;
+            document.getElementById('p-stars').innerText = stars;
         }
     </script>
 </body>
