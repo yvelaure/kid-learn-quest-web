@@ -82,3 +82,36 @@ body {
     color: black;
     box-shadow: 0 0 20px var(--neon-green);
 }
+/* SHOP STYLING */
+.shop-container {
+    margin-top: 20px;
+}
+
+.shop-scroller {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 20px;
+    scrollbar-width: none; /* Hides scrollbar on Firefox */
+}
+
+.shop-scroller::-webkit-scrollbar { display: none; } /* Hides scrollbar on Chrome/Safari */
+
+.shop-item {
+    min-width: 100px;
+    background: var(--panel);
+    border: 1px solid var(--neon-purple);
+    padding: 15px;
+    border-radius: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: 0.3s;
+}
+
+.shop-item span { display: block; font-weight: 900; font-size: 0.9rem; }
+.shop-item small { color: var(--gold); font-weight: 700; }
+
+.shop-item:active {
+    transform: scale(0.9);
+    border-color: var(--gold);
+}
