@@ -3,171 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Quest: Total Omega</title>
+    <title>Sovereign Quest: Grand Finale</title>
     <style>
-        :root { --gold: #ffa801; --green: #05c46b; --blue: #0984e3; --red: #ff3f34; --purp: #a29bfe; --dark: #111; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: system-ui, sans-serif; background: #000; color: white; margin: 0; padding: 15px; overflow-x: hidden; text-align: center; }
+        :root { --gold: #ffa801; --green: #05c46b; --blue: #0984e3; --red: #ff3f34; --purp: #a29bfe; --bg: #000; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
         
-        .screen { display: none; animation: fadeIn 0.3s; width: 100%; max-width: 450px; margin: 0 auto; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { background: var(--bg); color: white; margin: 0; padding: 10px; text-align: center; min-height: 100vh; transition: 0.8s ease; overflow-x: hidden; }
+        
+        /* Dynamic Themes */
+        .theme-toddler { --bg: #ff9f43; --card: rgba(255,255,255,0.4); }
+        .theme-elementary { --bg: #22a6b3; --card: rgba(0,0,0,0.4); }
+        .theme-middle { --bg: #4834d4; --card: rgba(255,255,255,0.1); }
+        .theme-high { --bg: #130f40; --card: rgba(0,0,0,0.6); }
 
-        .card { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; }
-        .btn { background: var(--green); color: white; border: none; padding: 15px 25px; border-radius: 12px; font-weight: bold; cursor: pointer; margin: 5px; width: 80%; transition: 0.2s; }
-        .btn:active { transform: scale(0.95); }
-        .back-btn { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 10px; font-size: 0.8rem; }
+        .screen { display: none; animation: fadeIn 0.4s; width: 100%; max-width: 500px; margin: 0 auto; padding-top: 50px; }
+        .active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-        /* Map Styles */
-        #map { width: 100%; height: 320px; position: relative; background: rgba(0,0,0,0.3); border: 2px solid var(--gold); border-radius: 20px; margin: 15px 0; }
-        .node { position: absolute; text-align: center; cursor: pointer; }
-        .node span { font-size: 2.2rem; display: block; }
-        .label { font-size: 0.6rem; background: var(--gold); color: black; padding: 2px 5px; border-radius: 5px; font-weight: bold; }
+        .card { background: var(--card, rgba(255,255,255,0.1)); backdrop-filter: blur(15px); border-radius: 28px; padding: 20px; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        
+        .btn { background: var(--green); color: white; border: none; padding: 18px; border-radius: 20px; font-weight: 800; cursor: pointer; margin: 8px 0; width: 100%; text-transform: uppercase; box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: 0.1s; }
+        .btn:active { transform: translateY(3px); box-shadow: none; }
+        
+        /* Animated Treasure Chest */
+        #chest { font-size: 5rem; cursor: pointer; transition: 0.3s; display: inline-block; filter: drop-shadow(0 0 15px var(--gold)); }
+        #chest.open { transform: scale(1.2); filter: drop-shadow(0 0 30px white); }
+        .reward-burst { animation: burst 0.6s forwards; position: absolute; font-size: 2rem; opacity: 0; }
+        @keyframes burst { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
 
-        /* Overlays */
-        #overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        /* Boards */
+        #map { width: 100%; height: 440px; position: relative; border-radius: 30px; margin: 15px 0; border: 3px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.2); }
+        .node { position: absolute; cursor: pointer; text-align: center; width: 90px; }
+        .node span { font-size: 2.8rem; display: block; animation: float 3s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        .label { font-size: 0.65rem; background: white; color: black; padding: 4px 8px; border-radius: 8px; font-weight: 900; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        .nav-btn { position: fixed; top: 15px; left: 15px; background: white; color: black; padding: 10px 18px; border-radius: 15px; font-size: 0.75rem; z-index: 2000; font-weight: 900; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
-<body>
+<body id="master-body">
+
+    <button class="nav-btn" onclick="showScreen('screen-hub')">🏠 HUB</button>
 
     <div id="screen-hub" class="screen active">
-        <h1 style="color:var(--gold)">SOVEREIGN HUB</h1>
-        <div class="card">
-            <button class="btn" onclick="showScreen('screen-age')">🚀 START ADVENTURE</button>
-            <button class="btn" style="background:var(--purp)" onclick="showScreen('screen-parent')">🔒 PARENT DASHBOARD</button>
-            <button class="btn" style="background:var(--blue)" onclick="alert('Daily Reward: +10 Stars!'); addStars(10)">🎁 DAILY REWARD</button>
-        </div>
-        <div class="card">
-            <h3>GLOBAL CHAT</h3>
-            <div style="height: 100px; background: rgba(0,0,0,0.5); border-radius: 10px; padding: 10px; font-size: 0.8rem; text-align: left; overflow-y: auto;">
-                <p><b>Hero123:</b> Just reached Level 5!</p>
-                <p><b>StarMaster:</b> The math mission is fun.</p>
+        <h1 style="text-shadow: 0 4px 15px rgba(0,0,0,0.5); font-size: 2.2rem;">SOVEREIGN QUEST</h1>
+        
+        <div class="card" style="border: 2px solid var(--gold); background: radial-gradient(circle, rgba(255,168,1,0.2) 0%, rgba(0,0,0,0) 100%);">
+            <h3 style="margin-bottom: 5px; color: var(--gold);">DAILY REWARD</h3>
+            <div id="chest-container" style="position: relative;">
+                <div id="chest" onclick="claimDaily()">🎁</div>
             </div>
+            <p id="chest-msg" style="font-weight: bold; margin-top: 10px;">Tap to unlock today's stars!</p>
         </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content: space-around; margin-bottom: 10px;">
+                <div style="font-size: 1.2rem;">⭐ <span id="h-stars">50</span></div>
+                <div style="font-size: 1.2rem;">🏆 <span id="h-trop">0</span></div>
+            </div>
+            <button class="btn" onclick="showScreen('screen-grade')">🚀 MISSION BOARDS</button>
+            <button class="btn" style="background:var(--blue)" onclick="showScreen('screen-shop')">🛒 SKILLS SHOP</button>
+        </div>
+        
+        <button class="btn" style="background:none; border: 1px solid rgba(255,255,255,0.3); font-size: 0.6rem;" onclick="adminCheck()">🔒 ADMIN CONSOLE</button>
     </div>
 
-    <div id="screen-age" class="screen">
-        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ BACK</button>
-        <h2 style="margin-top: 50px;">CHOOSE YOUR GRADE</h2>
-        <button class="btn" onclick="setGrade('Pre-K')">Pre-K (Ages 3-5)</button>
-        <button class="btn" onclick="setGrade('Elementary')">Elementary (Ages 6-10)</button>
-        <button class="btn" onclick="setGrade('Pro')">Pro (Ages 11+)</button>
+    <div id="screen-grade" class="screen">
+        <h2 style="font-size: 1.8rem;">SELECT YOUR PATH</h2>
+        <div class="card">
+            <button class="btn" style="background:#ff9f43" onclick="setGrade('Toddler')">TODDLER (1-3)</button>
+            <button class="btn" style="background:#22a6b3" onclick="setGrade('Elementary')">ELEMENTARY (K-5)</button>
+            <button class="btn" style="background:#4834d4" onclick="setGrade('Middle')">MIDDLE SCHOOL (6-8)</button>
+            <button class="btn" style="background:#130f40" onclick="setGrade('High')">HIGH SCHOOL (PRO)</button>
+        </div>
     </div>
 
     <div id="screen-game" class="screen">
-        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ HUB</button>
-        <div class="card" style="margin-top: 40px;">
-            <div id="pet" style="font-size: 4rem;">🥚</div>
-            <div style="color:var(--gold); font-size: 1.5rem; font-weight: bold;">⭐ <span id="star-val">50</span></div>
-            <p id="grade-display" style="margin: 5px 0; font-size: 0.8rem; opacity: 0.7;">Grade: Elementary</p>
-            <button class="btn" style="width: 50%; padding: 10px; font-size: 0.7rem;" onclick="feed()">FEED (10 ⭐)</button>
-        </div>
-
-        <div id="map">
-            <div class="node" style="top:10%; left:15%" onclick="mission('Space')"><span>🌌</span><div class="label">SPACE</div></div>
-            <div class="node" style="top:15%; left:65%" onclick="mission('Coding')"><span>💻</span><div class="label">CODING</div></div>
-            <div class="node" style="top:42%; left:40%" onclick="mission('Math')"><span>📐</span><div class="label">MATH</div></div>
-            <div class="node" style="top:70%; left:15%" onclick="mission('History')"><span>📜</span><div class="label">HISTORY</div></div>
-            <div class="node" style="top:72%; left:72%" onclick="mission('Wildlife')"><span>🦁</span><div class="label">WILDLIFE</div></div>
-        </div>
-
-        <div style="display:flex; justify-content: space-around;">
-            <button class="btn" style="width:45%; background:var(--gold); color:black;" onclick="alert('Shop: Coming Soon!')">🛒 SHOP</button>
-            <button class="btn" style="width:45%; background:var(--blue)" onclick="checkCert()">🏆 TROPHIES</button>
-        </div>
-    </div>
-
-    <div id="screen-parent" class="screen">
-        <button class="back-btn" onclick="showScreen('screen-hub')">⬅ BACK</button>
-        <h2 style="margin-top: 50px; color: var(--purp);">PARENT DASHBOARD</h2>
         <div class="card">
-            <p>Child Progress: <b>Master Explorer</b></p>
-            <p>Stars Earned: <span id="p-stars">50</span></p>
-            <p>Current Grade: <span id="p-grade">Not Set</span></p>
-            <button class="btn" style="background:var(--red)" onclick="stars=0; update(); alert('Stars Reset')">RESET PROGRESS</button>
+            <div id="pet-ui" style="font-size: 5rem;">🥚</div>
+            <h2 style="font-size: 2rem; margin: 10px 0;">⭐ <span id="star-display">50</span></h2>
+            <div id="pet-gear" style="font-size: 1.8rem;"></div>
+        </div>
+        <div id="map"><div id="map-content"></div></div>
+        <button id="portfolio-btn" class="btn" style="background:black; display:none;" onclick="showPortfolio()">📑 PORTFOLIO</button>
+    </div>
+
+    <div id="screen-shop" class="screen">
+        <h2>SKILLS SHOP</h2>
+        <div class="card">
+            <button class="btn" onclick="buy('Laptop', 100)">💻 BUSINESS LAPTOP (100⭐)</button>
+            <button class="btn" onclick="buy('AI-Link', 250)">🧠 AI NEURAL LINK (250⭐)</button>
+            <button class="btn" onclick="buy('Gold Suit', 500)">👔 PRO SUIT (500⭐)</button>
         </div>
     </div>
 
-    <div id="overlay">
-        <h2 id="m-title" style="color:var(--gold)">MISSION</h2>
-        <p id="m-text" style="padding: 20px; font-size: 1.2rem;"></p>
-        <input type="text" id="m-input" style="padding: 15px; border-radius: 10px; width: 80%; border: none; text-align: center; font-size: 1.2rem;">
-        <button class="btn" onclick="checkAnswer()">SUBMIT</button>
-        <button class="btn" style="background:none; border:1px solid white;" onclick="closeOverlay()">CANCEL</button>
+    <div id="mission-pop" class="overlay">
+        <div class="card" style="width: 100%; max-width: 400px; background: #111; color: white;">
+            <h2 id="m-subject" style="color:var(--gold); margin: 0;"></h2>
+            <hr style="border: 0.5px solid #333; margin: 15px 0;">
+            <p id="m-question" style="font-size: 1.3rem; margin-bottom: 25px;"></p>
+            <div id="toddler-options" style="display:none; gap: 15px; justify-content: center; flex-wrap: wrap;"></div>
+            <input type="text" id="m-input" placeholder="Type here...">
+            <button id="sub-btn" class="btn" onclick="checkAns()">SUBMIT MISSION</button>
+            <button class="btn" style="background:none; color: #666; font-size: 0.7rem;" onclick="closePop()">ABANDON</button>
+        </div>
     </div>
 
-    <div id="cert-pop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="card" style="border: 5px solid var(--gold); padding: 40px;">
-            <h1 style="color:var(--gold)">📜 CERTIFICATE</h1>
-            <p>COMPLETION AWARD</p>
-            <h2>SOVEREIGN HERO</h2>
-            <p>Mastered all Galaxy Subjects</p>
-            <button class="btn" onclick="this.parentElement.parentElement.style.display='none'">CLOSE</button>
+    <div id="portfolio-pop" class="overlay">
+        <div class="card" style="width: 100%; max-width: 400px; background: white; color: black;">
+            <h2 style="margin: 0;">MASTERED SKILLS</h2>
+            <div id="portfolio-list" style="text-align: left; margin: 25px 0; font-size: 0.9rem; line-height: 2;"></div>
+            <button class="btn" style="background: black;" onclick="closePop()">CLOSE</button>
         </div>
     </div>
 
     <script>
-        let stars = 50;
-        let grade = "Elementary";
-        let lvl = 1;
-        let activeAns = "";
-        let trophies = 0;
+        let stars = 50; let trophies = 0; let grade = ""; let currentAns = ""; 
+        let masteredSkills = []; let dailyDone = false;
+
+        const missions = {
+            'Toddler': [
+                { s: 'Colors', q: 'Touch the RED heart!', a: '❤️', type: 'choice', opts: ['💙', '❤️', '💚'] },
+                { s: 'Animals', q: 'Who says Meow?', a: '🐱', type: 'choice', opts: ['🐶', '🐷', '🐱'] }
+            ],
+            'Elementary': [
+                { s: 'Math', q: 'What is 5 x 5?', a: '25' },
+                { s: 'Nature', q: 'What is the closest star to Earth?', a: 'sun' }
+            ],
+            'Middle': [
+                { s: 'Safety', q: 'A trick email to steal data is "___"?', a: 'phishing' },
+                { s: 'Logic', q: 'Solve: 5x = 25', a: '5' }
+            ],
+            'High': [
+                { s: 'Venture', q: 'If you invest $10k for 10% equity, valuation?', a: '100000' },
+                { s: 'AI', q: 'Prompting: Best tag for code formatting?', a: 'markdown' },
+                { s: 'Finance', q: 'Form for employees (not contractors)?', a: 'w2' }
+            ]
+        };
 
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            updateUI();
+        }
+
+        function claimDaily() {
+            if(dailyDone) return;
+            dailyDone = true;
+            stars += 100;
+            const chest = document.getElementById('chest');
+            chest.innerText = "🔓";
+            chest.classList.add('open');
+            document.getElementById('chest-msg').innerText = "CLAIMED +100 STARS!";
+            
+            // Visual Burst
+            for(let i=0; i<5; i++) {
+                let s = document.createElement('div');
+                s.className = 'reward-burst';
+                s.innerText = '⭐';
+                s.style.left = '50%';
+                s.style.marginLeft = (Math.random()*60 - 30) + 'px';
+                document.getElementById('chest-container').appendChild(s);
+            }
+            updateUI();
         }
 
         function setGrade(g) {
             grade = g;
-            document.getElementById('grade-display').innerText = "Grade: " + g;
-            document.getElementById('p-grade').innerText = g;
+            document.getElementById('master-body').className = 'theme-' + g.toLowerCase();
+            document.getElementById('portfolio-btn').style.display = (g === 'High' || g === 'Middle') ? 'block' : 'none';
+            const map = document.getElementById('map-content');
+            map.innerHTML = "";
+            const list = missions[g] || [];
+            list.forEach((m, idx) => {
+                let div = document.createElement('div');
+                div.className = "node";
+                div.style.top = (15 + (idx * 30)) + "%";
+                div.style.left = (idx % 2 == 0 ? "15%" : "60%");
+                div.onclick = () => openMission(m);
+                div.innerHTML = `<span>${m.opts ? m.a : '💎'}</span><div class="label">${m.s}</div>`;
+                map.appendChild(div);
+            });
             showScreen('screen-game');
         }
 
-        function mission(sub) {
-            let q = "What is 10 + 10?";
-            activeAns = "20";
-            if(grade === "Pre-K") { q = "What animal says Woof?"; activeAns = "dog"; }
-            if(grade === "Pro") { q = "What is 12 x 12?"; activeAns = "144"; }
-            
-            document.getElementById('m-title').innerText = sub + " MISSION";
-            document.getElementById('m-text').innerText = q;
-            document.getElementById('m-input').value = "";
-            document.getElementById('overlay').style.display = 'flex';
-        }
+        function openMission(m) {
+            document.getElementById('m-subject').innerText = m.s.toUpperCase();
+            document.getElementById('m-question').innerText = m.q;
+            currentAns = m.a;
+            const optDiv = document.getElementById('toddler-options');
+            const input = document.getElementById('m-input');
+            const subBtn = document.getElementById('sub-btn');
 
-        function checkAnswer() {
-            let val = document.getElementById('m-input').value.toLowerCase().trim();
-            if(val === activeAns) {
-                stars += 50; trophies++;
-                alert("Correct! +50 Stars");
-                closeOverlay();
-                update();
-            } else { alert("Try again!"); }
-        }
-
-        function closeOverlay() { document.getElementById('overlay').style.display = 'none'; }
-
-        function feed() {
-            if(stars >= 10) {
-                stars -= 10; lvl++;
-                if(lvl >= 5) document.getElementById('pet').innerText = '🦖';
-                update();
+            if(m.type === 'choice') {
+                optDiv.style.display = 'flex'; input.style.display = 'none'; subBtn.style.display = 'none';
+                optDiv.innerHTML = m.opts.map(o => `<button class="btn" style="width:85px; font-size:2.5rem;" onclick="checkAns('${o}')">${o}</button>`).join('');
+            } else {
+                optDiv.style.display = 'none'; input.style.display = 'block'; subBtn.style.display = 'block';
+                input.value = "";
             }
+            document.getElementById('mission-pop').style.display = 'flex';
         }
 
-        function addStars(amt) { stars += amt; update(); }
-
-        function checkCert() {
-            if(trophies >= 3) document.getElementById('cert-pop').style.display = 'flex';
-            else alert("Complete " + (3 - trophies) + " more missions to get your Certificate!");
+        function checkAns(val) {
+            let user = val || document.getElementById('m-input').value.toLowerCase().trim();
+            if(user == currentAns.toLowerCase()) {
+                stars += 50; trophies++;
+                if(!masteredSkills.includes(grade + ": " + document.getElementById('m-subject').innerText)) {
+                    masteredSkills.push(grade + ": " + document.getElementById('m-subject').innerText);
+                }
+                alert("SUCCESS! +50 STARS"); closePop(); updateUI();
+            } else { alert("Try again, Sovereign!"); }
         }
 
-        function update() {
-            document.getElementById('star-val').innerText = stars;
-            document.getElementById('p-stars').innerText = stars;
+        function buy(item, price) {
+            if(stars >= price) {
+                stars -= price; 
+                document.getElementById('pet-gear').innerHTML += (item === 'Laptop' ? '💻' : item === 'AI-Link' ? '🧠' : '👔');
+                updateUI();
+                alert("Upgrade Complete!");
+            } else { alert("Need more stars!"); }
         }
+
+        function showPortfolio() {
+            document.getElementById('portfolio-list').innerHTML = masteredSkills.length > 0 ? 
+                masteredSkills.map(s => `✅ <b>${s}</b>`).join('<br>') : "Complete missions to verify your skills.";
+            document.getElementById('portfolio-pop').style.display = 'flex';
+        }
+
+        function updateUI() {
+            document.getElementById('h-stars').innerText = stars;
+            document.getElementById('h-trop').innerText = trophies;
+            document.getElementById('star-display').innerText = stars;
+            if(stars >= 500) document.getElementById('pet-ui').innerText = '🐲';
+            else if(stars >= 200) document.getElementById('pet-ui').innerText = '🦖';
+            else if(stars >= 100) document.getElementById('pet-ui').innerText = '🐥';
+        }
+
+        function closePop() { 
+            document.getElementById('mission-pop').style.display = 'none'; 
+            document.getElementById('portfolio-pop').style.display = 'none';
+        }
+        function adminCheck() { if(prompt("Code:") === "1234") showScreen('screen-hub'); }
     </script>
 </body>
 </html>
