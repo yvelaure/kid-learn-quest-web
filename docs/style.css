@@ -25,6 +25,21 @@ body {
     background-attachment: fixed;
 }
 
+.opt {
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 15px;
+    border: 1px solid var(--accent-blue);
+    cursor: pointer;
+    font-weight: 800;
+    text-align: center;
+}
+.opt:hover {
+    background: var(--accent-blue);
+    color: var(--bg-dark);
+}
+
 /* --- 2. THE HUB LAYOUT --- */
 .game-container {
     max-width: 500px;
