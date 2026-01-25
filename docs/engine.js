@@ -79,3 +79,26 @@ function changeGrade(newMode) {
 
 // Run HUD update on start
 window.onload = updateHUD;
+// ADD THIS TO YOUR engine.js
+function checkEvolution() {
+    const rankEl = document.getElementById('rank-display');
+    const dragonEl = document.getElementById('dragon');
+
+    if (Player.stars >= 10000) {
+        Player.rank = "GALACTIC SOVEREIGN";
+        dragonEl.innerText = "🐲"; // Add armor/crown emoji here
+        dragonEl.style.filter = "drop-shadow(0 0 20px #a855f7)";
+    } else if (Player.stars >= 5000) {
+        Player.rank = "CYBER DRAKE";
+        dragonEl.innerText = "🦎"; 
+        dragonEl.style.filter = "drop-shadow(0 0 15px #38bdf8)";
+    } else {
+        Player.rank = "FOREST HATCHLING";
+        dragonEl.innerText = "🥚";
+    }
+    
+    if(rankEl) rankEl.innerText = Player.rank;
+}
+
+// Call checkEvolution() inside your processWin() function!
+
