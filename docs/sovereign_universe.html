@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sovereign Universe | Ultimate Master Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { 
+            --p-blue: #3b82f6; --p-gold: #f59e0b; --p-green: #22c55e;
+            --p-bg: #f8fafc; --p-card: #ffffff; --p-text: #1e293b; --p-border: #e2e8f0;
+        }
+        
+        /* Night Mode Theme Styles */
+        body.night-mode { 
+            --p-bg: #0f172a; --p-card: #1e293b; --p-text: #f1f5f9; --p-border: #334155;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--p-bg); margin: 0; padding-bottom: 40px; color: var(--p-text); transition: background 0.5s, color 0.5s; overflow-x: hidden; }
+
+        /* Global Chat Ticker */
+        .chat-ticker { background: #1e293b; color: #fbbf24; padding: 10px; font-size: 0.8rem; font-weight: 800; overflow: hidden; white-space: nowrap; border-bottom: 3px solid var(--p-gold); z-index: 1000; }
+        .ticker-text { display: inline-block; animation: scrollChat 25s linear infinite; }
+        @keyframes scrollChat { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+        header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--p-card); box-shadow: 0 2px 10px rgba(0,0,0,0.1); sticky: top; }
+        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.5rem; letter-spacing: -1px; cursor: pointer; }
+        .stars-pill { background: #fffbeb; color: #92400e; padding: 8px 18px; border-radius: 50px; border: 2px solid #fde68a; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+        body.night-mode .stars-pill { background: #fbbf24; color: #1e293b; }
+
+        /* Main Pet Area */
+        .monster-container { background: var(--p-card); margin: 15px; padding: 40px 20px; border-radius: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; border: 1px solid var(--p-border); }
+        .aura { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border-radius: 50%; filter: blur(50px); opacity: 0.2; background: var(--p-blue); transition: 0.8s; }
+        
+        .monster-stack { position: relative; z-index: 10; display: inline-block; cursor: pointer; transition: 0.3s; }
+        .monster-stack:active { transform: scale(1.15) rotate(5deg); }
+        .m-emoji { font-size: 7rem; display: block; }
+        .m-acc { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 3rem; pointer-events: none; }
+        
+        .m-name { font-weight: 900; font-size: 1.8rem; margin: 15px 0 5px; text-transform: uppercase; }
+        .m-rank { color: #94a3b8; font-size: 0.9rem; font-weight: 700; margin-bottom: 20px; }
+
+        /* Progress Bar */
+        .bar-shell { background: var(--p-border); height: 14px; border-radius: 10px; margin: 10px auto; width: 85%; overflow: hidden; }
+        .bar-fill { background: var(--p-green); height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); box-shadow: 0 0 10px var(--p-green); }
+
+        /* Activity Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; padding: 0 15px; margin-top: 10px; }
+        .act-card { background: var(--p-card); padding: 22px 10px; border-radius: 25px; text-align: center; cursor: pointer; border: 1px solid var(--p-border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: 0.2s; }
+        .act-card:active { transform: scale(0.92); border-color: var(--p-blue); }
+        .act-icon { font-size: 2.2rem; display: block; margin-bottom: 10px; }
+        .act-card b { font-size: 0.7rem; text-transform: uppercase; font-weight: 800; color: var(--p-text); opacity: 0.9; }
+        
+        .locked { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
+
+        /* Modals */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--p-bg); z-index: 2000; display: none; flex-direction: column; padding: 30px; text-align: center; overflow-y: auto; }
+        .btn-action { background: var(--p-blue); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; width: 100%; margin-top: 15px; cursor: pointer; font-size: 1rem; }
+        .btn-close { background: #64748b; margin-top: 20px; }
+
+        /* Certificate */
+        .cert-frame { border: 12px double var(--p-gold); padding: 40px 20px; background: #fff; color: #1e293b; margin: 20px 0; }
+        
+        nav { position: fixed; bottom: 0; width: 100%; background: var(--p-card); display: flex; justify-content: space-around; padding: 15px; border-top: 1px solid var(--p-border); z-index: 1000; }
+        .nav-item { font-size: 0.75rem; font-weight: 800; color: #94a3b8; text-align: center; }
+        .nav-item.active { color: var(--p-blue); }
+    </style>
+</head>
+<body id="main-body">
+
+    <div class="chat-ticker">
+        <div class="ticker-text" id="ticker-content">
+            Sovereign_Alpha: "Just reached Master Dragon level!" • SYSTEM: New Logic Quests are live! • User_882 found a Golden Crown • Join the Science Lab now! • 
+        </div>
+    </div>
+
+    <header>
+        <div class="logo" id="admin-trigger">SOVEREIGN</div>
+        <div class="stars-pill">⭐ <span id="star-count">250</span></div>
+    </header>
+
+    <div id="scr-hub">
+        <div class="monster-container" id="photo-zone">
+            <div class="aura" id="pet-aura"></div>
+            <div class="monster-stack" onclick="petMonster()">
+                <div id="acc-display" class="m-acc"></div>
+                <div id="pet-emoji" class="m-emoji">🥚</div>
+            </div>
+            <div class="m-name" id="pet-name">EGG STAGE</div>
+            <div class="m-rank">RANK: SOVEREIGN HERO</div>
+            
+            <div class="bar-shell"><div class="bar-fill" id="power-bar"></div></div>
+            <div style="font-size: 0.75rem; font-weight: 900; color: var(--p-blue);">EVOLUTION POWER: <span id="pwr-val">250</span></div>
+        </div>
+
+        <div class="grid">
+            <div class="act-card" onclick="quest('Toddler', 'Color of grass?', 'green')"><span class="act-icon">🧸</span><b>Toddler</b></div>
+            <div class="act-card" onclick="quest('Math', '5 + 5 = ?', '10')"><span class="act-icon">➕</span><b>Math</b></div>
+            <div class="act-card" onclick="quest('Reading', 'Spell CAT', 'cat')"><span class="act-icon">📖</span><b>Reading</b></div>
+            
+            <div class="act-card" onclick="quest('Logic', 'Next: 1, 2, 3, ?', '4')"><span class="act-icon">🧩</span><b>Logic</b></div>
+            <div class="act-card" onclick="quest('Science', 'Is the Sun a star?', 'yes')"><span class="act-icon">🧪</span><b>Science</b></div>
+            <div class="act-card" onclick="openModal('modal-shop')"><span class="act-icon">🛒</span><b>Shop</b></div>
+
+            <div class="act-card locked" id="zone-space" onclick="quest('Space', 'Planet with rings?', 'saturn')"><span class="act-icon">🪐</span><b>Space</b></div>
+            <div class="act-card locked" id="zone-dino" onclick="quest('Dino', 'T-Rex or Bird?', 'bird')"><span class="act-icon">🦖</span><b>Dinos</b></div>
+            <div class="act-card" onclick="showCert()"><span class="act-icon">📜</span><b>Rank</b></div>
+
+            <div class="act-card" onclick="snapPhoto()"><span class="act-icon">📸</span><b>Photo</b></div>
+            <div class="act-card" onclick="openModal('modal-parent')"><span class="act-icon">⚙️</span><b>Parent</b></div>
+            <div class="act-card" onclick="toggleNight()"><span class="act-icon">🌙</span><b>Night</b></div>
+        </div>
+    </div>
+
+    <div id="modal-shop" class="modal">
+        <h1>WARDROBE</h1>
+        <p>Buy cool gear with your stars!</p>
+        <div class="grid">
+            <div class="act-card" onclick="buy('👑', 100)">👑<br><b>Crown</b><br>100 ⭐</div>
+            <div class="act-card" onclick="buy('🕶️', 200)">🕶️<br><b>Shades</b><br>200 ⭐</div>
+            <div class="act-card" onclick="buy('🧙', 500)">🧙<br><b>Wizard</b><br>500 ⭐</div>
+            <div class="act-card" onclick="buy('😇', 1000)">😇<br><b>Halo</b><br>1000 ⭐</div>
+        </div>
+        <button class="btn-action btn-close" onclick="closeAll()">CLOSE SHOP</button>
+    </div>
+
+    <div id="modal-parent" class="modal" style="background: #0f172a; color: #4ade80; font-family: monospace;">
+        <h1>ADMIN CONSOLE</h1>
+        <button class="btn-action" style="background:#22c55e" onclick="addStars(5000)">>> INJECT 5000 STARS</button>
+        <button class="btn-action" style="background:#3b82f6" onclick="toggleNight()">>> TOGGLE NIGHT MODE</button>
+        <button class="btn-action" style="background:#ef4444" onclick="resetAll()">>> RESET ALL DATA</button>
+        <button class="btn-action btn-close" onclick="closeAll()">EXIT CONSOLE</button>
+    </div>
+
+    <div id="modal-photo" class="modal" style="background: rgba(0,0,0,0.9); color: white;">
+        <h1>PHOTO CAPTURED!</h1>
+        <div id="photo-output" style="margin: 20px 0;"></div>
+        <button class="btn-action" onclick="downloadPhoto()">💾 SAVE TO GALLERY</button>
+        <button class="btn-action btn-close" onclick="closeAll()">CLOSE</button>
+    </div>
+
+    <div id="modal-cert" class="modal">
+        <div class="cert-frame" id="cert-zone">
+            <h1>SOVEREIGN EXCELLENCE</h1>
+            <p>This award is presented to</p>
+            <h2 style="text-decoration: underline;">THE MASTER LEARNER</h2>
+            <p>For mastering Math, Logic, and Science in the Sovereign Universe.</p>
+            <div style="font-size: 5rem;">🏆</div>
+            <p id="cert-date"></p>
+        </div>
+        <button class="btn-action" onclick="closeAll()">BACK TO HUB</button>
+    </div>
+
+    <script>
+        let stars = 250;
+        let activeAcc = "";
+        let isNight = false;
+
+        // 1. Voice Interaction
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.pitch = 1.6;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function petMonster() {
+            const lines = ["I'm getting so smart!", "Let's find more stars!", "You are a Sovereign Hero!", "Check out my new look!"];
+            const msg = lines[Math.floor(Math.random()*lines.length)];
+            speak(msg);
+            document.getElementById('pet-aura').style.opacity = "0.6";
+            setTimeout(() => document.getElementById('pet-aura').style.opacity = "0.2", 1000);
+        }
+
+        // 2. Evolution & UI Logic
+        function updateUI() {
+            document.getElementById('star-count').innerText = stars;
+            document.getElementById('pwr-val').innerText = stars;
+            const progress = Math.min((stars / 3000) * 100, 100);
+            document.getElementById('power-bar').style.width = progress + "%";
+            
+            const pet = document.getElementById('pet-emoji');
+            const name = document.getElementById('pet-name');
+            const aura = document.getElementById('pet-aura');
+
+            if (stars < 500) {
+                pet.innerText = "🥚"; name.innerText = "EGG STAGE"; aura.style.background = "#3b82f6";
+            } else if (stars < 1500) {
+                pet.innerText = "🐣"; name.innerText = "JUNIOR STAGE"; aura.style.background = "#22c55e";
+                document.getElementById('zone-space').classList.remove('locked');
+            } else {
+                pet.innerText = "🐲"; name.innerText = "MASTER DRAGON"; aura.style.background = "#f59e0b";
+                document.getElementById('zone-dino').classList.remove('locked');
+            }
+        }
+
+        // 3. Learning Quests
+        function quest(subj, question, answer) {
+            speak(question);
+            let userAns = prompt(`[${subj} Quests]\n\n${question}`).toLowerCase().trim();
+            if (userAns == answer) {
+                stars += 250;
+                updateUI();
+                speak("Correct! You earned two hundred and fifty stars!");
+                alert("🌟 EXCELLENT! +250 Stars!");
+            } else {
+                speak("Not quite, try again!");
+                alert("Try again! You can do it!");
+            }
+        }
+
+        // 4. Shop Logic
+        function buy(item, price) {
+            if (stars >= price) {
+                stars -= price;
+                activeAcc = item;
+                document.getElementById('acc-display').innerText = item;
+                updateUI();
+                speak("I love my new accessory!");
+                closeAll();
+            } else {
+                speak("We need more stars for that gear!");
+                alert("Keep learning! You need more stars.");
+            }
+        }
+
+        // 5. Night Mode Toggle
+        function toggleNight() {
+            isNight = !isNight;
+            document.getElementById('main-body').classList.toggle('night-mode');
+            speak(isNight ? "Goodnight, Sovereign Hero." : "Good morning! Let's learn.");
+        }
+
+        // 6. Photo Mode
+        function snapPhoto() {
+            html2canvas(document.getElementById('photo-zone')).then(canvas => {
+                const imgBase64 = canvas.toDataURL();
+                document.getElementById('photo-output').innerHTML = `<img src="${imgBase64}" style="width:100%; border-radius:20px; border: 5px solid white;">`;
+                openModal('modal-photo');
+            });
+        }
+
+        function downloadPhoto() {
+            const img = document.querySelector('#photo-output img').src;
+            const link = document.createElement('a');
+            link.download = 'my-sovereign-monster.png';
+            link.href = img;
+            link.click();
+        }
+
+        // 7. General Controls
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeAll() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function addStars(n) { stars += n; updateUI(); }
+        function resetAll() { if(confirm("Reset all progress?")) { stars = 0; activeAcc = ""; document.getElementById('acc-display').innerText = ""; updateUI(); closeAll(); } }
+        
+        function showCert() {
+            document.getElementById('cert-date').innerText = new Date().toLocaleDateString();
+            openModal('modal-cert');
+        }
+
+        // 8. Dynamic Chat Updates
+        setInterval(() => {
+            const msgs = [
+                "User_Queen: 'Check out my Master Dragon!'",
+                "New High Score in Math Land: 5000!",
+                "SYSTEM: Night Mode active after 7 PM.",
+                "Global Goal: Collect 1 Million Stars!",
+                "Sovereign_Kid: 'The Dino zone is awesome!'"
+            ];
+            document.getElementById('ticker-content').innerText = msgs[Math.floor(Math.random() * msgs.length)] + " • " + document.getElementById('ticker-content').innerText.substring(0, 150);
+        }, 8000);
+
+        // Auto Night Mode Check
+        if (new Date().getHours() >= 19 || new Date().getHours() < 6) toggleNight();
+
+        updateUI();
+    </script>
+</body>
+</html>
