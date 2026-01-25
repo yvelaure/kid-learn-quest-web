@@ -3,238 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Universe | Elite</title>
+    <title>Sovereign Photo Mode</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --p-orange: #ff7f50; --p-blue: #3498db; --p-green: #2ecc71; --p-yellow: #f1c40f; --p-purp: #9b59b6; --p-bg: #f0f4f8; }
+        :root { --p-blue: #3498db; --p-green: #2ecc71; --p-gold: #f1c40f; --p-bg: #f8faff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Rounded Mplus 1c', sans-serif; }
-        
-        body { background: var(--p-bg); color: #333; margin: 0; padding: 0; min-height: 100vh; transition: 0.5s; }
+        body { background: var(--p-bg); margin: 0; padding-bottom: 80px; }
 
-        /* Header & Stats */
-        header { background: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 900; color: var(--p-blue); font-size: 1.2rem; cursor: pointer; user-select: none; }
-        .stats-row { display: flex; gap: 8px; }
-        .stat-pill { background: #f8f9fa; padding: 5px 10px; border-radius: 50px; border: 2px solid #eee; font-weight: 900; font-size: 0.8rem; display: flex; align-items: center; gap: 4px; }
+        /* The Capture Zone (What the photo looks like) */
+        #photo-capture-area { 
+            background: white; padding: 40px; border-radius: 30px; 
+            text-align: center; position: relative; overflow: hidden;
+            width: 320px; margin: 20px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .capture-aura { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 200px; height: 200px; border-radius: 50%;
+            filter: blur(40px); opacity: 0.3; z-index: 1;
+        }
+        .capture-monster-stack { position: relative; z-index: 10; display: inline-block; }
+        .capture-monster { font-size: 7rem; }
+        .capture-acc { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 3rem; }
 
-        /* Global Chat Feed */
-        .chat-bar { background: #2c3e50; color: #ecf0f1; padding: 8px; font-size: 0.75rem; overflow: hidden; white-space: nowrap; border-bottom: 2px solid var(--p-yellow); }
-        .chat-track { display: inline-block; animation: scrollChat 20s linear infinite; }
-        @keyframes scrollChat { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        /* UI Buttons */
+        header { background: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-camera { background: #333; color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 8px; margin: 0 auto; }
+        .btn-big { background: var(--p-blue); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 900; width: 90%; margin: 10px 5%; cursor: pointer; }
 
-        /* Monster Section */
-        .evo-container { background: white; margin: 15px; padding: 20px; border-radius: 30px; border-bottom: 6px solid #ddd; text-align: center; }
-        .monster-box { font-size: 5rem; margin: 10px 0; transition: 0.5s; animation: float 3s infinite ease-in-out; display: inline-block; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .glow-aura { filter: drop-shadow(0 0 15px var(--p-yellow)); }
-
-        /* Navigation Tabs */
-        .nav-tabs { display: flex; background: white; padding: 10px; position: fixed; bottom: 0; width: 100%; justify-content: space-around; border-top: 3px solid #eee; z-index: 1000; }
-        .tab { text-align: center; font-size: 0.7rem; font-weight: 900; color: #aaa; cursor: pointer; }
-        .tab.active { color: var(--p-blue); }
-
-        /* Screens */
-        .screen { display: none; padding: 15px 15px 100px; animation: fadeIn 0.3s ease; }
-        .active-screen { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .world-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .item-card { background: white; border-radius: 20px; border-bottom: 5px solid #ddd; padding: 15px; text-align: center; cursor: pointer; }
-        
-        .btn-buy { background: var(--p-green); color: white; border: none; padding: 10px; border-radius: 12px; width: 100%; font-weight: 900; margin-top: 10px; cursor: pointer; }
-        .btn-play { background: var(--p-blue); color: white; border: none; padding: 15px; border-radius: 15px; width: 100%; font-weight: 900; box-shadow: 0 5px 0 #2980b9; cursor: pointer; }
-        
-        /* Modals */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: white; z-index: 5000; display: none; flex-direction: column; padding: 30px; text-align: center; }
-        
-        /* ADMIN PANEL */
-        #admin-panel { background: #000; color: #0f0; font-family: 'Courier New', monospace; text-align: left; }
-        .admin-btn { background: #333; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px 0; width: 100%; text-align: left; }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 5000; display:none; flex-direction: column; padding: 20px; text-align: center; color: white; }
+        #preview-img { max-width: 100%; border-radius: 20px; margin: 20px 0; border: 5px solid white; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo" id="logo-admin" onmousedown="startAdminTimer()" onmouseup="clearAdminTimer()" ontouchstart="startAdminTimer()" ontouchend="clearAdminTimer()">SOVEREIGN 🌌</div>
-        <div class="stats-row">
-            <div class="stat-pill">🔥 <span id="s-streak">1</span></div>
-            <div class="stat-pill">⭐ <span id="s-stars">100</span></div>
-        </div>
+        <div style="font-weight:900; color:var(--p-blue)">SOVEREIGN</div>
+        <div style="background:#eee; padding:5px 15px; border-radius:20px; font-weight:900;">⭐ <span id="stars">250</span></div>
     </header>
 
-    <div class="chat-bar">
-        <div class="chat-track" id="chat-content">
-            Sovereign_Alpha just evolved to Master! • User77 earned 500 stars • Sovereign_Kid: "This level is fire!" • Welcome to the Sovereign Universe!
-        </div>
-    </div>
-
-    <div id="scr-hub" class="screen active-screen">
-        <div class="evo-container">
-            <div id="monster-evo" class="monster-box">🥚</div>
-            <h2 id="evo-name" style="margin: 5px 0;">EGG</h2>
-            <div style="background: #eee; height: 12px; border-radius: 10px; overflow: hidden; margin: 10px 0;">
-                <div id="evo-fill" style="background: var(--p-green); width: 10%; height: 100%; transition: 0.5s;"></div>
+    <div id="hub-scr">
+        <div id="photo-capture-area">
+            <div class="capture-aura" id="v-aura" style="background: var(--p-blue);"></div>
+            <div class="capture-monster-stack">
+                <div id="v-acc" class="capture-acc">👑</div>
+                <div id="v-icon" class="capture-monster">🐲</div>
             </div>
-            <p style="font-size: 0.75rem; color: #999; font-weight: 900;">POWER: <span id="pwr-lvl">10</span></p>
+            <h2 id="v-name" style="color: #333; margin-top: 20px;">MASTER DRAGON</h2>
+            <p style="color: #999; font-size: 0.8rem;">Sovereign Universe Hero</p>
         </div>
 
-        <div class="world-grid">
-            <div class="item-card" onclick="openWorld('Toddler')">
-                <div style="font-size: 3rem;">🧸</div>
-                <div style="font-weight: 900; margin-top:10px;">TODDLER</div>
-            </div>
-            <div class="item-card" onclick="openWorld('Elementary')">
-                <div style="font-size: 3rem;">🎒</div>
-                <div style="font-weight: 900; margin-top:10px;">ACADEMY</div>
-            </div>
-        </div>
+        <button class="btn-camera" onclick="takePhoto()">
+            📷 TAKE A PHOTO
+        </button>
+
+        <p style="text-align:center; color:#999; font-size:0.8rem; margin-top:15px;">Your pet will strike a pose!</p>
     </div>
 
-    <div id="scr-shop" class="screen">
-        <h2>SOVEREIGN SHOP</h2>
-        <div class="world-grid">
-            <div class="item-card">
-                <div style="font-size: 2rem;">✨</div>
-                <b>GOLD AURA</b><br>
-                <button class="btn-buy" onclick="buy('aura', 500)">500 ⭐</button>
-            </div>
-            <div class="item-card">
-                <div style="font-size: 2rem;">🌌</div>
-                <b>NIGHT THEME</b><br>
-                <button class="btn-buy" onclick="buy('theme', 1000)">1000 ⭐</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="scr-rank" class="screen">
-        <h2>LEADERBOARD</h2>
-        <div id="rank-list">
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; display:flex; justify-content:space-between; border-left: 5px solid var(--p-yellow);">
-                <b>1. Sovereign_Alpha</b> <span>12,400 ⭐</span>
-            </div>
-            <div style="background:white; padding:15px; border-radius:15px; margin-bottom:10px; display:flex; justify-content:space-between; border-left: 5px solid #ccc;">
-                <b>2. King_Logic</b> <span>9,150 ⭐</span>
-            </div>
-            <div style="background:var(--p-blue); color:white; padding:15px; border-radius:15px; margin-bottom:10px; display:flex; justify-content:space-between;">
-                <b>YOU</b> <span id="your-rank">100 ⭐</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="admin-panel" class="modal">
-        <h2>[ ACCESS GRANTED ]</h2>
-        <p>SOVEREIGN CONTROL UNIT</p>
-        <button class="admin-btn" onclick="stars += 1000; updateStats(); alert('1000 Stars Added');">>> ADD 1000 STARS</button>
-        <button class="admin-btn" onclick="streak += 5; updateStats(); alert('Streak Boosted');">>> BOOST STREAK (+5)</button>
-        <button class="admin-btn" onclick="hasAura = true; updateStats(); alert('Aura Forced');">>> FORCE UNLOCK AURA</button>
-        <button class="admin-btn" style="color:red; border-color:red;" onclick="stars=0; streak=1; updateStats(); alert('Data Wiped');">>> RESET ALL DATA</button>
-        <button class="admin-btn" style="margin-top:20px;" onclick="closeAdmin()">>> EXIT CONSOLE</button>
-    </div>
-
-    <div id="mission-modal" class="modal">
-        <h1 id="q-text" style="font-size: 2rem; margin-top: 40px;"></h1>
-        <div id="opt-grid" class="world-grid" style="margin-top: 20px;"></div>
-        <input type="text" id="q-input" style="display:none; width: 100%; padding: 20px; border-radius: 20px; border: 3px solid #eee; margin: 20px 0; text-align: center; font-size: 1.5rem;">
-        <button id="q-sub" class="btn-play" style="display:none;" onclick="checkAns()">SUBMIT ANSWER</button>
-        <button class="btn-buy" style="background:none; color: #ccc;" onclick="closeModal()">EXIT</button>
-    </div>
-
-    <div id="success-modal" class="modal" style="background: var(--p-green); color: white;">
-        <div style="font-size: 5rem; margin-top: 50px;">🏆</div>
-        <h1>BRILLIANT!</h1>
-        <p>+150 Sovereign Credits Added</p>
-        <button class="btn-play" style="background: white; color: var(--p-green);" onclick="closeModal()">CONTINUE</button>
-    </div>
-
-    <div class="nav-tabs">
-        <div class="tab active" onclick="switchTab('scr-hub', this)">🏠<br>MAP</div>
-        <div class="tab" onclick="switchTab('scr-shop', this)">🛒<br>SHOP</div>
-        <div class="tab" onclick="switchTab('scr-rank', this)">🏆<br>RANKS</div>
+    <div id="photo-modal" class="modal">
+        <h2>PHOTO SAVED!</h2>
+        <div id="result-container"></div>
+        <p>Your Sovereign Monster is now in your gallery!</p>
+        <button class="btn-big" onclick="downloadImage()">💾 DOWNLOAD PHOTO</button>
+        <button class="btn-big" style="background:none; color:white; border: 2px solid white;" onclick="closePhoto()">CLOSE</button>
     </div>
 
     <script>
-        let stars = 100; let streak = 1; let currentAns = "";
-        let hasAura = false; let adminTimer;
+        // Use the stars and evolution logic from previous builds
+        let stars = 1500; 
 
-        const content = {
-            'Toddler': [{q: 'Find the BLUE Square', a: '🟦', opts: ['🟥', '🟦', '🟩']}, {q: 'Who says MEOW?', a: '🐱', opts: ['🐶', '🐷', '🐱']}],
-            'Elementary': [{q: '25 + 25 = ?', a: '50'}, {q: 'Which is the Sun?', a: 'star'}]
-        };
-
-        // ADMIN ACCESS LOGIC
-        function startAdminTimer() { adminTimer = setTimeout(() => { document.getElementById('admin-panel').style.display = 'flex'; }, 3000); }
-        function clearAdminTimer() { clearTimeout(adminTimer); }
-        function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-
-        function switchTab(id, el) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active-screen');
-            el.classList.add('active');
-        }
-
-        function openWorld(w) {
-            const m = content[w][Math.floor(Math.random() * content[w].length)];
-            document.getElementById('mission-modal').style.display = 'flex';
-            document.getElementById('q-text').innerText = m.q;
-            currentAns = m.a.toLowerCase();
+        function takePhoto() {
+            // "Strike a pose" animation
+            const area = document.getElementById('photo-capture-area');
+            area.style.transform = "scale(1.05)";
             
-            const grid = document.getElementById('opt-grid');
-            const input = document.getElementById('q-input');
-            const sub = document.getElementById('q-sub');
-
-            if(m.opts) {
-                grid.style.display = 'grid'; input.style.display = 'none'; sub.style.display = 'none';
-                grid.innerHTML = m.opts.map(o => `<button class="btn-play" style="font-size:2rem; padding:20px;" onclick="checkAns('${o}')">${o}</button>`).join('');
-            } else {
-                grid.style.display = 'none'; input.style.display = 'block'; sub.style.display = 'block';
-                input.value = "";
-            }
+            // Generate the image
+            html2canvas(area).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                const container = document.getElementById('result-container');
+                container.innerHTML = `<img src="${imgData}" id="preview-img">`;
+                
+                document.getElementById('photo-modal').style.display = 'flex';
+                area.style.transform = "scale(1)";
+                
+                // Voice feedback
+                const ut = new SpeechSynthesisUtterance("Smile! What a great photo!");
+                window.speechSynthesis.speak(ut);
+            });
         }
 
-        function checkAns(val) {
-            let u = (val || document.getElementById('q-input').value).toLowerCase().trim();
-            if(u === currentAns) {
-                stars += 150; updateStats();
-                document.getElementById('success-modal').style.display = 'flex';
-            } else { alert("Try again, Sovereign!"); }
+        function downloadImage() {
+            const img = document.getElementById('preview-img').src;
+            const link = document.createElement('a');
+            link.download = 'my-sovereign-pet.png';
+            link.href = img;
+            link.click();
         }
 
-        function buy(type, cost) {
-            if(stars >= cost) {
-                stars -= cost;
-                if(type === 'aura') hasAura = true;
-                if(type === 'theme') { document.body.style.background = "#1a1a1a"; document.body.style.color = "white"; }
-                updateStats();
-                alert("ITEM UNLOCKED!");
-            } else { alert("Need more stars!"); }
+        function closePhoto() {
+            document.getElementById('photo-modal').style.display = 'none';
         }
 
-        function updateStats() {
-            document.getElementById('s-stars').innerText = stars;
-            document.getElementById('your-rank').innerText = stars + " ⭐";
-            document.getElementById('pwr-lvl').innerText = (stars * streak);
-            document.getElementById('s-streak').innerText = streak;
-            
-            const monster = document.getElementById('monster-evo');
-            if(hasAura) monster.classList.add('glow-aura'); else monster.classList.remove('glow-aura');
-            
-            if(stars < 500) { monster.innerText = "🥚"; document.getElementById('evo-name').innerText = "EGG"; }
-            else if(stars < 1500) { monster.innerText = "🐣"; document.getElementById('evo-name').innerText = "BABY"; }
-            else { monster.innerText = "🐲"; document.getElementById('evo-name').innerText = "DRAGON"; }
-
-            document.getElementById('evo-fill').style.width = Math.min((stars/2000)*100, 100) + "%";
+        // Logic to keep the photo area updated with current evolution/items
+        function syncPhotoData(mon, acc, name, auraColor) {
+            document.getElementById('v-icon').innerText = mon;
+            document.getElementById('v-acc').innerText = acc;
+            document.getElementById('v-name').innerText = name;
+            document.getElementById('v-aura').style.background = auraColor;
         }
-
-        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-        // Live Chat Simulation
-        setInterval(() => {
-            const chat = document.getElementById('chat-content');
-            const fakeNews = ["Logic_Master just hit a 10-day streak!", "Sovereign_Kid unlocked the Dragon Stage!", "New Shop Items coming soon!", "Welcome to the Frontier!"];
-            chat.innerText = fakeNews[Math.floor(Math.random()*fakeNews.length)] + " • " + chat.innerText.substring(0, 150);
-        }, 10000);
-
-        updateStats();
     </script>
 </body>
 </html>
