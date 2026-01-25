@@ -194,3 +194,49 @@ body {
     width: 40%;
     transition: width 1s ease-in-out;
 }
+
+/* MISSION GRID STYLING */
+.activity-map {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+}
+
+.activity-node {
+    background: var(--panel);
+    border-radius: 25px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+/* ANSWER BUTTONS (Crucial for battles) */
+.opt {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--accent-blue);
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.opt:active {
+    background: var(--accent-blue);
+    color: var(--bg-dark);
+}
+
+/* MODAL DISPLAY */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.98);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
