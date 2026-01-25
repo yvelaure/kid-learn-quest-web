@@ -3,240 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Nexus Pro</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>Sovereign Hub | Ultra</title>
     <style>
         :root { 
-            --accent: #6366f1; --gold: #f59e0b; --green: #10b981;
-            --bg: #f1f5f9; --card: rgba(255, 255, 255, 0.9); --text: #0f172a;
+            --p-blue: #3b82f6; --p-gold: #fbbf24; --p-green: #22c55e;
+            --p-bg: #f0f4f8; --p-card: rgba(255, 255, 255, 0.9); --p-text: #1e293b;
         }
-        body.dark { --bg: #020617; --card: rgba(30, 41, 59, 0.8); --text: #f8fafc; }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'SF Pro Display', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--text); margin: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
-
-        /* --- AUTH SCREEN --- */
-        #auth-gate {
-            position: fixed; inset: 0; z-index: 9999; background: linear-gradient(135deg, #4338ca, #6366f1);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
-            padding: 40px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.2);
-            width: 100%; max-width: 350px; text-align: center;
+        body.night { 
+            --p-bg: #0f172a; --p-card: rgba(30, 41, 59, 0.9); --p-text: #f1f5f9; 
         }
 
-        /* --- DASHBOARD UI --- */
-        header { 
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--p-bg); color: var(--p-text); margin: 0; overflow-x: hidden; transition: 0.5s; }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1), transparent);
+            z-index: -1; animation: pulse 8s infinite alternate;
+        }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.5); } }
+
+        /* --- HUB HEADER --- */
+        .hub-header {
             padding: 20px; display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
+            background: var(--p-card); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
         }
-        .stats-pill { 
-            background: var(--card); padding: 10px 20px; border-radius: 30px; 
-            font-weight: 800; border: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; gap: 8px;
+        .user-profile { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .user-avatar { width: 40px; height: 40px; background: var(--p-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; }
+        .star-box { background: #fffbeb; border: 2px solid #fde68a; padding: 10px 18px; border-radius: 50px; font-weight: 900; color: #92400e; display: flex; gap: 8px; }
+
+        /* --- HERO DRAGON ZONE --- */
+        .hero-zone {
+            margin: 20px; padding: 40px 20px; border-radius: 40px;
+            background: var(--p-card); box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            text-align: center; position: relative;
+        }
+        .dragon-display { font-size: 8rem; position: relative; z-index: 5; cursor: pointer; transition: 0.3s; display: inline-block; }
+        .dragon-display:active { transform: scale(0.9); }
+        .dragon-acc { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); font-size: 3.5rem; z-index: 10; }
+        
+        .level-badge {
+            background: var(--p-blue); color: white; padding: 5px 15px; border-radius: 10px;
+            font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: inline-block;
         }
 
-        .pet-stage-card {
-            margin: 20px; padding: 50px 20px; border-radius: 40px;
-            background: var(--card); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            position: relative; overflow: hidden; text-align: center;
+        /* --- MISSION CONTROL GRID --- */
+        .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .mission-card {
+            background: var(--p-card); border-radius: 30px; padding: 25px 15px;
+            text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
         }
-        .glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 200px; height: 200px; border-radius: 50%; filter: blur(60px); opacity: 0.2;
-            background: var(--accent); transition: 1s;
-        }
-        .pet-sprite { font-size: 8rem; position: relative; z-index: 5; cursor: pointer; transition: 0.3s; }
-        .pet-sprite:hover { transform: scale(1.1) rotate(5deg); }
+        .mission-card:active { border-color: var(--p-blue); transform: translateY(-5px); }
+        .m-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .m-label { font-weight: 900; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .m-sub { font-size: 0.7rem; opacity: 0.6; display: block; margin-top: 5px; }
 
-        /* --- NAVIGATION --- */
-        .nav-tabs { display: flex; justify-content: center; gap: 12px; margin: 10px 0; }
-        .tab { 
-            padding: 14px 24px; border-radius: 20px; border: none; font-weight: 700;
-            background: var(--card); color: var(--text); cursor: pointer; transition: 0.3s;
+        /* --- BATTLE PORTAL --- */
+        .battle-portal {
+            margin: 15px; padding: 20px; border-radius: 30px;
+            background: linear-gradient(135deg, #1e293b, #0f172a); color: white;
+            display: flex; justify-content: space-between; align-items: center; overflow: hidden; position: relative;
         }
-        .tab.active { background: var(--accent); color: white; transform: translateY(-3px); }
+        .battle-portal::after { content: '⚔️'; position: absolute; right: -10px; font-size: 5rem; opacity: 0.1; }
 
-        /* --- GRID SYSTEM --- */
-        .island-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 20px; }
-        .island {
-            background: var(--card); border-radius: 35px; padding: 30px 15px;
-            text-align: center; border: 1px solid rgba(0,0,0,0.03); transition: 0.3s;
-        }
-        .island:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .icon-circle { 
-            font-size: 2.5rem; width: 70px; height: 70px; background: rgba(99, 102, 241, 0.1);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;
-        }
+        /* --- LEVEL PICKER --- */
+        .lvl-nav { display: flex; justify-content: center; gap: 10px; margin: 10px 0; }
+        .lvl-btn { padding: 12px 20px; border-radius: 15px; border: none; font-weight: 800; background: var(--p-card); color: var(--p-text); cursor: pointer; }
+        .lvl-btn.active { background: var(--p-blue); color: white; }
 
         /* --- MODAL ENGINE --- */
-        .modal {
-            position: fixed; inset: 0; background: var(--bg); z-index: 5000;
-            display: none; flex-direction: column; padding: 40px 20px; overflow-y: auto;
-        }
-        .q-text { font-size: 2.5rem; font-weight: 900; margin-bottom: 40px; }
-        .ans-btn {
-            background: var(--card); border: 2px solid rgba(0,0,0,0.05); 
-            padding: 25px; border-radius: 25px; margin-bottom: 15px;
-            font-size: 1.4rem; font-weight: 800; width: 100%; text-align: center;
-        }
-        .ans-btn:active { background: var(--accent); color: white; }
-
-        .progress-container { width: 80%; height: 10px; background: #e2e8f0; border-radius: 10px; margin: 20px auto; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--green); transition: 0.5s; }
+        .modal { position: fixed; inset: 0; background: var(--p-bg); z-index: 5000; display: none; flex-direction: column; padding: 40px 25px; }
+        .q-text { font-size: 2.5rem; font-weight: 900; margin: 40px 0; line-height: 1.1; }
+        .opt-btn { background: var(--p-card); border: 2px solid rgba(0,0,0,0.05); padding: 20px; border-radius: 20px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 800; width: 100%; cursor: pointer; }
+        .opt-btn:active { background: var(--p-blue); color: white; }
     </style>
 </head>
-<body id="app-root">
+<body id="hub-body">
 
-    <div id="auth-gate">
-        <div class="glass-panel">
-            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">SOVEREIGN</h1>
-            <p>The Future of Learning</p>
-            <input type="text" id="name-in" placeholder="Student Name" style="width:100%; padding:15px; border-radius:15px; border:none; margin:20px 0; font-size:1.1rem; text-align:center;">
-            <button onclick="bootApp()" style="width:100%; padding:18px; border-radius:15px; border:none; background:var(--gold); font-weight:900; font-size:1.1rem;">INITIALIZE</button>
+    <div class="bg-glow"></div>
+
+    <header class="hub-header">
+        <div class="user-profile" onclick="openReport()">
+            <div class="user-avatar" id="avatar-initial">H</div>
+            <div style="font-weight: 900;" id="display-name">HERO</div>
+        </div>
+        <div class="star-box">⭐ <span id="star-val">250</span></div>
+    </header>
+
+    <div class="hero-zone">
+        <div class="level-badge" id="rank-badge">NOVICE LEARNER</div>
+        <div class="dragon-display" onclick="dragonSpeak()">
+            <div id="acc-slot" class="dragon-acc"></div>
+            <div id="dragon-emoji">🥚</div>
+        </div>
+        <div id="status-text" style="font-weight: 900; margin-top: 15px; letter-spacing: 2px;">EGG STAGE</div>
+        <div style="background: #e2e8f0; height: 10px; border-radius: 10px; width: 80%; margin: 20px auto; overflow: hidden;">
+            <div id="xp-bar" style="background: var(--p-green); height: 100%; width: 5%; transition: 1s;"></div>
         </div>
     </div>
 
-    <header>
-        <div class="stats-pill" onclick="openReport()">👤 <span id="user-display">Explorer</span></div>
-        <div class="stats-pill">⭐ <span id="star-count">0</span></div>
-    </header>
-
-    <div class="pet-stage-card">
-        <div class="glow" id="aura"></div>
-        <div id="acc-layer" style="position:absolute; top:40px; left:50%; transform:translateX(-50%); font-size:3rem; z-index:10;"></div>
-        <div class="pet-sprite" id="pet" onclick="speak('Ready for a challenge?')">🥚</div>
-        <h2 id="stage-label" style="text-transform:uppercase; letter-spacing:2px;">EGG STAGE</h2>
-        <div class="progress-container"><div class="progress-bar" id="p-fill" style="width: 0%;"></div></div>
+    <div class="lvl-nav">
+        <button class="lvl-btn active" onclick="changeLvl(1, this)">LEVEL 1</button>
+        <button class="lvl-btn" onclick="changeLvl(2, this)">LEVEL 2</button>
+        <button class="lvl-btn" onclick="changeLvl(3, this)">LEVEL 3</button>
     </div>
 
-    <div class="nav-tabs">
-        <button class="tab active" onclick="setGrade(1, this)">LVL 1</button>
-        <button class="tab" onclick="setGrade(2, this)">LVL 2</button>
-        <button class="tab" onclick="setGrade(3, this)">LVL 3</button>
+    <div class="battle-portal" onclick="alert('Defend the Kingdom! Math Battle loading...')">
+        <div>
+            <div style="font-weight: 900; font-size: 1.2rem;">DAILY BATTLE</div>
+            <div style="font-size: 0.8rem; opacity: 0.8;">Protect the stars from monsters!</div>
+        </div>
+        <button style="background: var(--p-gold); border: none; padding: 10px 20px; border-radius: 50px; font-weight: 900;">FIGHT</button>
     </div>
 
-    <div class="island-grid">
-        <div class="island" onclick="launchQuest('Math')"><div class="icon-circle">➕</div><b>MATH</b></div>
-        <div class="island" onclick="launchQuest('Reading')"><div class="icon-circle">📖</div><b>READING</b></div>
-        <div class="island" onclick="launchQuest('Science')"><div class="icon-circle">🔬</div><b>SCIENCE</b></div>
-        <div class="island" onclick="openLibrary()"><div class="icon-circle">📚</div><b>LIBRARY</b></div>
-        <div class="island" onclick="openShop()"><div class="icon-circle">💎</div><b>CLOSET</b></div>
-        <div class="island" onclick="toggleDark()"><div class="icon-circle">🌙</div><b>THEME</b></div>
+    <div class="mission-grid">
+        <div class="mission-card" onclick="startQuest('Math')"><span class="m-icon">🔢</span><b class="m-label">Math</b><span class="m-sub">Numbers & Logic</span></div>
+        <div class="mission-card" onclick="startQuest('Words')"><span class="m-icon">📖</span><b class="m-label">Reading</b><span class="m-sub">Grammar & Stories</span></div>
+        <div class="mission-card" onclick="startQuest('Science')"><span class="m-icon">🧪</span><b class="m-label">Science</b><span class="m-sub">The Universe</span></div>
+        <div class="mission-card" onclick="openShop()"><span class="m-icon">🛍️</span><b class="m-label">Closet</b><span class="m-sub">Dragon Hats</span></div>
+        <div class="mission-card" onclick="openStory()"><span class="m-icon">📜</span><b class="m-label">Library</b><span class="m-sub">Narrated Stories</span></div>
+        <div class="mission-card" onclick="toggleMode()"><span class="m-icon">🌙</span><b class="m-label">Theme</b><span class="m-sub">Light/Dark</span></div>
     </div>
 
     <div id="quest-modal" class="modal">
-        <div id="q-title" style="color:var(--accent); font-weight:900;">LEVEL 1 MATH</div>
-        <div class="q-text" id="q-body">What is 10 + 5?</div>
-        <div id="options-box"></div>
-        <button onclick="closeModals()" style="margin-top:auto; background:none; border:none; color:#94a3b8; font-weight:700;">QUIT SESSION</button>
-    </div>
-
-    <div id="report-modal" class="modal">
-        <h1>ACADEMIC REPORT</h1>
-        <div style="background:var(--card); padding:20px; border-radius:20px; text-align:left; margin-bottom:20px;">
-            <p><b>STUDENT:</b> <span id="rep-name"></span></p>
-            <p><b>MASTERY STARS:</b> <span id="rep-stars"></span></p>
-            <p><b>LEVEL ACHIEVED:</b> <span id="rep-level"></span></p>
-        </div>
-        <button class="ans-btn" style="background:var(--green); color:white; border:none;" onclick="addStars(5000)">+5,000 ADMIN STARS</button>
-        <button class="ans-btn" onclick="closeModals()">RETURN</button>
+        <div id="q-title" style="font-weight: 900; color: var(--p-blue);">MISSION</div>
+        <div class="q-text" id="q-body">1 + 1 = ?</div>
+        <div id="opt-box"></div>
+        <button onclick="closeModals()" style="margin-top:auto; background:none; border:none; color:#94a3b8; font-weight:700;">BACK TO HUB</button>
     </div>
 
     <script>
-        let state = {
-            name: "Explorer", stars: 250, grade: 1, completed: 0, 
-            theme: 'light', accessory: ''
-        };
+        let stars = 250; let currentLvl = 1; let name = "Hero";
+        const synth = window.speechSynthesis;
 
-        const bank = {
+        const quests = {
             Math: {
-                1: [{q:"1+5?", a:"6", o:["4","6","8"]}, {q:"10-3?", a:"7", o:["5","7","9"]}],
-                2: [{q:"12 x 2?", a:"24", o:["22","24","26"]}, {q:"50 + 75?", a:"125", o:["115","125","135"]}],
-                3: [{q:"Square of 5?", a:"25", o:["10","20","25"]}, {q:"144 / 12?", a:"12", o:["10","12","14"]}]
+                1: [{q:"1+1?", a:"2", o:["1","2","3"]}],
+                2: [{q:"10x5?", a:"50", o:["40","50","60"]}],
+                3: [{q:"144/12?", a:"12", o:["10","12","14"]}]
             },
-            Reading: {
-                1: [{q:"Sound of 'C'?", a:"Cat", o:["Cat","Ant"]}],
-                2: [{q:"Opposite: FAST", a:"Slow", o:["Quick","Slow"]}],
-                3: [{q:"What is a VERB?", a:"Run", o:["Run","Book","Blue"]}]
+            Words: {
+                1: [{q:"Cat starts with...", a:"C", o:["C","B"]}],
+                2: [{q:"Opposite of Hot?", a:"Cold", o:["Ice","Cold"]}],
+                3: [{q:"Identify Verb", a:"Run", o:["Run","Sky"]}]
             },
             Science: {
                 1: [{q:"Sun is a...", a:"Star", o:["Planet","Star"]}],
                 2: [{q:"Ice is...", a:"Solid", o:["Solid","Gas"]}],
-                3: [{q:"Moon orbits...", a:"Earth", o:["Sun","Earth"]}]
+                3: [{q:"Earth is...", a:"Round", o:["Flat","Round"]}]
             }
         };
 
-        function bootApp() {
-            const input = document.getElementById('name-in').value;
-            if(!input) return alert("Enter your name, Hero!");
-            state.name = input;
-            document.getElementById('user-display').innerText = state.name;
-            document.getElementById('auth-gate').style.display = 'none';
-            speak("Welcome " + state.name);
-            updateUI();
+        function dragonSpeak() { 
+            let u = new SpeechSynthesisUtterance("I am ready for level " + currentLvl); 
+            u.pitch = 1.4; synth.speak(u); 
         }
 
-        function setGrade(g, el) {
-            state.grade = g;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            speak("Level " + g + " active");
+        function changeLvl(n, btn) {
+            currentLvl = n;
+            document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
-        function launchQuest(type) {
-            const quests = bank[type][state.grade];
-            let current = 0;
-            const modal = document.getElementById('quest-modal');
-            modal.style.display = 'flex';
-            
-            function render() {
-                if(current >= quests.length) {
-                    addStars(500); state.completed++;
-                    closeModals(); alert("Mastery Achieved!"); return;
-                }
-                document.getElementById('q-title').innerText = `LEVEL ${state.grade} ${type}`;
-                document.getElementById('q-body').innerText = quests[current].q;
-                const box = document.getElementById('options-box');
-                box.innerHTML = "";
-                quests[current].o.forEach(o => {
-                    const b = document.createElement('button');
-                    b.className = "ans-btn"; b.innerText = o;
-                    b.onclick = () => { if(o === quests[current].a) { current++; render(); } else { speak("Try again!"); } };
-                    box.appendChild(b);
-                });
-            }
-            render();
+        function startQuest(type) {
+            const data = quests[type][currentLvl][0];
+            document.getElementById('q-title').innerText = `${type.toUpperCase()} - LEVEL ${currentLvl}`;
+            document.getElementById('q-body').innerText = data.q;
+            const box = document.getElementById('opt-box'); box.innerHTML = "";
+            data.o.forEach(o => {
+                const b = document.createElement('button'); b.className = "opt-btn"; b.innerText = o;
+                b.onclick = () => { if(o === data.a) { stars += 500; update(); alert("Correct!"); closeModals(); } };
+                box.appendChild(b);
+            });
+            document.getElementById('quest-modal').style.display = 'flex';
         }
 
-        function addStars(amt) { state.stars += amt; updateUI(); }
-
-        function updateUI() {
-            document.getElementById('star-count').innerText = state.stars;
-            const p = Math.min((state.stars / 5000) * 100, 100);
-            document.getElementById('p-fill').style.width = p + "%";
-            
-            const pet = document.getElementById('pet');
-            const label = document.getElementById('stage-label');
-            const aura = document.getElementById('aura');
-
-            if(state.stars < 1000) { pet.innerText = "🥚"; label.innerText = "Egg Stage"; aura.style.background = "#6366f1"; }
-            else if(state.stars < 3000) { pet.innerText = "🐣"; label.innerText = "Guardian Hatchling"; aura.style.background = "#10b981"; }
-            else { pet.innerText = "🐲"; label.innerText = "Sovereign Dragon"; aura.style.background = "#f59e0b"; }
+        function update() {
+            document.getElementById('star-val').innerText = stars;
+            document.getElementById('xp-bar').style.width = Math.min((stars/5000)*100, 100) + "%";
+            let img = document.getElementById('dragon-emoji');
+            let stat = document.getElementById('status-text');
+            if(stars < 1000) { img.innerText = "🥚"; stat.innerText = "EGG STAGE"; }
+            else if(stars < 3000) { img.innerText = "🐣"; stat.innerText = "JUNIOR DRAGON"; }
+            else { img.innerText = "🐲"; stat.innerText = "MASTER SOVEREIGN"; }
         }
 
-        function openReport() {
-            document.getElementById('rep-name').innerText = state.name;
-            document.getElementById('rep-stars').innerText = state.stars;
-            document.getElementById('rep-level').innerText = "Grade " + state.grade;
-            document.getElementById('report-modal').style.display = 'flex';
-        }
-
-        function speak(t) { window.speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
-        function toggleDark() { document.body.classList.toggle('dark'); }
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function openShop() { alert("Closet Unlocks at 1000 Stars!"); }
-        function openLibrary() { alert("Library Stories coming in next update!"); }
+        function toggleMode() { document.body.classList.toggle('night'); }
+        function openShop() { let p = prompt("Enter PIN for Admin Stars:"); if(p === "1234") { stars += 10000; update(); } }
+        function closeModals() { document.getElementById('quest-modal').style.display = 'none'; }
+        
+        update();
     </script>
 </body>
 </html>
