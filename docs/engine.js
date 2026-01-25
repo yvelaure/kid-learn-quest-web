@@ -1,4 +1,4 @@
-/**
+u/**
  * SOVEREIGN NEXUS: GAME ENGINE
  * This file runs the logic, battles, and saving.
  */
@@ -10,13 +10,29 @@ let Player = JSON.parse(localStorage.getItem('sovereign_save')) || {
     rank: "Novice",
     mode: "preschool", // Default starting point
     completedQuests: []
-};
+}
+
 
 // 2. SAVE SYSTEM
 function saveGame() {
     localStorage.setItem('sovereign_save', JSON.stringify(Player));
     updateHUD();
 }
+// VOICE NARRATION ENGINE
+function speak(text) {
+    // Cancel any current speech so it doesn't overlap
+    window.speechSynthesis.cancel();
+    
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.pitch = 1.2; // Slightly higher pitch for a friendly "game" feel
+    msg.rate = 0.9;  // Slightly slower so kids can follow along
+    
+    window.speechSynthesis.speak(msg);
+}
+
+// Update your startBattle function in engine.js to call this:
+// Inside startBattle(idx):
+// speak(quest.q); 
 
 // 3. UI UPDATER (Syncs HTML with Javascript)
 function updateHUD() {
@@ -98,6 +114,11 @@ function checkEvolution() {
     }
     
     if(rankEl) rankEl.innerText = Player.rank;
+}
+// Trigger the Certificate
+if (Player.stars >= 20000) {
+    document.getElementById('cert-overlay').style.display = 'flex';
+    speak("Congratulations, Galactic Sovereign! You have mastered the Nexus.");
 }
 
 // Call checkEvolution() inside your processWin() function!
