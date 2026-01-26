@@ -1,117 +1,24 @@
-:root {
-    --bg: #0b0e14;
-    --panel: #161b22;
-    --neon-blue: #00d4ff;
-    --neon-purple: #bc13fe;
-    --neon-green: #39ff14;
-    --gold: #ffcf00;
-}
+:root { --bg: #020617; --panel: #0f172a; --blue: #38bdf8; --gold: #fbbf24; --purple: #a855f7; }
+body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; text-align: center; }
 
-body {
-    background: var(--bg);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    overflow-x: hidden;
-}
+.hub-header { display: flex; justify-content: space-between; padding: 15px; border-bottom: 2px solid var(--blue); align-items: center; }
+.header-actions { display: flex; align-items: center; gap: 10px; }
 
-/* --- THE HUB --- */
-.hub-header {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    border-bottom: 2px solid var(--neon-blue);
-    display: flex;
-    justify-content: space-between;
-    box-shadow: 0 0 15px var(--neon-blue);
-}
+.board-btn { background: var(--gold); border: none; font-weight: 900; border-radius: 5px; padding: 5px 10px; font-size: 0.7rem; }
+.reset-btn { background: #ff4444; border: none; color: white; padding: 4px; border-radius: 5px; font-size: 0.5rem; margin-top: 5px; }
 
-.hero-card {
-    margin: 20px;
-    background: var(--panel);
-    border-radius: 25px;
-    padding: 30px;
-    border: 1px solid var(--neon-purple);
-    box-shadow: 0 0 20px rgba(188, 19, 254, 0.2);
-}
+.hero-card { background: var(--panel); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--purple); }
+.dragon-sprite { font-size: 5rem; text-shadow: 0 0 20px var(--purple); }
 
-/* --- MISSIONS --- */
-.activity-map {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    padding: 20px;
-}
+.grade-btns button { background: none; border: 1px solid var(--blue); color: white; margin: 5px; padding: 6px 10px; border-radius: 8px; font-size: 0.7rem; }
 
-.activity-node {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(0, 212, 255, 0.3);
-    border-radius: 20px;
-    padding: 20px;
-    transition: 0.3s;
-}
+.shop-scroller { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: rgba(0,0,0,0.2); }
+.shop-item { background: var(--panel); border: 1px solid var(--purple); min-width: 90px; padding: 10px; border-radius: 12px; flex-shrink: 0; }
+.shop-item span { display: block; font-size: 0.7rem; font-weight: 900; }
 
-.activity-node:hover {
-    border-color: var(--neon-blue);
-    background: rgba(0, 212, 255, 0.1);
-    transform: translateY(-5px);
-}
+.activity-map { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+.activity-node { background: var(--panel); padding: 25px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
-/* --- BATTLE MODAL --- */
-.modal-content {
-    background: #000;
-    border: 3px solid var(--neon-blue);
-    border-radius: 30px;
-    padding: 40px;
-    box-shadow: 0 0 50px var(--neon-blue);
-}
-
-.opt {
-    background: transparent;
-    border: 2px solid var(--neon-green);
-    color: var(--neon-green);
-    padding: 15px;
-    margin: 10px;
-    border-radius: 50px;
-    font-weight: 900;
-    text-transform: uppercase;
-    transition: 0.2s;
-}
-
-.opt:hover {
-    background: var(--neon-green);
-    color: black;
-    box-shadow: 0 0 20px var(--neon-green);
-}
-/* SHOP STYLING */
-.shop-container {
-    margin-top: 20px;
-}
-
-.shop-scroller {
-    display: flex;
-    overflow-x: auto;
-    gap: 15px;
-    padding: 10px 20px;
-    scrollbar-width: none; /* Hides scrollbar on Firefox */
-}
-
-.shop-scroller::-webkit-scrollbar { display: none; } /* Hides scrollbar on Chrome/Safari */
-
-.shop-item {
-    min-width: 100px;
-    background: var(--panel);
-    border: 1px solid var(--neon-purple);
-    padding: 15px;
-    border-radius: 20px;
-    text-align: center;
-    flex-shrink: 0;
-    transition: 0.3s;
-}
-
-.shop-item span { display: block; font-weight: 900; font-size: 0.9rem; }
-.shop-item small { color: var(--gold); font-weight: 700; }
-
-.shop-item:active {
-    transform: scale(0.9);
-    border-color: var(--gold);
-}
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: var(--panel); width: 85%; padding: 25px; border-radius: 25px; border: 2px solid var(--blue); }
+.opt { background: var(--gold); color: black; padding: 15px; margin: 10px auto; width: 90%; border-radius: 15px; font-weight: 900; border: none; }
