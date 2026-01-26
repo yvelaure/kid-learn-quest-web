@@ -3,138 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Nexus | Omni-Hub</title>
-    
-    <link rel="stylesheet" href="style.css?v=2">
-
-    
+    <title>Sovereign Nexus | Quest</title>
+    <link rel="stylesheet" href="style.css?v=10">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-
     <div class="game-container">
-        
         <header class="hub-header">
             <div class="user-profile">
-                <div style="font-weight: 900; color: var(--accent-blue);">SOVEREIGN OPS</div>
+                <div id="player-name">ID: ---</div>
+                <button onclick="resetGame()" class="reset-btn">🔄 RESET</button>
             </div>
-            <div class="star-box">⭐ <span id="stars">0</span></div>
+            <div class="header-actions">
+                <button onclick="toggleLeaderboard()" class="board-btn">🏆 RANK</button>
+                <div class="star-box">⭐ <span id="stars">0</span></div>
+            </div>
         </header>
 
         <section class="hero-card">
-            <div class="dragon-aura"></div>
             <div class="dragon-sprite" id="dragon">🥚</div>
-            <div class="rank-ribbon" id="rank-display">NOVICE EXPLORER</div>
-            
-            <div class="xp-shell">
-                <div class="xp-bar" id="xp-fill"></div>
-            </div>
-
-            <div style="display:flex; justify-content:center; gap:8px; margin-top:15px;">
-                <button class="lvl-btn" onclick="changeGrade('preschool')">PRE-K</button>
-                <button class="lvl-btn" onclick="changeGrade('middleSchool')">MIDDLE</button>
-                <button class="lvl-btn" onclick="changeGrade('highSchool')">HIGH</button>
+            <div class="grade-btns">
+                <button onclick="changeGrade('preschool')">PRE-K</button>
+                <button onclick="changeGrade('middleSchool')">MIDDLE</button>
+                <button onclick="changeGrade('highSchool')">HIGH</button>
             </div>
         </section>
 
-        <div class="battle-portal">
-            <div>
-                <div style="font-weight: 900; color: white;">DAILY BATTLE</div>
-                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.7);">Defend the Stars!</div>
-            </div>
-            <button class="battle-btn" onclick="startBattle(0)">FIGHT</button>
-        </div>
+        <section class="shop-scroller">
+            <div class="shop-item" onclick="buyItem('Shield', 1000)"><span>🛡️ SHIELD</span><small>1,000</small></div>
+            <div class="shop-item" onclick="buyItem('XP Boost', 2500)"><span>⚡ BOOST</span><small>2,500</small></div>
+            <div class="shop-item" onclick="buyItem('Evolution Stone', 5000)"><span>💎 STONE</span><small>5,000</small></div>
+        </section>
 
-        <div class="activity-map" id="mission-grid">
-            </div>
-
+        <div class="activity-map" id="mission-grid"></div>
     </div>
 
-    <div id="q-modal" class="modal" style="display:none;">
+    <div id="board-modal" class="modal">
+        <div class="modal-content leaderboard">
+            <h2 style="color:var(--gold)">GLOBAL RANKINGS</h2>
+            <div id="leaderboard-list"></div>
+            <button onclick="toggleLeaderboard()" class="opt" style="margin-top:20px">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="q-modal" class="modal">
         <div class="modal-content">
-            <h1 id="q-title" style="color: var(--accent-blue);">MISSION</h1>
-            <div id="q-body" style="font-size: 1.8rem; font-weight: 900; margin: 40px 0; min-height: 100px;"></div>
-            <div id="opt-grid" class="options-container">
-                </div>
-            <button onclick="document.getElementById('q-modal').style.display='none'" class="exit-btn">ABORT MISSION</button>
+            <h2 id="q-body"></h2>
+            <div id="opt-grid"></div>
         </div>
     </div>
-
-    <div id="cert-overlay" class="cert-modal" style="display:none;">
-    <div class="cert-card">
-        <div class="cert-border">
-            <h1 class="cert-title">MISSION ACCOMPLISHED</h1>
-            <p>This certifies that our Hero has reached</p>
-            <div class="cert-stars">20,000 STARS</div>
-            <p>and earned the Rank of</p>
-            <h2 id="final-rank">GALACTIC SOVEREIGN</h2>
-            <div class="cert-dragon">🐲</div>
-            <button class="claim-btn" onclick="closeCert()">CLAIM ETERNAL GLORY</button>
-        </div>
-    </div>
-</div>
-
-    <div id="badge-collection" class="collection-screen" style="display:none;">
-    <div class="collection-header">
-        <button onclick="toggleCollection()" class="back-btn">⬅ BACK</button>
-        <h2>TROPHY ROOM</h2>
-    </div>
-    <div id="badge-grid" class="badge-grid">
-        </div>
-</div>
-
-<section class="shop-container">
-    <h3 style="color: var(--gold); font-size: 0.8rem; margin-left: 20px;">QUEST TRADER</h3>
-    <div class="shop-scroller">
-        <div class="shop-item" onclick="buyItem('Shield', 1000)">
-            <span>🛡️ Shield</span>
-            <small>1,000 ⭐</small>
-        </div>
-        <div class="shop-item" onclick="buyItem('XP Boost', 2500)">
-            <span>⚡ Boost</span>
-            <small>2,500 ⭐</small>
-        </div>
-        <div class="shop-item" onclick="buyItem('Evolution Stone', 5000)">
-            <span>💎 Stone</span>
-            <small>5,000 ⭐</small>
-        </div>
-    </div>
-</section>
-    
-<button class="nav-btn" onclick="toggleCollection()">🏆 BADGES</button>
 
     <script src="world_data.js"></script>
-    
     <script src="engine.js"></script>
-
-    <script>
-        function buildGrid() {
-            const grid = document.getElementById('mission-grid');
-            const mode = Player.mode; // Uses data from engine.js
-            const tasks = GameDatabase[mode].quests;
-            
-            grid.innerHTML = ""; // Clear existing
-            
-            tasks.forEach((quest, index) => {
-                const tile = document.createElement('div');
-                tile.className = "activity-node";
-                tile.onclick = () => startBattle(index);
-                
-                // Assigning icons based on index for variety
-                const icons = ['🔢', '📖', '🧪', '🧬', '⚙️'];
-                const icon = icons[index] || '🌟';
-
-                tile.innerHTML = `
-                    <span class="node-icon">${icon}</span>
-                    <span class="node-label">${quest.title}</span>
-                `;
-                grid.appendChild(tile);
-            });
-        }
-
-        // Run this when the page finishes loading
-        window.addEventListener('load', buildGrid);
-    </script>
-
 </body>
 </html>
