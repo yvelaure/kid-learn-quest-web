@@ -1,119 +1,95 @@
 let Player = JSON.parse(localStorage.getItem('sovereign_save')) || {
-    stars: 0,
-    mode: "preschool",
-    rank: "Novice",
-    streak: 0
+    name: "", age: "", stars: 0, mode: "preschool"
 };
 
-function renderMissions() {
-    const grid = document.getElementById('mission-grid');
-    if (!grid) return;
-    const tasks = GameDatabase[Player.mode].quests;
-    grid.innerHTML = ""; 
-    tasks.forEach((quest, index) => {
-        const tile = document.createElement('div');
-        tile.className = "activity-node";
-        tile.onclick = () => startBattle(index);
-        const icons = ['🔢', '📖', '🧪', '🧬', '⚙️', '🌌', '📐', '🔋', '📡', '🛡️'];
-        tile.innerHTML = `<span class="node-icon">${icons[index] || '🌟'}</span><span class="node-label">${quest.title}</span>`;
-        grid.appendChild(tile);
-    });
-    checkBossAvailability();
-}
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-function updateHUD() {
-    document.getElementById('stars').innerText = Player.stars.toLocaleString();
-    const dragon = document.getElementById('dragon');
-    const rank = document.getElementById('rank-display');
-    const xp = document.getElementById('xp-fill');
-    const zoneBadge = document.getElementById('current-zone');
-
-    if(xp) xp.style.width = Math.min((Player.stars / 20000 * 100), 100) + "%";
-    
-    // Evolution & Rank
-    if (Player.stars >= 10000) { dragon.innerText = "🐲"; rank.innerText = "GALACTIC SOVEREIGN"; }
-    else if (Player.stars >= 5000) { dragon.innerText = "🦎"; rank.innerText = "CYBER DRAKE"; }
-    else { dragon.innerText = "🥚"; rank.innerText = "FOREST HATCHLING"; }
-
-    function buyItem(name, cost) {
-    if (Player.stars >= cost) {
-        Player.stars -= cost;
-        saveGame();
-        speak("Purchased " + name + "!");
-        alert("Success! You bought: " + name);
-        
-        // Bonus: If they buy the Evolution Stone, grow the dragon instantly
-        if (name === 'Evolution Stone') {
-            document.getElementById('dragon').innerText = "🐲";
-            speak("Your dragon has reached its ultimate form!");
-        }
+function playSound(type) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    if (type === 'win') {
+        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1046, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
     } else {
-        speak("You need more stars for that.");
-        alert("Not enough stars!");
+        osc.frequency.setValueAtTime(110, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
     }
 }
 
-    // Zone Badge
-    const labels = { preschool: "PRE-K", middleSchool: "MIDDLE", highSchool: "HIGH" };
-    if(zoneBadge) zoneBadge.innerText = labels[Player.mode];
+function buzz(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
+function checkProfile() {
+    if (!Player.name) {
+        Player.name = prompt("Hero Name:") || "Explorer";
+        Player.age = prompt("Age:") || "7";
+        saveGame();
+    }
+    document.getElementById('player-name').innerText = Player.name.toUpperCase();
 }
 
-function speak(text) {
-    window.speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance(text);
-    msg.rate = 0.9;
-    window.speechSynthesis.speak(msg);
+function toggleLeaderboard() {
+    const modal = document.getElementById('board-modal');
+    const isShowing = modal.style.display === 'flex';
+    modal.style.display = isShowing ? 'none' : 'flex';
+    if (!isShowing) {
+        const list = document.getElementById('leaderboard-list');
+        const scores = [
+            {n: "ZANE_X", s: 25000}, {n: "LUNA_9", s: 18500}, 
+            {n: Player.name.toUpperCase(), s: Player.stars},
+            {n: "NOVA_BOT", s: 5000}, {n: "RECRUIT_1", s: 500}
+        ].sort((a,b) => b.s - a.s);
+        
+        list.innerHTML = scores.map((u, i) => `
+            <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333; color:${u.n === Player.name.toUpperCase() ? 'var(--gold)' : 'white'}">
+                <span>#${i+1} ${u.n}</span><span>${u.s} ⭐</span>
+            </div>
+        `).join('');
+    }
 }
 
-function startBattle(idx) {
-    const quest = GameDatabase[Player.mode].quests[idx];
-    document.getElementById('q-modal').style.display = 'flex';
-    document.getElementById('q-body').innerText = quest.q;
-    speak(quest.q);
-
-    const grid = document.getElementById('opt-grid');
+function renderMissions() {
+    const grid = document.getElementById('mission-grid');
     grid.innerHTML = "";
-    quest.o.forEach(opt => {
-        const btn = document.createElement('div');
-        btn.className = "opt";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if(opt === quest.a) { 
-                Player.stars += 500; 
-                Player.streak++;
-                if(Player.streak >= 3) speak("On Fire!");
-                processWin(); 
-            } else { 
-                Player.streak = 0;
-                speak("Try again!"); 
-            }
-        };
-        grid.appendChild(btn);
+    GameDatabase[Player.mode].quests.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = "activity-node";
+        div.innerHTML = `✨<br><small>${q.title}</small>`;
+        div.onclick = () => { buzz(30); startBattle(i); };
+        grid.appendChild(div);
     });
 }
 
-function processWin() {
-    saveGame();
-    document.getElementById('q-modal').style.display = 'none';
-    if(Player.stars >= 20000) triggerVictory();
-}
-
-function triggerVictory() {
-    const boom = document.createElement('div');
-    boom.className = 'victory-explosion';
-    document.body.appendChild(boom);
-    boom.style.display = 'block';
-    speak("Mission Accomplished! You are the Sovereign!");
-    setTimeout(() => { document.getElementById('cert-overlay').style.display = 'flex'; }, 1000);
+function startBattle(i) {
+    const q = GameDatabase[Player.mode].quests[i];
+    document.getElementById('q-modal').style.display = 'flex';
+    document.getElementById('q-body').innerText = q.q;
+    const optGrid = document.getElementById('opt-grid');
+    optGrid.innerHTML = "";
+    q.o.forEach(o => {
+        const btn = document.createElement('div');
+        btn.className = "opt";
+        btn.innerText = o;
+        btn.onclick = () => {
+            if (o === q.a) {
+                playSound('win'); buzz([50, 50, 50]);
+                Player.stars += 500; saveGame();
+                document.getElementById('q-modal').style.display = 'none';
+            } else { playSound('lose'); buzz(200); }
+        };
+        optGrid.appendChild(btn);
+    });
 }
 
 function changeGrade(m) {
-    document.body.classList.add('shake');
-    setTimeout(() => { 
-        Player.mode = m; 
-        saveGame(); 
-        location.reload(); 
-    }, 400);
+    buzz(100); Player.mode = m; saveGame(); location.reload();
+}
+
+function resetGame() {
+    if(confirm("New Game?")) { localStorage.clear(); location.reload(); }
 }
 
 function saveGame() {
@@ -121,10 +97,11 @@ function saveGame() {
     updateHUD();
 }
 
-function prepareSnapshot() {
-    document.querySelector('.cert-actions').style.visibility = 'hidden';
-    speak("Take your screenshot now!");
-    setTimeout(() => { document.querySelector('.cert-actions').style.visibility = 'visible'; }, 5000);
+function updateHUD() {
+    document.getElementById('stars').innerText = Player.stars.toLocaleString();
+    const d = document.getElementById('dragon');
+    if (Player.stars >= 5000) d.innerText = "🐲";
+    else if (Player.stars >= 1000) d.innerText = "🦎";
 }
 
-window.onload = () => { updateHUD(); renderMissions(); };
+window.onload = () => { checkProfile(); updateHUD(); renderMissions(); };
