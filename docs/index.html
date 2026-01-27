@@ -3,46 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dino Preschool Hub</title>
-    <link rel="stylesheet" href="style.css?v=final">
+    <title>Dino Learning Hub</title>
+    <link rel="stylesheet" href="style.css?v=2.0">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="game-container">
-        <header class="hub-header">
-            <div id="player-name">DINO LAND</div>
-            <div class="star-box">⭐ <span id="stars">0</span></div>
-            <div class="parent-lock" onclick="toggleDashboard()">⚙️</div>
-        </header>
+<body class="world-jungle"> <nav class="game-header">
+        <div class="world-indicator" id="world-badge">🦖 Dino Valley</div>
+        <div class="stat-group">
+            <div class="star-badge">⭐ <span id="stars">0</span></div>
+            <div class="settings-gear" onclick="toggleDashboard()">⚙️</div>
+        </div>
+    </nav>
 
-        <section class="hero-card">
-            <div class="dragon-sprite" id="dragon">🥚</div>
-            <div id="evolution-text">Hatch your dino!</div>
-            <div class="care-buttons">
-                <button onclick="feedDino()" class="care-btn">🍎 FEED</button>
-                <button onclick="speak('I love you!')" class="care-btn">✋ PET</button>
+    <main class="viewport">
+        
+        <section class="pet-sanctuary">
+            <div class="dino-container" id="dragon-box">
+                <div class="sprite" id="dragon">🥚</div>
+                <div class="aura"></div>
+            </div>
+            <div class="pet-actions">
+                <button class="btn-round" onclick="feedDino()">🍎</button>
+                <button class="btn-round" onclick="speak('I love you!')">✋</button>
             </div>
         </section>
 
-        <section class="sticker-section">
-            <h3 style="color:var(--pink)">✨ STICKER BOOK ✨</h3>
-            <div id="sticker-display" class="sticker-grid"></div>
+        <section class="map-container">
+            <div class="winding-path" id="mission-grid">
+                </div>
         </section>
 
-        <div class="video-lab">
-            <p>📺 WATCH & LEARN</p>
-            <div class="video-scroller" id="video-list"></div>
-        </div>
+        <section class="collection-shelf">
+            <h3>MY STICKERS</h3>
+            <div class="sticker-row" id="sticker-display"></div>
+        </section>
 
-        <div class="activity-map" id="mission-grid"></div>
+    </main>
+
+    <div id="q-modal" class="overlay">
+        <div class="modal-card">
+            <h2 id="q-body">Find the Letter</h2>
+            <div class="options-grid" id="opt-grid"></div>
+        </div>
     </div>
 
-    <div id="q-modal" class="modal"><div class="modal-content"><h1 id="q-body"></h1><div id="opt-grid"></div></div></div>
-    <div id="video-modal" class="modal"><div class="modal-content"><div id="player-container"></div><button onclick="closeVideo()" class="opt">CLAIM STARS ⭐</button></div></div>
-    <div id="parent-dash" class="dashboard-panel" style="display:none;">
-        <h3>📊 Parent Report</h3>
-        <p>Stars: <span id="stat-stars">0</span> | Done: <span id="stat-done">0</span></p>
-        <p style="color:red">Needs Help: <span id="stat-needs-help">None</span></p>
-        <button onclick="toggleDashboard()" class="care-btn">Close</button>
+    <div id="parent-dash" class="overlay">
+        <div class="modal-card parent-report">
+            <h2>Parent Dashboard</h2>
+            <div id="report-stats"></div>
+            <button class="btn-wide" onclick="toggleDashboard()">Back to Play</button>
+        </div>
     </div>
 
     <script src="world_data.js"></script>
