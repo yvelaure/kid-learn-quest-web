@@ -1,92 +1,15 @@
-/* style.css */
-:root {
-    --bg: #0f172a;
-    --card: #1e293b;
-    --blue: #38bdf8;
-    --gold: #facc15;
-    --pink: #f472b6;
-}
-
-body {
-    background: var(--bg);
-    color: white;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    margin: 0;
-    text-align: center;
-}
-
-.hub-header {
-    background: var(--card);
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 5px solid var(--blue);
-}
-
-.star-box {
-    font-size: 1.5rem;
-    color: var(--gold);
-    font-weight: bold;
-}
-
-.hero-card {
-    background: var(--card);
-    margin: 20px;
-    padding: 30px;
-    border-radius: 30px;
-    border: 4px solid var(--pink);
-}
-
-.dragon-sprite {
-    font-size: 5rem;
-}
-
-/* THIS FIXES THE LIST: It makes it a Grid! */
-.activity-map {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 2 items per row */
-    gap: 15px;
-    padding: 20px;
-}
-
-.activity-node {
-    background: white;
-    color: black;
-    padding: 20px;
-    border-radius: 20px;
-    border: 5px solid var(--blue);
-    font-size: 1.2rem;
-    font-weight: bold;
-    box-shadow: 0 5px 0 var(--blue);
-}
-
-/* Make the Question Popup look nice */
-.modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: var(--card);
-    padding: 30px;
-    border-radius: 40px;
-    width: 90%;
-}
-
-.opt {
-    display: block;
-    width: 100%;
-    background: var(--gold);
-    border: none;
-    padding: 20px;
-    margin: 10px 0;
-    border-radius: 20px;
-    font-size: 2rem;
-    font-weight: bold;
-    box-shadow: 0 6px 0 #b45309;
-}
+:root { --bg: #0f172a; --card: #1e293b; --blue: #38bdf8; --gold: #facc15; --pink: #f472b6; }
+body { background: var(--bg); color: white; font-family: 'Comic Sans MS', cursive, sans-serif; text-align: center; margin: 0; }
+.hub-header { background: var(--card); padding: 15px; display: flex; justify-content: space-between; border-bottom: 4px solid var(--blue); }
+.hero-card { background: var(--card); margin: 15px; padding: 20px; border-radius: 30px; border: 4px solid var(--pink); }
+.dragon-sprite { font-size: 5rem; transition: 0.3s; }
+.care-btn { background: var(--blue); border: none; padding: 10px 20px; border-radius: 15px; color: white; font-weight: bold; margin: 5px; }
+.sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 10px; }
+.sticker-item { background: #222; padding: 10px; border-radius: 10px; font-size: 1.5rem; }
+.sticker-item.unlocked { background: white; border: 2px solid var(--gold); }
+.activity-map { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
+.activity-node { background: white; color: black; padding: 20px; border-radius: 20px; border-bottom: 5px solid #ccc; }
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 100; }
+.opt { background: var(--gold); width: 100%; padding: 20px; margin: 10px 0; border-radius: 20px; font-size: 2rem; border: none; box-shadow: 0 5px 0 #b45309; }
+.dashboard-panel { position: fixed; top: 20%; left: 10%; width: 80%; background: white; color: black; padding: 20px; border-radius: 20px; z-index: 200; }
+.video-scroller { display: flex; overflow-x: auto; gap: 10px; padding: 10px; }
