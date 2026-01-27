@@ -1,44 +1,25 @@
-/* Professional Hub Layout */
-.activity-map {
-    position: relative;
-    padding: 60px 20px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 50px;
-    margin: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px; /* Space between nodes */
-}
+:root { --green: #22c55e; --blue: #3b82f6; --pink: #ec4899; --gold: #f59e0b; }
+body { background: #0f172a; color: white; font-family: sans-serif; margin: 0; text-align: center; overflow-x: hidden; }
 
-/* The Winding Path Logic */
-.activity-node {
-    width: 80px;
-    height: 80px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--bg);
-    border: 6px solid var(--blue);
-    box-shadow: 0 10px 0 #cbd5e1, 0 15px 25px rgba(0,0,0,0.2);
-    position: relative;
-    transition: 0.2s;
-}
+.top-nav { background: rgba(0,0,0,0.5); display: flex; justify-content: space-between; padding: 15px; position: sticky; top: 0; z-index: 10; }
+.badge { background: var(--green); padding: 5px 15px; border-radius: 20px; font-weight: bold; }
 
-/* Offset every other node to create a "S-curve" path */
-.activity-node:nth-child(even) { transform: translateX(50px); border-color: var(--pink); }
-.activity-node:nth-child(odd) { transform: translateX(-50px); border-color: var(--gold); }
+.pet-zone { padding: 40px 0; background: radial-gradient(circle, #1e293b, #0f172a); }
+.big-dino { font-size: 80px; animation: bounce 2s infinite; }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-.activity-node::after {
-    content: '';
-    position: absolute;
-    top: 80px;
-    width: 10px;
-    height: 45px;
-    background: rgba(255,255,255,0.2);
-    z-index: -1;
+/* THE WINDING PATH - NO MORE LISTS */
+.path-map { display: flex; flex-direction: column; align-items: center; gap: 30px; padding: 50px 0; }
+.node { 
+    width: 70px; height: 70px; background: white; color: #1e293b; 
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: bold; border: 5px solid var(--blue);
+    box-shadow: 0 8px 0 #94a3b8; transition: 0.2s;
 }
+.node:nth-child(even) { transform: translateX(50px); border-color: var(--pink); }
+.node:nth-child(odd) { transform: translateX(-50px); border-color: var(--gold); }
+.node:active { transform: scale(0.9) translateY(4px); box-shadow: none; }
+
+.popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 100; }
+.card { background: #1e293b; padding: 30px; border-radius: 30px; width: 85%; border: 3px solid var(--blue); }
+.opt { background: white; color: black; width: 100%; padding: 20px; margin: 10px 0; border-radius: 15px; font-size: 30px; border: none; font-weight: bold; }
