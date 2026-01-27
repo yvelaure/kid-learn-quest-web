@@ -1,24 +1,24 @@
-:root { --bg: #020617; --panel: #0f172a; --blue: #38bdf8; --gold: #fbbf24; --purple: #a855f7; }
-body { background: var(--bg); color: white; font-family: 'Inter', sans-serif; margin: 0; text-align: center; }
+.parent-lock {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.2rem;
+    opacity: 0.3; /* Makes it nearly invisible to kids */
+}
 
-.hub-header { display: flex; justify-content: space-between; padding: 15px; border-bottom: 2px solid var(--blue); align-items: center; }
-.header-actions { display: flex; align-items: center; gap: 10px; }
+.dashboard-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    color: #1e293b;
+    padding: 30px;
+    border-radius: 20px;
+    z-index: 3000;
+    width: 80%;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    text-align: left;
+}
 
-.board-btn { background: var(--gold); border: none; font-weight: 900; border-radius: 5px; padding: 5px 10px; font-size: 0.7rem; }
-.reset-btn { background: #ff4444; border: none; color: white; padding: 4px; border-radius: 5px; font-size: 0.5rem; margin-top: 5px; }
-
-.hero-card { background: var(--panel); margin: 15px; padding: 20px; border-radius: 20px; border: 1px solid var(--purple); }
-.dragon-sprite { font-size: 5rem; text-shadow: 0 0 20px var(--purple); }
-
-.grade-btns button { background: none; border: 1px solid var(--blue); color: white; margin: 5px; padding: 6px 10px; border-radius: 8px; font-size: 0.7rem; }
-
-.shop-scroller { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: rgba(0,0,0,0.2); }
-.shop-item { background: var(--panel); border: 1px solid var(--purple); min-width: 90px; padding: 10px; border-radius: 12px; flex-shrink: 0; }
-.shop-item span { display: block; font-size: 0.7rem; font-weight: 900; }
-
-.activity-map { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
-.activity-node { background: var(--panel); padding: 25px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 1000; }
-.modal-content { background: var(--panel); width: 85%; padding: 25px; border-radius: 25px; border: 2px solid var(--blue); }
-.opt { background: var(--gold); color: black; padding: 15px; margin: 10px auto; width: 90%; border-radius: 15px; font-weight: 900; border: none; }
+.dashboard-panel h3 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
