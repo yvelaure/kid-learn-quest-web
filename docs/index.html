@@ -1,12 +1,34 @@
-<div class="parent-lock" onclick="toggleDashboard()">⚙️</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dino Quest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header class="hub-header">
+            <div id="player-name">DINO LAND</div>
+            <div class="star-box">⭐ <span id="stars">0</span></div>
+        </header>
 
-<div id="parent-dash" class="dashboard-panel" style="display:none;">
-    <h3>📊 Parent Progress Report</h3>
-    <p><strong>Total Stars:</strong> <span id="stat-stars">0</span></p>
-    <p><strong>Quests Finished:</strong> <span id="stat-done">0</span></p>
-    <p style="color:#ff4444;"><strong>Letters to Practice:</strong><br>
-       <span id="stat-needs-help">---</span></p>
-    <button onclick="toggleDashboard()" class="opt" style="font-size:1rem; padding:10px;">Close Report</button>
-</div>
-<script src="world_data.js"></script>
-<script src="engine.js"></script>
+        <section class="hero-card">
+            <div class="dragon-sprite" id="dragon">🥚</div>
+        </section>
+
+        <div class="activity-map" id="mission-grid">
+            </div>
+    </div>
+
+    <div id="q-modal" class="modal">
+        <div class="modal-content">
+            <h1 id="q-body"></h1>
+            <div id="opt-grid"></div>
+        </div>
+    </div>
+
+    <script src="world_data.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html>
