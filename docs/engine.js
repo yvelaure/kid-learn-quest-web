@@ -1,37 +1,86 @@
-// Add 'history' to your Player object
+// --- SAFE PLAYER DATA ---
 let Player = JSON.parse(localStorage.getItem('sovereign_save')) || {
-    name: "", stars: 0, mode: "preschool", 
-    history: { wrong: [], completed: 0 } 
+    name: "Hero", stars: 0, history: { wrong: [], completed: 0 }
 };
 
-function checkAns(picked, correct) {
-    if(picked === correct) {
-        speak("Great job! That is " + picked);
-        Player.history.completed++; // Track progress
-        showEmojiReward();
-        buzz([50, 50, 50]);
-        Player.stars += 100;
-        saveGame();
-        setTimeout(() => { document.getElementById('q-modal').style.display = 'none'; }, 1000);
-    } else {
-        // Track the struggle
-        if(!Player.history.wrong.includes(correct)) {
-            Player.history.wrong.push(correct);
-        }
-        speak("Try again!");
-        buzz(200);
-        saveGame();
+// --- VOICE & SOUND ---
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
     }
 }
 
-// Secret function to show the dashboard
-function toggleDashboard() {
-    const dash = document.getElementById('parent-dash');
-    dash.style.display = (dash.style.display === 'block') ? 'none' : 'block';
+function buzz(ms) { if (navigator.vibrate) navigator.vibrate(ms); }
+
+// --- GAME LOGIC ---
+function renderMissions() {
+    const grid = document.getElementById('mission-grid');
+    if (!grid) return;
+    grid.innerHTML = "";
     
-    // Fill the dashboard with data
-    document.getElementById('stat-stars').innerText = Player.stars;
-    document.getElementById('stat-done').innerText = Player.history.completed;
-    document.getElementById('stat-needs-help').innerText = 
-        Player.history.wrong.length > 0 ? Player.history.wrong.join(", ") : "None yet!";
+    // Safety check for data
+    if (!GameDatabase || !GameDatabase.preschool) {
+        grid.innerHTML = "Loading Data...";
+        return;
+    }
+
+    GameDatabase.preschool.quests.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = "activity-node";
+        div.innerHTML = `⭐<br><small>${q.title}</small>`;
+        div.onclick = () => startBattle(i);
+        grid.appendChild(div);
+    });
 }
+
+function startBattle(i) {
+    const q = GameDatabase.preschool.quests[i];
+    speak(q.q);
+    document.getElementById('q-modal').style.display = 'flex';
+    document.getElementById('q-body').innerText = q.q;
+    
+    const optGrid = document.getElementById('opt-grid');
+    optGrid.innerHTML = "";
+    q.o.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "opt";
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if (opt === q.a) {
+                speak("Great job!");
+                Player.stars += 100;
+                saveGame();
+                document.getElementById('q-modal').style.display = 'none';
+            } else {
+                speak("Try again!");
+                buzz(200);
+            }
+        };
+        optGrid.appendChild(btn);
+    });
+}
+
+function saveGame() {
+    localStorage.setItem('sovereign_save', JSON.stringify(Player));
+    updateHUD();
+}
+
+function updateHUD() {
+    const starCount = document.getElementById('stars');
+    if (starCount) starCount.innerText = Player.stars;
+    
+    const d = document.getElementById('dragon');
+    if (d) {
+        if (Player.stars >= 1000) d.innerText = "🦖";
+        else if (Player.stars >= 500) d.innerText = "🦎";
+        else d.innerText = "🥚";
+    }
+}
+
+// Start everything
+window.onload = () => {
+    updateHUD();
+    renderMissions();
+};
