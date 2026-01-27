@@ -1,31 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dino Quest</title>
-    <link rel="stylesheet" href="style.css?v=1.1">
+    <title>Dino Preschool Hub</title>
+    <link rel="stylesheet" href="style.css?v=final">
 </head>
 <body>
     <div class="game-container">
         <header class="hub-header">
             <div id="player-name">DINO LAND</div>
             <div class="star-box">⭐ <span id="stars">0</span></div>
+            <div class="parent-lock" onclick="toggleDashboard()">⚙️</div>
         </header>
 
         <section class="hero-card">
             <div class="dragon-sprite" id="dragon">🥚</div>
+            <div id="evolution-text">Hatch your dino!</div>
+            <div class="care-buttons">
+                <button onclick="feedDino()" class="care-btn">🍎 FEED</button>
+                <button onclick="speak('I love you!')" class="care-btn">✋ PET</button>
+            </div>
         </section>
 
-        <div class="activity-map" id="mission-grid">
-            </div>
+        <section class="sticker-section">
+            <h3 style="color:var(--pink)">✨ STICKER BOOK ✨</h3>
+            <div id="sticker-display" class="sticker-grid"></div>
+        </section>
+
+        <div class="video-lab">
+            <p>📺 WATCH & LEARN</p>
+            <div class="video-scroller" id="video-list"></div>
+        </div>
+
+        <div class="activity-map" id="mission-grid"></div>
     </div>
 
-    <div id="q-modal" class="modal">
-        <div class="modal-content">
-            <h1 id="q-body"></h1>
-            <div id="opt-grid"></div>
-        </div>
+    <div id="q-modal" class="modal"><div class="modal-content"><h1 id="q-body"></h1><div id="opt-grid"></div></div></div>
+    <div id="video-modal" class="modal"><div class="modal-content"><div id="player-container"></div><button onclick="closeVideo()" class="opt">CLAIM STARS ⭐</button></div></div>
+    <div id="parent-dash" class="dashboard-panel" style="display:none;">
+        <h3>📊 Parent Report</h3>
+        <p>Stars: <span id="stat-stars">0</span> | Done: <span id="stat-done">0</span></p>
+        <p style="color:red">Needs Help: <span id="stat-needs-help">None</span></p>
+        <button onclick="toggleDashboard()" class="care-btn">Close</button>
     </div>
 
     <script src="world_data.js"></script>
