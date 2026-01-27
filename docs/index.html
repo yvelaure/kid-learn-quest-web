@@ -3,57 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dino Learning Hub</title>
-    <link rel="stylesheet" href="style.css?v=2.0">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <title>Dino Hub</title>
+    <link rel="stylesheet" href="style.css?v=99">
 </head>
-<body class="world-jungle"> <nav class="game-header">
-        <div class="world-indicator" id="world-badge">🦖 Dino Valley</div>
-        <div class="stat-group">
-            <div class="star-badge">⭐ <span id="stars">0</span></div>
-            <div class="settings-gear" onclick="toggleDashboard()">⚙️</div>
-        </div>
+<body class="jungle-theme">
+
+    <nav class="top-nav">
+        <div id="world-badge" class="badge">🦖 Dino Valley</div>
+        <div class="stats">⭐ <span id="stars">0</span></div>
+        <div class="admin" onclick="toggleDashboard()">⚙️</div>
     </nav>
 
-    <main class="viewport">
-        
-        <section class="pet-sanctuary">
-            <div class="dino-container" id="dragon-box">
-                <div class="sprite" id="dragon">🥚</div>
-                <div class="aura"></div>
+    <main class="hub">
+        <div class="pet-zone">
+            <div id="dragon" class="big-dino">🥚</div>
+            <div class="actions">
+                <button onclick="feedDino()">🍎</button>
+                <button onclick="speak('I love you!')">✋</button>
             </div>
-            <div class="pet-actions">
-                <button class="btn-round" onclick="feedDino()">🍎</button>
-                <button class="btn-round" onclick="speak('I love you!')">✋</button>
-            </div>
-        </section>
+        </div>
 
-        <section class="map-container">
-            <div class="winding-path" id="mission-grid">
-                </div>
-        </section>
+        <div id="mission-grid" class="path-map"></div>
 
-        <section class="collection-shelf">
-            <h3>MY STICKERS</h3>
-            <div class="sticker-row" id="sticker-display"></div>
-        </section>
-
+        <div class="shelf">
+            <h3>STICKERS</h3>
+            <div id="sticker-display" class="stickers"></div>
+        </div>
     </main>
 
-    <div id="q-modal" class="overlay">
-        <div class="modal-card">
-            <h2 id="q-body">Find the Letter</h2>
-            <div class="options-grid" id="opt-grid"></div>
-        </div>
-    </div>
-
-    <div id="parent-dash" class="overlay">
-        <div class="modal-card parent-report">
-            <h2>Parent Dashboard</h2>
-            <div id="report-stats"></div>
-            <button class="btn-wide" onclick="toggleDashboard()">Back to Play</button>
-        </div>
-    </div>
+    <div id="q-modal" class="popup"><div class="card"><h2 id="q-body"></h2><div id="opt-grid"></div></div></div>
+    
+    <div id="parent-dash" class="popup"><div class="card"><h2>Report</h2><div id="report"></div><button onclick="toggleDashboard()">Close</button></div></div>
 
     <script src="world_data.js"></script>
     <script src="engine.js"></script>
