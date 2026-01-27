@@ -1,59 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sovereign Nexus | Quest</title>
-    <link rel="stylesheet" href="style.css?v=10">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="game-container">
-        <header class="hub-header">
-            <div class="user-profile">
-                <div id="player-name">ID: ---</div>
-                <button onclick="resetGame()" class="reset-btn">🔄 RESET</button>
-            </div>
-            <div class="header-actions">
-                <button onclick="toggleLeaderboard()" class="board-btn">🏆 RANK</button>
-                <div class="star-box">⭐ <span id="stars">0</span></div>
-            </div>
-        </header>
+<div class="parent-lock" onclick="toggleDashboard()">⚙️</div>
 
-        <section class="hero-card">
-            <div class="dragon-sprite" id="dragon">🥚</div>
-            <div class="grade-btns">
-                <button onclick="changeGrade('preschool')">PRE-K</button>
-                <button onclick="changeGrade('middleSchool')">MIDDLE</button>
-                <button onclick="changeGrade('highSchool')">HIGH</button>
-            </div>
-        </section>
-
-        <section class="shop-scroller">
-            <div class="shop-item" onclick="buyItem('Shield', 1000)"><span>🛡️ SHIELD</span><small>1,000</small></div>
-            <div class="shop-item" onclick="buyItem('XP Boost', 2500)"><span>⚡ BOOST</span><small>2,500</small></div>
-            <div class="shop-item" onclick="buyItem('Evolution Stone', 5000)"><span>💎 STONE</span><small>5,000</small></div>
-        </section>
-
-        <div class="activity-map" id="mission-grid"></div>
-    </div>
-
-    <div id="board-modal" class="modal">
-        <div class="modal-content leaderboard">
-            <h2 style="color:var(--gold)">GLOBAL RANKINGS</h2>
-            <div id="leaderboard-list"></div>
-            <button onclick="toggleLeaderboard()" class="opt" style="margin-top:20px">CLOSE</button>
-        </div>
-    </div>
-
-    <div id="q-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="q-body"></h2>
-            <div id="opt-grid"></div>
-        </div>
-    </div>
-
-    <script src="world_data.js"></script>
-    <script src="engine.js"></script>
-</body>
-</html>
+<div id="parent-dash" class="dashboard-panel" style="display:none;">
+    <h3>📊 Parent Progress Report</h3>
+    <p><strong>Total Stars:</strong> <span id="stat-stars">0</span></p>
+    <p><strong>Quests Finished:</strong> <span id="stat-done">0</span></p>
+    <p style="color:#ff4444;"><strong>Letters to Practice:</strong><br>
+       <span id="stat-needs-help">---</span></p>
+    <button onclick="toggleDashboard()" class="opt" style="font-size:1rem; padding:10px;">Close Report</button>
+</div>
